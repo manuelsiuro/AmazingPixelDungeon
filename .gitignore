@@ -104,6 +104,7 @@ Thumbs.db
 
 # Claude Code
 .claude/
+.plan/
 
 # Backup files
 *.bak
