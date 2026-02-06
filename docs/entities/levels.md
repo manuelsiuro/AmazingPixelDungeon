@@ -293,6 +293,8 @@ Blocked passage (beyond Floor 26).
 
 ## Level Generation
 
+> **Deep dive**: See [Level Generation System](../systems/level-generation.md) for the full pipeline, room shapes, interior features, corridor variety, and region-specific decorations.
+
 ### RegularLevel
 **Path**: `levels/RegularLevel.kt`
 
@@ -380,7 +382,7 @@ Room painters decorate rooms with specific themes:
 
 | Painter | File | Description |
 |---------|------|-------------|
-| StandardPainter | `StandardPainter.kt` | Basic empty room |
+| StandardPainter | `StandardPainter.kt` | Room shapes (rectangle, rounded rect, circle, diamond, cross), dramatic decorations, and interior features (pillars, alcoves, center features, wall niches, scattered) |
 | EntrancePainter | `EntrancePainter.kt` | Stairs up |
 | ExitPainter | `ExitPainter.kt` | Stairs down |
 | BossExitPainter | `BossExitPainter.kt` | Locked boss exit |
@@ -396,8 +398,8 @@ Room painters decorate rooms with specific themes:
 | PoolPainter | `PoolPainter.kt` | Water features |
 | MagicWellPainter | `MagicWellPainter.kt` | Magic well |
 | AltarPainter | `AltarPainter.kt` | Sacrificial altar |
-| TunnelPainter | `TunnelPainter.kt` | Narrow passage |
-| PassagePainter | `PassagePainter.kt` | Wide corridor |
+| TunnelPainter | `TunnelPainter.kt` | Narrow passage with optional widening (2- or 3-wide corridors), alcoves, and decorated floor tiles |
+| PassagePainter | `PassagePainter.kt` | Perimeter path with wider segments, optional courtyard fill (grass/water), center features, and corner decorations |
 | TrapsPainter | `TrapsPainter.kt` | Trap-filled room |
 | WeakFloorPainter | `WeakFloorPainter.kt` | Collapsing floor |
 | RatKingPainter | `RatKingPainter.kt` | Secret throne |
@@ -508,6 +510,7 @@ Floor 26:    LastLevel (Amulet)
 
 ## See Also
 
+- [Level Generation System](../systems/level-generation.md) - Pipeline, room shapes, decorations
 - [Mobs](mobs.md) - Enemies per region
 - [Actor System](../systems/actor-system.md) - Game entities
 - [Scene System](../systems/scene-system.md) - Level transitions
