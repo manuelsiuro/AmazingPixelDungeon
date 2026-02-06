@@ -29,6 +29,40 @@ open class SewerLevel : RegularLevel() {
         return Patch.generate(if (feeling === Level.Feeling.GRASS) 0.60f else 0.40f, 4)
     }
     override fun decorate() {
+        // Room-interior sewer features
+        for (room in rooms.orEmpty()) {
+            if (room.type != Room.Type.STANDARD) continue
+            if (room.width() <= 3 || room.height() <= 3) continue
+
+            // Drainage channel through center
+            if ((room.width() >= 6 || room.height() >= 6) && Random.Int(3) == 0) {
+                if (room.width() > room.height()) {
+                    val cy = (room.top + room.bottom) / 2
+                    for (x in room.left + 1 until room.right) {
+                        map[cy * WIDTH + x] = Terrain.WATER
+                    }
+                } else {
+                    val cx = (room.left + room.right) / 2
+                    for (y in room.top + 1 until room.bottom) {
+                        map[y * WIDTH + cx] = Terrain.WATER
+                    }
+                }
+            }
+
+            // Mossy corners
+            val corners = intArrayOf(
+                (room.top + 1) * WIDTH + room.left + 1,
+                (room.top + 1) * WIDTH + room.right - 1,
+                (room.bottom - 1) * WIDTH + room.left + 1,
+                (room.bottom - 1) * WIDTH + room.right - 1
+            )
+            for (corner in corners) {
+                if (Random.Float() < 0.25f) {
+                    map[corner] = Terrain.GRASS
+                }
+            }
+        }
+
         for (i in 0 until WIDTH) {
             if (map[i] == Terrain.WALL &&
                 map[i + WIDTH] == Terrain.WATER &&

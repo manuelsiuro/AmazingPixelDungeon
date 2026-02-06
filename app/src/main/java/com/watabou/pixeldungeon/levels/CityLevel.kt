@@ -7,6 +7,7 @@ import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.DungeonTilemap
 import com.watabou.pixeldungeon.actors.mobs.npcs.Imp
 import com.watabou.pixeldungeon.levels.Room.Type
+import com.watabou.pixeldungeon.levels.painters.Painter
 import com.watabou.utils.Random
 open class CityLevel : RegularLevel() {
     init {
@@ -34,6 +35,33 @@ open class CityLevel : RegularLevel() {
         }
     }
     override fun decorate() {
+        // Room-interior dwarven city features
+        for (room in rooms.orEmpty()) {
+            if (room.type != Type.STANDARD) continue
+            if (room.width() <= 3 || room.height() <= 3) continue
+
+            // Carpet center
+            if (room.width() >= 5 && room.height() >= 5 && Random.Int(3) == 0) {
+                val cx = (room.left + room.right) / 2
+                val cy = (room.top + room.bottom) / 2
+                Painter.fill(this, cx - 1, cy - 1, 3, 3, Terrain.EMPTY_SP)
+            }
+            // Column pairs
+            else if (room.width() >= 6 && room.height() >= 6 && Random.Int(4) == 0) {
+                if (room.width() >= room.height()) {
+                    Painter.set(this, room.left + 2, room.top + 2, Terrain.STATUE_SP)
+                    Painter.set(this, room.right - 2, room.top + 2, Terrain.STATUE_SP)
+                    Painter.set(this, room.left + 2, room.bottom - 2, Terrain.STATUE_SP)
+                    Painter.set(this, room.right - 2, room.bottom - 2, Terrain.STATUE_SP)
+                } else {
+                    Painter.set(this, room.left + 2, room.top + 2, Terrain.STATUE_SP)
+                    Painter.set(this, room.right - 2, room.top + 2, Terrain.STATUE_SP)
+                    Painter.set(this, room.left + 2, room.bottom - 2, Terrain.STATUE_SP)
+                    Painter.set(this, room.right - 2, room.bottom - 2, Terrain.STATUE_SP)
+                }
+            }
+        }
+
         for (i in 0 until LENGTH) {
             if (map[i] == Terrain.EMPTY && Random.Int(10) == 0) {
                 map[i] = Terrain.EMPTY_DECO

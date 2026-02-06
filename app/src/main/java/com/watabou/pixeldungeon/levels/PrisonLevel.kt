@@ -40,6 +40,47 @@ open class PrisonLevel : RegularLevel() {
         roomEntrance?.let { Wandmaker.Quest.spawn(this, it) }
     }
     override fun decorate() {
+        // Room-interior prison features
+        for (room in rooms.orEmpty()) {
+            if (room.type != Type.STANDARD) continue
+            if (room.width() <= 3 || room.height() <= 3) continue
+
+            // Cell bars across a middle row
+            if (room.width() >= 6 && room.connected.size == 2 && Random.Int(5) == 0) {
+                val midY = (room.top + room.bottom) / 2
+                val cx = (room.left + room.right) / 2
+                for (x in room.left + 2 until room.right - 1) {
+                    if (x == cx) continue // gap for passage
+                    val cell = midY * WIDTH + x
+                    // Check not adjacent to door
+                    var nearDoor = false
+                    for (door in room.connected.values) {
+                        val d = door ?: continue
+                        if (kotlin.math.abs(d.x - x) <= 1 && kotlin.math.abs(d.y - midY) <= 1) {
+                            nearDoor = true
+                            break
+                        }
+                    }
+                    if (!nearDoor && (x - room.left) % 2 == 0) {
+                        map[cell] = Terrain.STATUE
+                    }
+                }
+            }
+
+            // Blood stain corners
+            val corners = intArrayOf(
+                (room.top + 1) * WIDTH + room.left + 1,
+                (room.top + 1) * WIDTH + room.right - 1,
+                (room.bottom - 1) * WIDTH + room.left + 1,
+                (room.bottom - 1) * WIDTH + room.right - 1
+            )
+            for (corner in corners) {
+                if (Random.Float() < 0.3f) {
+                    map[corner] = Terrain.EMPTY_DECO
+                }
+            }
+        }
+
         for (i in WIDTH + 1 until LENGTH - WIDTH - 1) {
             if (map[i] == Terrain.EMPTY) {
                 var c = 0.05f

@@ -67,6 +67,16 @@ open class CavesLevel : RegularLevel() {
                     map[corner] = Terrain.WALL
                 }
             }
+            // Cave rubble
+            if (room.width() >= 5 && room.height() >= 5 && Random.Int(5) == 0) {
+                val count = Random.Int(2, 5)
+                for (i in 0 until count) {
+                    val rx = Random.Int(room.left + 2, room.right - 1)
+                    val ry = Random.Int(room.top + 2, room.bottom - 1)
+                    map[ry * WIDTH + rx] = Terrain.EMBERS
+                }
+            }
+
             for (n in room.connected.keys) {
                 if ((n.type == Type.STANDARD || n.type == Type.TUNNEL) && Random.Int(3) == 0) {
                     room.connected[n]?.let { Painter.set(this, it, Terrain.EMPTY_DECO) }

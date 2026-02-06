@@ -8,6 +8,7 @@ import com.watabou.pixeldungeon.Assets
 import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.DungeonTilemap
 import com.watabou.pixeldungeon.items.Torch
+import com.watabou.pixeldungeon.levels.painters.Painter
 import com.watabou.utils.PointF
 import com.watabou.utils.Random
 import javax.microedition.khronos.opengles.GL10
@@ -36,6 +37,24 @@ open class HallsLevel : RegularLevel() {
         return Patch.generate(if (feeling === Level.Feeling.GRASS) 0.55f else 0.30f, 3)
     }
     override fun decorate() {
+        // Room-interior demon halls features
+        for (room in rooms.orEmpty()) {
+            if (room.type != Room.Type.STANDARD) continue
+            if (room.width() <= 3 || room.height() <= 3) continue
+
+            // Lava pool
+            if (room.width() >= 5 && room.height() >= 5 && Random.Int(4) == 0) {
+                val px = Random.Int(room.left + 2, room.right - 2)
+                val py = Random.Int(room.top + 2, room.bottom - 2)
+                Painter.fill(this, px, py, 2, 2, Terrain.WATER)
+            }
+            // Skull pillars
+            else if (room.width() >= 6 && room.height() >= 6 && Random.Int(5) == 0) {
+                Painter.set(this, room.left + 2, (room.top + room.bottom) / 2, Terrain.STATUE_SP)
+                Painter.set(this, room.right - 2, (room.top + room.bottom) / 2, Terrain.STATUE_SP)
+            }
+        }
+
         for (i in WIDTH + 1 until LENGTH - WIDTH - 1) {
             if (map[i] == Terrain.EMPTY) {
                 var count = 0
