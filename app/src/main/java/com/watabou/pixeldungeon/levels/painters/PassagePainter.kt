@@ -1,7 +1,9 @@
 package com.watabou.pixeldungeon.levels.painters
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.Room
+import com.watabou.pixeldungeon.levels.Terrain
 import com.watabou.utils.Point
+import com.watabou.utils.Random
 import java.util.ArrayList
 import java.util.Collections
 object PassagePainter : Painter() {
@@ -34,6 +36,74 @@ object PassagePainter : Painter() {
             p = (p + 1) % perimeter
         } while (p != joints[end])
         Painter.set(level, p2xy(room, p, pasWidth, pasHeight), floor)
+
+        // Wider path segments: widen some perimeter path cells inward
+        if (pasWidth >= 3 && pasHeight >= 3 && Random.Int(3) == 0) {
+            for (x in room.left + 1 until room.right) {
+                for (y in room.top + 1 until room.bottom) {
+                    val cell = y * Level.WIDTH + x
+                    if (level.map[cell] != floor) continue
+                    // Only widen perimeter ring cells (1 cell from wall)
+                    val onPerimeter = (x == room.left + 1 || x == room.right - 1 ||
+                            y == room.top + 1 || y == room.bottom - 1)
+                    if (!onPerimeter) continue
+                    if (Random.Float() > 0.35f) continue
+                    // Carve 1 cell inward from this perimeter cell
+                    val inX = if (x == room.left + 1) x + 1
+                             else if (x == room.right - 1) x - 1
+                             else x
+                    val inY = if (y == room.top + 1) y + 1
+                             else if (y == room.bottom - 1) y - 1
+                             else y
+                    if (inX > room.left + 1 && inX < room.right - 1 &&
+                        inY > room.top + 1 && inY < room.bottom - 1
+                    ) {
+                        val inCell = inY * Level.WIDTH + inX
+                        if (level.map[inCell] == Terrain.WALL) {
+                            level.map[inCell] = floor
+                        }
+                    }
+                }
+            }
+        }
+
+        // Courtyard fill: fill interior with grass or water
+        if (pasWidth >= 3 && pasHeight >= 3 && Random.Int(4) == 0) {
+            val fillTerrain = if (Random.Int(2) == 0) Terrain.GRASS else Terrain.WATER
+            for (x in room.left + 2 until room.right - 1) {
+                for (y in room.top + 2 until room.bottom - 1) {
+                    val cell = y * Level.WIDTH + x
+                    if (level.map[cell] == Terrain.WALL) {
+                        level.map[cell] = fillTerrain
+                    }
+                }
+            }
+
+            // Courtyard center feature
+            if (pasWidth >= 5 && pasHeight >= 5 && Random.Int(3) == 0) {
+                val cx = (room.left + room.right) / 2
+                val cy = (room.top + room.bottom) / 2
+                val centerTerrain = when (Random.Int(3)) {
+                    0 -> Terrain.PEDESTAL
+                    1 -> Terrain.STATUE
+                    else -> Terrain.EMPTY_DECO
+                }
+                Painter.set(level, cx, cy, centerTerrain)
+            }
+        }
+
+        // Corner features along the perimeter path
+        val cornerPs = intArrayOf(0, pasWidth, pasWidth + pasHeight, pasWidth * 2 + pasHeight)
+        for (cp in cornerPs) {
+            if (Random.Int(5) == 0) {
+                val pt = p2xy(room, cp % perimeter, pasWidth, pasHeight)
+                val cell = pt.y * Level.WIDTH + pt.x
+                if (level.map[cell] == floor) {
+                    level.map[cell] = Terrain.EMPTY_DECO
+                }
+            }
+        }
+
         for (door in room.connected.values) {
             door?.set(Room.Door.Type.TUNNEL)
         }
