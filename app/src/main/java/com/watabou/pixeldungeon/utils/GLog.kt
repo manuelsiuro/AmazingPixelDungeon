@@ -1,5 +1,6 @@
 package com.watabou.pixeldungeon.utils
 import android.util.Log
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.utils.Signal
 object GLog {
     const val TAG = "GAME"
@@ -13,6 +14,7 @@ object GLog {
         if (args.isNotEmpty()) {
             msg = Utils.format(text, *args)
         }
+        LlmTextEnhancer.enhanceCombatMessage(msg)?.let { msg = it }
         Log.i(TAG, msg)
         update.dispatch(msg)
     }

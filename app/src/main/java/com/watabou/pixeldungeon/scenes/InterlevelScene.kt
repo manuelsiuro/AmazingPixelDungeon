@@ -10,6 +10,7 @@ import com.watabou.pixeldungeon.Statistics
 import com.watabou.pixeldungeon.actors.Actor
 import com.watabou.pixeldungeon.items.Generator
 import com.watabou.pixeldungeon.levels.Level
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.ui.GameLog
 import com.watabou.pixeldungeon.windows.WndError
 import com.watabou.pixeldungeon.windows.WndStory
@@ -60,6 +61,15 @@ class InterlevelScene : PixelScene() {
                     if (Dungeon.depth % 5 == 0) {
                         Sample.play(Assets.SND_BOSS)
                     }
+                    // Pre-warm LLM cache for the new floor
+                    val regionName = when {
+                        Dungeon.depth <= 5 -> "Sewers"
+                        Dungeon.depth <= 10 -> "Prison"
+                        Dungeon.depth <= 15 -> "Caves"
+                        Dungeon.depth <= 20 -> "Dwarven Metropolis"
+                        else -> "Demon Halls"
+                    }
+                    LlmTextEnhancer.preWarmCache(regionName, Dungeon.depth, Dungeon.hero?.className() ?: "adventurer")
                 } catch (e: FileNotFoundException) {
                     error = ERR_FILE_NOT_FOUND
                 } catch (e: Exception) {

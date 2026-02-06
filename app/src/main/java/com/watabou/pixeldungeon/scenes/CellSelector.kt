@@ -11,12 +11,12 @@ class CellSelector(map: DungeonTilemap) : TouchArea(map) {
     private val dragThreshold: Float = PixelScene.defaultZoom * DungeonTilemap.SIZE / 2
     private var pinching = false
     private var another: Touch? = null
-    private var startZoom: Float = 0.toFloat()
-    private var startSpan: Float = 0.toFloat()
+    private var startZoom: Float = 0f
+    private var startSpan: Float = 0f
     private var dragging = false
     private val lastPos = PointF()
     init {
-        camera = map.camera
+        camera = map.camera()
     }
     override fun onClick(touch: Touch) {
         if (dragging) {
@@ -40,37 +40,43 @@ class CellSelector(map: DungeonTilemap) : TouchArea(map) {
     }
     override fun onTouchDown(touch: Touch) {
         if (touch !== this.touch && another == null) {
-            if (!this.touch!!.down) {
+            val cur = this.touch ?: return
+            if (!cur.down) {
                 this.touch = touch
                 onTouchDown(touch)
                 return
             }
             pinching = true
             another = touch
-            startSpan = PointF.distance(this.touch!!.current, another!!.current)
-            startZoom = camera!!.zoom
+            startSpan = PointF.distance(cur.current, touch.current)
+            startZoom = camera?.zoom ?: return
             dragging = false
         }
     }
     override fun onTouchUp(touch: Touch) {
         if (pinching && (touch === this.touch || touch === another)) {
             pinching = false
-            val zoom = Math.round(camera()!!.zoom)
-            camera()!!.zoom(zoom.toFloat())
+            val cam = camera ?: return
+            val zoom = Math.round(cam.zoom)
+            cam.zoom(zoom.toFloat())
             PixelDungeon.zoom((zoom - PixelScene.defaultZoom).toInt())
             dragging = true
             if (touch === this.touch) {
                 this.touch = another
             }
             another = null
-            lastPos.set(this.touch!!.current)
+            val cur = this.touch ?: return
+            lastPos.set(cur.current)
         }
     }
     override fun onDrag(touch: Touch) {
-        camera()?.target = null
+        val cam = camera ?: return
+        cam.target = null
         if (pinching) {
-            val curSpan = PointF.distance(this.touch!!.current, another!!.current)
-            camera()?.zoom(
+            val cur = this.touch ?: return
+            val other = another ?: return
+            val curSpan = PointF.distance(cur.current, other.current)
+            cam.zoom(
                 GameMath.gate(
                     PixelScene.minZoom,
                     startZoom * curSpan / startSpan,
@@ -82,7 +88,7 @@ class CellSelector(map: DungeonTilemap) : TouchArea(map) {
                 dragging = true
                 lastPos.set(touch.current)
             } else if (dragging) {
-                camera!!.scroll.offset(PointF.diff(lastPos, touch.current).invScale(camera!!.zoom))
+                cam.scroll.offset(PointF.diff(lastPos, touch.current).invScale(cam.zoom))
                 lastPos.set(touch.current)
             }
         }

@@ -14,6 +14,13 @@ object Preferences {
     const val KEY_DONATED = "donated"
     const val KEY_INTRO = "intro"
     const val KEY_BRIGHTNESS = "brightness"
+    const val KEY_LLM_ENABLED = "llm_enabled"
+    const val KEY_LLM_NPC_DIALOG = "llm_npc_dialog"
+    const val KEY_LLM_NARRATION = "llm_narration"
+    const val KEY_LLM_ITEM_DESC = "llm_item_desc"
+    const val KEY_LLM_COMBAT_NARRATION = "llm_combat_narration"
+    const val KEY_LLM_SELECTED_MODEL = "llm_selected_model"
+    const val KEY_LLM_HF_TOKEN = "llm_hf_token"
     private var prefs: SharedPreferences? = null
     private fun get(): SharedPreferences {
         if (prefs == null) {

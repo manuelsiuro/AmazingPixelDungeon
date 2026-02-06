@@ -5,6 +5,7 @@ import com.watabou.noosa.Game
 import com.watabou.noosa.TouchArea
 import com.watabou.pixeldungeon.Chrome
 import com.watabou.pixeldungeon.Dungeon
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.scenes.PixelScene
 import com.watabou.pixeldungeon.ui.Window
 import com.watabou.utils.SparseArray
@@ -91,8 +92,20 @@ open class WndStory(text: String) : Window(0, 0, Chrome.get(Chrome.Type.SCROLL)!
             if (chapters.contains(id)) {
                 return
             }
-            val text = CHAPTERS[id]
-            if (text != null) {
+            val staticText = CHAPTERS[id]
+            if (staticText != null) {
+                val regionName = when (id) {
+                    ID_SEWERS -> "Sewers"
+                    ID_PRISON -> "Prison"
+                    ID_CAVES -> "Caves"
+                    ID_METROPOLIS -> "Dwarven Metropolis"
+                    ID_HALLS -> "Demon Halls"
+                    else -> "Unknown"
+                }
+                val text = LlmTextEnhancer.generateFloorNarration(
+                    regionName, Dungeon.depth,
+                    Dungeon.hero?.className() ?: "adventurer", staticText
+                )
                 val wnd = WndStory(text)
                 wnd.delay = 0.6f
                 if (wnd.delay > 0) {

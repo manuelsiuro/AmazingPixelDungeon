@@ -28,6 +28,7 @@ import com.watabou.pixeldungeon.levels.SewerLevel
 import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.sprites.GhostSprite
 import com.watabou.pixeldungeon.utils.Utils
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.windows.WndQuest
 import com.watabou.pixeldungeon.windows.WndSadGhost
 import com.watabou.utils.Bundle
@@ -259,16 +260,21 @@ private val roseQuest = object : Ghost.QuestHandler() {
     private val TXT_ROSE2 = "Please... Help me... _Find the rose_..."
     private val TXT_ROSE3 = "Yes! Yes!!! This is it! Please give it to me! And you can take one of these items, maybe they will be useful to you in your journey..."
     override fun interact(ghost: Ghost) {
+        val heroClass = Dungeon.hero?.className() ?: "adventurer"
+        val depth = Dungeon.depth
         if (Ghost.Quest.given) {
             val item = Dungeon.hero?.belongings?.getItem(DriedRose::class.java)
             if (item != null) {
-                GameScene.show(WndSadGhost(ghost, item, TXT_ROSE3))
+                val text = LlmTextEnhancer.enhanceNpcDialog("sad ghost", "rose_complete", heroClass, depth, TXT_ROSE3)
+                GameScene.show(WndSadGhost(ghost, item, text))
             } else {
-                GameScene.show(WndQuest(ghost, TXT_ROSE2))
+                val text = LlmTextEnhancer.enhanceNpcDialog("sad ghost", "rose_reminder", heroClass, depth, TXT_ROSE2)
+                GameScene.show(WndQuest(ghost, text))
                 relocate(ghost)
             }
         } else {
-            GameScene.show(WndQuest(ghost, TXT_ROSE1))
+            val text = LlmTextEnhancer.enhanceNpcDialog("sad ghost", "rose_initial", heroClass, depth, TXT_ROSE1)
+            GameScene.show(WndQuest(ghost, text))
             Ghost.Quest.given = true
             Journal.add(Journal.Feature.GHOST)
         }
@@ -279,16 +285,21 @@ private val ratQuest = object : Ghost.QuestHandler() {
     private val TXT_RAT2 = "Please... Help me... _Slay the abomination_..."
     private val TXT_RAT3 = "Yes! The ugly creature is slain and I can finally rest... Please take one of these items, maybe they will be useful to you in your journey..."
     override fun interact(ghost: Ghost) {
+        val heroClass = Dungeon.hero?.className() ?: "adventurer"
+        val depth = Dungeon.depth
         if (Ghost.Quest.given) {
             val item = Dungeon.hero?.belongings?.getItem(RatSkull::class.java)
             if (item != null) {
-                GameScene.show(WndSadGhost(ghost, item, TXT_RAT3))
+                val text = LlmTextEnhancer.enhanceNpcDialog("sad ghost", "rat_complete", heroClass, depth, TXT_RAT3)
+                GameScene.show(WndSadGhost(ghost, item, text))
             } else {
-                GameScene.show(WndQuest(ghost, TXT_RAT2))
+                val text = LlmTextEnhancer.enhanceNpcDialog("sad ghost", "rat_reminder", heroClass, depth, TXT_RAT2)
+                GameScene.show(WndQuest(ghost, text))
                 relocate(ghost)
             }
         } else {
-            GameScene.show(WndQuest(ghost, TXT_RAT1))
+            val text = LlmTextEnhancer.enhanceNpcDialog("sad ghost", "rat_initial", heroClass, depth, TXT_RAT1)
+            GameScene.show(WndQuest(ghost, text))
             Ghost.Quest.given = true
             Journal.add(Journal.Feature.GHOST)
         }
@@ -301,10 +312,15 @@ private val curseQuest = object : Ghost.QuestHandler() {
     private val TXT_NO = "No, I can't help you"
     override fun interact(ghost: Ghost) {
         val hero = Dungeon.hero ?: return
+        val heroClass = hero.className()
+        val depth = Dungeon.depth
         if (Ghost.Quest.given) {
-            GameScene.show(WndSadGhost(ghost, null, Utils.format(TXT_CURSE2, hero.className())))
+            val baseText = Utils.format(TXT_CURSE2, heroClass)
+            val text = LlmTextEnhancer.enhanceNpcDialog("sad ghost", "curse_complete", heroClass, depth, baseText)
+            GameScene.show(WndSadGhost(ghost, null, text))
         } else {
-            GameScene.show(object : WndQuest(ghost, TXT_CURSE1, TXT_YES, TXT_NO) {
+            val text = LlmTextEnhancer.enhanceNpcDialog("sad ghost", "curse_initial", heroClass, depth, TXT_CURSE1)
+            GameScene.show(object : WndQuest(ghost, text, TXT_YES, TXT_NO) {
                 override fun onSelect(index: Int) {
                     if (index == 0) {
                         Ghost.Quest.given = true

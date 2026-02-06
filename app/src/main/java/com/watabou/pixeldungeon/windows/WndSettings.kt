@@ -1,5 +1,6 @@
 package com.watabou.pixeldungeon.windows
 import com.watabou.noosa.Camera
+import com.watabou.noosa.Game
 import com.watabou.noosa.audio.Sample
 import com.watabou.pixeldungeon.Assets
 import com.watabou.pixeldungeon.PixelDungeon
@@ -102,7 +103,15 @@ class WndSettings(inGame: Boolean) : Window() {
             btnQuickslot.setRect(0f, btnBrightness.bottom() + GAP, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
             btnQuickslot.checked(Toolbar.secondQuickslot())
             add(btnQuickslot)
-            resize(WIDTH, btnQuickslot.bottom().toInt())
+            val btnAI = object : RedButton(TXT_AI_FEATURES) {
+                override fun onClick() {
+                    hide()
+                    Game.scene()?.add(WndLlmSettings())
+                }
+            }
+            btnAI.setRect(0f, btnQuickslot.bottom() + GAP, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
+            add(btnAI)
+            resize(WIDTH, btnAI.bottom().toInt())
         } else {
             val btnOrientation = object : RedButton(orientationText()) {
                 override fun onClick() {
@@ -111,7 +120,15 @@ class WndSettings(inGame: Boolean) : Window() {
             }
             btnOrientation.setRect(0f, btnSound.bottom() + GAP, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
             add(btnOrientation)
-            resize(WIDTH, btnOrientation.bottom().toInt())
+            val btnAI = object : RedButton(TXT_AI_FEATURES) {
+                override fun onClick() {
+                    hide()
+                    Game.scene()?.add(WndLlmSettings())
+                }
+            }
+            btnAI.setRect(0f, btnOrientation.bottom() + GAP, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
+            add(btnAI)
+            resize(WIDTH, btnAI.bottom().toInt())
         }
     }
     private fun zoom(value: Float) {
@@ -139,6 +156,7 @@ class WndSettings(inGame: Boolean) : Window() {
         private const val TXT_QUICKSLOT = "Second quickslot"
         private const val TXT_SWITCH_PORT = "Switch to portrait"
         private const val TXT_SWITCH_LAND = "Switch to landscape"
+        private const val TXT_AI_FEATURES = "AI Features"
         private const val WIDTH = 112
         private const val BTN_HEIGHT = 20
         private const val GAP = 2

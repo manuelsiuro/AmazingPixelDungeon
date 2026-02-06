@@ -10,6 +10,7 @@ import android.view.View
 import com.watabou.noosa.Game
 import com.watabou.noosa.audio.Music
 import com.watabou.noosa.audio.Sample
+import com.watabou.pixeldungeon.llm.LlmManager
 import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.scenes.PixelScene
 import com.watabou.pixeldungeon.scenes.TitleScene
@@ -187,6 +188,18 @@ class PixelDungeon : Game(TitleScene::class.java) {
             Assets.SND_MIMIC
         )
     }
+    override fun onPause() {
+        super.onPause()
+        LlmManager.unloadModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (llmEnabled()) {
+            LlmManager.loadModel()
+        }
+    }
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
@@ -312,6 +325,28 @@ class PixelDungeon : Game(TitleScene::class.java) {
         fun intro(): Boolean {
             return Preferences.getBoolean(Preferences.KEY_INTRO, true)
         }
+        // LLM Preferences
+        fun llmEnabled(): Boolean = Preferences.getBoolean(Preferences.KEY_LLM_ENABLED, false)
+        fun llmEnabled(value: Boolean) { Preferences.put(Preferences.KEY_LLM_ENABLED, value) }
+
+        fun llmNpcDialog(): Boolean = Preferences.getBoolean(Preferences.KEY_LLM_NPC_DIALOG, true)
+        fun llmNpcDialog(value: Boolean) { Preferences.put(Preferences.KEY_LLM_NPC_DIALOG, value) }
+
+        fun llmNarration(): Boolean = Preferences.getBoolean(Preferences.KEY_LLM_NARRATION, true)
+        fun llmNarration(value: Boolean) { Preferences.put(Preferences.KEY_LLM_NARRATION, value) }
+
+        fun llmItemDesc(): Boolean = Preferences.getBoolean(Preferences.KEY_LLM_ITEM_DESC, true)
+        fun llmItemDesc(value: Boolean) { Preferences.put(Preferences.KEY_LLM_ITEM_DESC, value) }
+
+        fun llmCombatNarration(): Boolean = Preferences.getBoolean(Preferences.KEY_LLM_COMBAT_NARRATION, false)
+        fun llmCombatNarration(value: Boolean) { Preferences.put(Preferences.KEY_LLM_COMBAT_NARRATION, value) }
+
+        fun llmSelectedModel(): String = Preferences.getString(Preferences.KEY_LLM_SELECTED_MODEL, "")
+        fun llmSelectedModel(value: String) { Preferences.put(Preferences.KEY_LLM_SELECTED_MODEL, value) }
+
+        fun llmHfToken(): String = Preferences.getString(Preferences.KEY_LLM_HF_TOKEN, "")
+        fun llmHfToken(value: String) { Preferences.put(Preferences.KEY_LLM_HF_TOKEN, value) }
+
         /*
          * <--- Preferences
          */

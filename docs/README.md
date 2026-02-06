@@ -14,6 +14,7 @@ Welcome to the comprehensive documentation for **Amazing Pixel Dungeon**, an And
 - [UI System](systems/ui-system.md) - Components, windows, and input handling
 - [Rendering System](systems/rendering-system.md) - Noosa engine, sprites, and animations
 - [Actor System](systems/actor-system.md) - Turn-based scheduling and buff system
+- [LLM System](systems/llm-system.md) - On-device AI text generation for enhanced game content
 
 ### Entity Catalogs
 - [Items](entities/items.md) - All weapons, armor, potions, scrolls, rings, wands, and more

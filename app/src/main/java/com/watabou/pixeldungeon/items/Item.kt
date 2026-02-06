@@ -11,6 +11,7 @@ import com.watabou.pixeldungeon.effects.Degradation
 import com.watabou.pixeldungeon.effects.Speck
 import com.watabou.pixeldungeon.items.armor.Armor
 import com.watabou.pixeldungeon.items.bags.Bag
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.items.rings.Ring
 import com.watabou.pixeldungeon.items.wands.Wand
 import com.watabou.pixeldungeon.items.weapon.Weapon
@@ -306,7 +307,14 @@ open class Item : Bundlable {
         return null
     }
     open fun info(): String {
-        return desc()
+        val baseDesc = desc()
+        val enchName = (this as? Weapon)?.let { w ->
+            w.enchantment?.name(w.name() ?: "")
+        }
+        return LlmTextEnhancer.enhanceItemInfo(
+            name(), javaClass.simpleName, level(),
+            enchName, cursed && cursedKnown, baseDesc
+        )
     }
     open fun desc(): String {
         return ""

@@ -16,6 +16,7 @@ import com.watabou.pixeldungeon.levels.Room
 import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.sprites.BlacksmithSprite
 import com.watabou.pixeldungeon.utils.GLog
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.windows.WndBlacksmith
 import com.watabou.pixeldungeon.windows.WndQuest
 import com.watabou.utils.Bundle
@@ -32,8 +33,13 @@ class Blacksmith : NPC() {
     override fun interact() {
         val hero = Dungeon.hero ?: return
         sprite?.turnTo(pos, hero.pos)
+        val heroClass = hero.className()
+        val depth = Dungeon.depth
         if (!Quest.given) {
-            GameScene.show(object : WndQuest(this@Blacksmith, if (Quest.alternative) TXT_BLOOD_1 else TXT_GOLD_1) {
+            val baseText = if (Quest.alternative) TXT_BLOOD_1 else TXT_GOLD_1
+            val questState = if (Quest.alternative) "blood_initial" else "gold_initial"
+            val text = LlmTextEnhancer.enhanceNpcDialog("troll blacksmith", questState, heroClass, depth, baseText)
+            GameScene.show(object : WndQuest(this@Blacksmith, text) {
                 override fun onBackPressed() {
                     super.onBackPressed()
                     Quest.given = true
@@ -88,7 +94,9 @@ class Blacksmith : NPC() {
         }
     }
     private fun tell(text: String) {
-        GameScene.show(WndQuest(this, text))
+        val heroClass = Dungeon.hero?.className() ?: "adventurer"
+        val enhanced = LlmTextEnhancer.enhanceNpcDialog("troll blacksmith", "tell", heroClass, Dungeon.depth, text)
+        GameScene.show(WndQuest(this, enhanced))
     }
     override fun defenseSkill(enemy: Char?): Int {
         return 1000

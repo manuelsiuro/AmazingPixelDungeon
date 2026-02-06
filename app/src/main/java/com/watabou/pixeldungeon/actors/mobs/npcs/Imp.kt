@@ -16,6 +16,7 @@ import com.watabou.pixeldungeon.levels.Room
 import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.sprites.ImpSprite
 import com.watabou.pixeldungeon.utils.Utils
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.windows.WndImp
 import com.watabou.pixeldungeon.windows.WndQuest
 import com.watabou.utils.Bundle
@@ -62,14 +63,20 @@ class Imp : NPC() {
                 tell(if (Quest.alternative) TXT_MONKS2 else TXT_GOLEMS2, hero.className())
             }
         } else {
-            tell(if (Quest.alternative) TXT_MONKS1 else TXT_GOLEMS1)
+            val baseText = if (Quest.alternative) TXT_MONKS1 else TXT_GOLEMS1
+            val questState = if (Quest.alternative) "monks_initial" else "golems_initial"
+            val text = LlmTextEnhancer.enhanceNpcDialog("ambitious imp", questState, hero.className(), Dungeon.depth, baseText)
+            GameScene.show(WndQuest(this, text))
             Quest.given = true
             Quest.completed = false
             Journal.add(Journal.Feature.IMP)
         }
     }
     private fun tell(format: String, vararg args: Any) {
-        GameScene.show(WndQuest(this, Utils.format(format, *args)))
+        val baseText = Utils.format(format, *args)
+        val heroClass = Dungeon.hero?.className() ?: "adventurer"
+        val enhanced = LlmTextEnhancer.enhanceNpcDialog("ambitious imp", "tell", heroClass, Dungeon.depth, baseText)
+        GameScene.show(WndQuest(this, enhanced))
     }
     fun flee() {
         Dungeon.hero?.let { yell(Utils.format(TXT_CYA, it.className())) }

@@ -17,6 +17,7 @@ import com.watabou.pixeldungeon.plants.Rotberry
 import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.sprites.WandmakerSprite
 import com.watabou.pixeldungeon.utils.Utils
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.windows.WndQuest
 import com.watabou.pixeldungeon.windows.WndWandmaker
 import com.watabou.utils.Bundle
@@ -50,7 +51,10 @@ class Wandmaker : NPC() {
         Quest.type.handler?.interact(this)
     }
     fun tell(format: String, vararg args: Any) {
-        GameScene.show(WndQuest(this, Utils.format(format, *args)))
+        val baseText = Utils.format(format, *args)
+        val heroClass = Dungeon.hero?.className() ?: "adventurer"
+        val enhanced = LlmTextEnhancer.enhanceNpcDialog("old wandmaker", "tell", heroClass, Dungeon.depth, baseText)
+        GameScene.show(WndQuest(this, enhanced))
     }
     override fun description(): String {
         return "This old but hale gentleman wears a slightly confused expression. He is protected by a magic shield."
