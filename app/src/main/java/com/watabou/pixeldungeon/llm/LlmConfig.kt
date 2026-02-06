@@ -6,7 +6,7 @@ object LlmConfig {
     const val DEFAULT_TOP_K = 40
     const val INFERENCE_TIMEOUT_MS = 5000L
     const val CACHE_TTL_MS = 7L * 24 * 60 * 60 * 1000  // 7 days
-    const val MAX_CACHE_ENTRIES = 500
+    const val MAX_CACHE_ENTRIES = 1000
     const val MODEL_DIR = "llm_models"
     const val CACHE_DIR = "llm_cache"
 

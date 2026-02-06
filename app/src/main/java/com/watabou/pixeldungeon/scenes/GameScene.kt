@@ -30,6 +30,7 @@ import com.watabou.pixeldungeon.items.potions.Potion
 import com.watabou.pixeldungeon.items.wands.WandOfBlink
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.RegularLevel
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.levels.features.Chasm
 import com.watabou.pixeldungeon.plants.Plant
 import com.watabou.pixeldungeon.sprites.CharSprite
@@ -217,16 +218,24 @@ class GameScene : PixelScene() {
                 GLog.h(TXT_WELCOME, Dungeon.depth)
                 Sample.play(Assets.SND_DESCEND)
             }
+            val regionName = when {
+                Dungeon.depth <= 5 -> "Sewers"
+                Dungeon.depth <= 10 -> "Prison"
+                Dungeon.depth <= 15 -> "Caves"
+                Dungeon.depth <= 20 -> "Dwarven Metropolis"
+                else -> "Demon Halls"
+            }
+            val heroClass = Dungeon.hero?.className() ?: "adventurer"
             when (level.feeling) {
-                Level.Feeling.CHASM -> GLog.w(TXT_CHASM)
-                Level.Feeling.WATER -> GLog.w(TXT_WATER)
-                Level.Feeling.GRASS -> GLog.w(TXT_GRASS)
+                Level.Feeling.CHASM -> GLog.w(LlmTextEnhancer.enhanceLevelFeeling("chasm", regionName, Dungeon.depth, heroClass, TXT_CHASM))
+                Level.Feeling.WATER -> GLog.w(LlmTextEnhancer.enhanceLevelFeeling("water", regionName, Dungeon.depth, heroClass, TXT_WATER))
+                Level.Feeling.GRASS -> GLog.w(LlmTextEnhancer.enhanceLevelFeeling("grass", regionName, Dungeon.depth, heroClass, TXT_GRASS))
                 else -> {}
             }
             if (level is RegularLevel &&
                 level.secretDoors > Random.IntRange(3, 4)
             ) {
-                GLog.w(TXT_SECRETS)
+                GLog.w(LlmTextEnhancer.enhanceLevelFeeling("secrets", regionName, Dungeon.depth, heroClass, TXT_SECRETS))
             }
             if (Dungeon.nightMode && !Dungeon.bossLevel()) {
                 GLog.w(TXT_NIGHT_MODE)

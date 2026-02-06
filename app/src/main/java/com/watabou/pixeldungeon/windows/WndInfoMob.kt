@@ -1,7 +1,9 @@
 package com.watabou.pixeldungeon.windows
 import com.watabou.noosa.BitmapText
 import com.watabou.noosa.ui.Component
+import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.actors.mobs.Mob
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.scenes.PixelScene
 import com.watabou.pixeldungeon.sprites.CharSprite
 import com.watabou.pixeldungeon.ui.BuffIndicator
@@ -12,7 +14,11 @@ import kotlin.math.max
 class WndInfoMob(mob: Mob) : WndTitledMessage(MobTitle(mob), desc(mob)) {
     companion object {
         private fun desc(mob: Mob): String {
-            val builder = StringBuilder(mob.description())
+            val baseDesc = mob.description()
+            val enhanced = LlmTextEnhancer.enhanceMobDescription(
+                mob.name, mob.state.status(), Dungeon.depth, baseDesc
+            )
+            val builder = StringBuilder(enhanced)
             builder.append("\n\n" + mob.state.status() + ".")
             return builder.toString()
         }

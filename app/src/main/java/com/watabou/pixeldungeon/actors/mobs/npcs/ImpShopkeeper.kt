@@ -1,5 +1,6 @@
 package com.watabou.pixeldungeon.actors.mobs.npcs
 import com.watabou.pixeldungeon.Dungeon
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.effects.CellEmitter
 import com.watabou.pixeldungeon.effects.Speck
 import com.watabou.pixeldungeon.effects.particles.ElmoParticle
@@ -14,7 +15,9 @@ class ImpShopkeeper : Shopkeeper() {
     private var seenBefore = false
     override fun act(): Boolean {
         if (!seenBefore && Dungeon.visible[pos]) {
-            yell(Utils.format(TXT_GREETINGS))
+            val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+            val greeting = LlmTextEnhancer.enhanceShopkeeperGreeting(name, heroClass, Dungeon.depth, TXT_GREETINGS)
+            yell(Utils.format(greeting))
             seenBefore = true
         }
         return super.act()

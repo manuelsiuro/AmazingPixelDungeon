@@ -1,10 +1,14 @@
 package com.watabou.pixeldungeon.scenes
 import com.watabou.noosa.Game
+import com.watabou.pixeldungeon.Dungeon
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.windows.WndStory
 class IntroScene : PixelScene() {
     override fun create() {
         super.create()
-        add(object : WndStory(TEXT) {
+        val heroClass = StartScene.curClass?.title() ?: Dungeon.hero?.heroClass?.title() ?: "adventurer"
+        val text = LlmTextEnhancer.generateIntroNarration(heroClass, TEXT)
+        add(object : WndStory(text) {
             override fun hide() {
                 super.hide()
                 Game.switchScene(InterlevelScene::class.java)

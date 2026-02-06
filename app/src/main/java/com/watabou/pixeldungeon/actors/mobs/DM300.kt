@@ -21,6 +21,7 @@ import com.watabou.pixeldungeon.items.weapon.enchantments.Death
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.Terrain
 import com.watabou.pixeldungeon.scenes.GameScene
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.sprites.DM300Sprite
 import com.watabou.pixeldungeon.utils.GLog
 import com.watabou.utils.Random
@@ -89,11 +90,13 @@ class DM300 : Mob() {
         GameScene.bossSlain()
         Dungeon.level?.drop(SkeletonKey(), pos)?.sprite?.drop()
         Badges.validateBossSlain()
-        yell("Mission failed. Shutting down.")
+        val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+        yell(LlmTextEnhancer.enhanceBossDialog("DM-300", "death", heroClass, Dungeon.depth, "Mission failed. Shutting down."))
     }
     override fun notice() {
         super.notice()
-        yell("Unauthorised personnel detected.")
+        val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+        yell(LlmTextEnhancer.enhanceBossDialog("DM-300", "notice", heroClass, Dungeon.depth, "Unauthorised personnel detected."))
     }
     override fun description(): String {
         return "This machine was created by the Dwarves several centuries ago. Later, Dwarves started to replace machines with golems, elementals and even demons. Eventually it led their civilization to the decline. The DM-300 and similar machines were typically used for construction and mining, and in some cases, for city defense."

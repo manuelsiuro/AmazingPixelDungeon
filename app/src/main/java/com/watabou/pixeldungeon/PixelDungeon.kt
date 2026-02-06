@@ -341,6 +341,15 @@ class PixelDungeon : Game(TitleScene::class.java) {
         fun llmCombatNarration(): Boolean = Preferences.getBoolean(Preferences.KEY_LLM_COMBAT_NARRATION, false)
         fun llmCombatNarration(value: Boolean) { Preferences.put(Preferences.KEY_LLM_COMBAT_NARRATION, value) }
 
+        fun llmStoryMoments(): Boolean = Preferences.getBoolean(Preferences.KEY_LLM_STORY_MOMENTS, true)
+        fun llmStoryMoments(value: Boolean) { Preferences.put(Preferences.KEY_LLM_STORY_MOMENTS, value) }
+
+        fun llmBossEncounters(): Boolean = Preferences.getBoolean(Preferences.KEY_LLM_BOSS_ENCOUNTERS, true)
+        fun llmBossEncounters(value: Boolean) { Preferences.put(Preferences.KEY_LLM_BOSS_ENCOUNTERS, value) }
+
+        fun llmBestiary(): Boolean = Preferences.getBoolean(Preferences.KEY_LLM_BESTIARY, false)
+        fun llmBestiary(value: Boolean) { Preferences.put(Preferences.KEY_LLM_BESTIARY, value) }
+
         fun llmSelectedModel(): String = Preferences.getString(Preferences.KEY_LLM_SELECTED_MODEL, "")
         fun llmSelectedModel(value: String) { Preferences.put(Preferences.KEY_LLM_SELECTED_MODEL, value) }
 

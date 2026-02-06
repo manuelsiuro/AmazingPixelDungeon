@@ -455,8 +455,17 @@ object Dungeon {
         Hero.preview(info, bundle.getBundle(HERO))
     }
     fun fail(desc: String) {
-        resultDescription = desc
-        val currentHero = hero ?: return
+        val currentHero = hero ?: run {
+            resultDescription = desc
+            return
+        }
+        resultDescription = com.watabou.pixeldungeon.llm.LlmTextEnhancer.generateDeathEpitaph(
+            desc,
+            currentHero.heroClass.title(),
+            depth,
+            currentHero.lvl,
+            desc
+        )
         if (currentHero.belongings.getItem(Ankh::class.java) == null) {
             Rankings.submit(false)
         }

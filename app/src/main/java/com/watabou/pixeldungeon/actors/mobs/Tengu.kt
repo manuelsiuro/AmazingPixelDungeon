@@ -20,6 +20,7 @@ import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.Terrain
 import com.watabou.pixeldungeon.mechanics.Ballistica
 import com.watabou.pixeldungeon.scenes.GameScene
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.sprites.TenguSprite
 import com.watabou.utils.Random
 import java.util.*
@@ -59,7 +60,8 @@ class Tengu : Mob() {
         level?.drop(SkeletonKey(), pos)?.sprite?.drop()
         super.die(src)
         Badges.validateBossSlain()
-        yell("Free at last...")
+        val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+        yell(LlmTextEnhancer.enhanceBossDialog("Tengu", "death", heroClass, Dungeon.depth, "Free at last..."))
     }
     override fun getCloser(target: Int): Boolean {
         return if (Level.fieldOfView[target]) {
@@ -113,7 +115,8 @@ class Tengu : Mob() {
     }
     override fun notice() {
         super.notice()
-        Dungeon.hero?.let { yell("Gotcha, " + it.heroClass.title() + "!") }
+        val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+        yell(LlmTextEnhancer.enhanceBossDialog("Tengu", "notice", heroClass, Dungeon.depth, "Gotcha, $heroClass!"))
     }
     override fun description(): String {
         return "Tengu are members of the ancient assassins clan, which is also called Tengu. These assassins are noted for extensive use of shuriken and traps."

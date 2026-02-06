@@ -5,6 +5,7 @@ import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.DungeonTilemap
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.Terrain
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.scenes.PixelScene
 import com.watabou.pixeldungeon.ui.Window
 class WndInfoCell(cell: Int) : Window() {
@@ -33,7 +34,14 @@ class WndInfoCell(cell: Int) : Window() {
             add(titlebar)
             val info = PixelScene.createMultiline(6f)
             add(info)
-            val desc = StringBuilder(level.tileDesc(tile))
+            val tileName = level.tileName(tile)
+            val baseDesc = level.tileDesc(tile)
+            val enhancedDesc = if (baseDesc.isNotEmpty()) {
+                LlmTextEnhancer.enhanceCellDescription(tileName, baseDesc)
+            } else {
+                baseDesc
+            }
+            val desc = StringBuilder(enhancedDesc)
             val newLine = '\n'
             for (blob in level.blobs.values) {
                 if (blob.cur[cell] > 0 && blob.tileDesc() != null) {

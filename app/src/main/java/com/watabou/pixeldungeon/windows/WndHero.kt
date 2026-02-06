@@ -10,6 +10,7 @@ import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.Statistics
 import com.watabou.pixeldungeon.actors.buffs.Buff
 import com.watabou.pixeldungeon.actors.hero.Hero
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.scenes.PixelScene
 import com.watabou.pixeldungeon.ui.BuffIndicator
@@ -125,7 +126,8 @@ class WndHero : WndTabbed() {
                 icon.frame(film[index]!!)
                 icon.y = pos
                 add(icon)
-                val txt = PixelScene.createText(buff.toString(), 8f)
+                val buffText = LlmTextEnhancer.enhanceBuffDescription(buff.toString(), buff.toString())
+                val txt = PixelScene.createText(buffText, 8f)
                 txt.x = icon.width + GAP
                 txt.y = pos + (icon.height - txt.baseLine()) / 2
                 add(txt)

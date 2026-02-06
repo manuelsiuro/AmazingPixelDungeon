@@ -5,18 +5,41 @@ import android.content.Context
 import com.google.mediapipe.tasks.genai.llminference.LlmInference
 import com.watabou.noosa.Game
 import com.watabou.pixeldungeon.PixelDungeon
-import java.util.concurrent.Executors
+import java.util.concurrent.PriorityBlockingQueue
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
 
 object LlmManager {
 
     enum class ModelState { NOT_DOWNLOADED, DOWNLOADED, LOADING, READY, ERROR }
+
+    enum class Priority { CRITICAL, HIGH, NORMAL, LOW }
 
     @Volatile
     var state: ModelState = ModelState.NOT_DOWNLOADED
         private set
 
     private var inference: LlmInference? = null
-    private val executor = Executors.newSingleThreadExecutor()
+
+    private val sequenceCounter = AtomicLong(0)
+
+    private class PrioritizedRunnable(
+        val priority: Priority,
+        val sequence: Long,
+        val task: Runnable
+    ) : Runnable, Comparable<PrioritizedRunnable> {
+        override fun run() = task.run()
+        override fun compareTo(other: PrioritizedRunnable): Int {
+            val p = priority.ordinal - other.priority.ordinal
+            return if (p != 0) p else sequence.compareTo(other.sequence)
+        }
+    }
+
+    private val executor = ThreadPoolExecutor(
+        1, 1, 0L, TimeUnit.MILLISECONDS,
+        PriorityBlockingQueue<Runnable>()
+    )
 
     private const val MIN_RAM_MB = 3072 // 3 GB minimum
 
@@ -72,13 +95,13 @@ object LlmManager {
         }
 
         state = ModelState.LOADING
-        executor.submit {
+        submitWithPriority(Priority.CRITICAL) {
             try {
                 val context = Game.instance
                 if (context == null) {
                     state = ModelState.ERROR
                     onComplete(false)
-                    return@submit
+                    return@submitWithPriority
                 }
 
                 val options = LlmInference.LlmInferenceOptions.builder()
@@ -116,15 +139,24 @@ object LlmManager {
         }
     }
 
-    fun generateText(prompt: String, maxTokens: Int = LlmConfig.DEFAULT_MAX_TOKENS, onResult: (String?) -> Unit) {
+    fun generateText(
+        prompt: String,
+        maxTokens: Int = LlmConfig.DEFAULT_MAX_TOKENS,
+        priority: Priority = Priority.NORMAL,
+        onResult: (String?) -> Unit
+    ) {
         if (!isAvailable()) {
             onResult(null)
             return
         }
-        executor.submit {
+        submitWithPriority(priority) {
             val result = generateTextSync(prompt, maxTokens)
             onResult(result)
         }
+    }
+
+    fun generateText(prompt: String, maxTokens: Int = LlmConfig.DEFAULT_MAX_TOKENS, onResult: (String?) -> Unit) {
+        generateText(prompt, maxTokens, Priority.NORMAL, onResult)
     }
 
     fun generateTextSync(prompt: String, maxTokens: Int = LlmConfig.DEFAULT_MAX_TOKENS): String? {
@@ -136,5 +168,9 @@ object LlmManager {
             PixelDungeon.reportException(e)
             null
         }
+    }
+
+    private fun submitWithPriority(priority: Priority, task: Runnable) {
+        executor.execute(PrioritizedRunnable(priority, sequenceCounter.getAndIncrement(), task))
     }
 }

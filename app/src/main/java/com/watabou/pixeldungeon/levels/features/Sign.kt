@@ -2,6 +2,7 @@ package com.watabou.pixeldungeon.levels.features
 import com.watabou.noosa.audio.Sample
 import com.watabou.pixeldungeon.Assets
 import com.watabou.pixeldungeon.Dungeon
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.effects.CellEmitter
 import com.watabou.pixeldungeon.effects.particles.ElmoParticle
 import com.watabou.pixeldungeon.levels.DeadEndLevel
@@ -44,7 +45,9 @@ object Sign {
         } else {
             val index = Dungeon.depth - 1
             if (index < TIPS.size) {
-                GameScene.show(WndMessage(TIPS[index]))
+                val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+                val tip = LlmTextEnhancer.enhanceSignTip(Dungeon.depth, heroClass, TIPS[index])
+                GameScene.show(WndMessage(tip))
             } else {
                 Dungeon.level?.destroy(pos)
                 GameScene.updateMap(pos)

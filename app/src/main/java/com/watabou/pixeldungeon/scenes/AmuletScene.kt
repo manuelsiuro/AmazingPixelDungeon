@@ -8,6 +8,7 @@ import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.ResultDescriptions
 import com.watabou.pixeldungeon.effects.Flare
 import com.watabou.pixeldungeon.effects.Speck
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.ui.RedButton
 import com.watabou.utils.Random
 class AmuletScene : PixelScene() {
@@ -17,7 +18,9 @@ class AmuletScene : PixelScene() {
         super.create()
         var text: BitmapTextMultiline? = null
         if (!noText) {
-            text = PixelScene.createMultiline(TXT, 8f)
+            val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+            val victoryText = LlmTextEnhancer.generateVictoryNarration(heroClass, TXT)
+            text = PixelScene.createMultiline(victoryText, 8f)
             text.maxWidth = WIDTH
             text.measure()
             add(text)

@@ -17,6 +17,7 @@ import com.watabou.pixeldungeon.mechanics.Ballistica
 import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.sprites.CharSprite
 import com.watabou.pixeldungeon.sprites.GooSprite
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.utils.GLog
 import com.watabou.utils.Callback
 import com.watabou.utils.Random
@@ -125,11 +126,13 @@ class Goo : Mob() {
         GameScene.bossSlain()
         Dungeon.level?.drop(SkeletonKey(), pos)?.sprite?.drop()
         Badges.validateBossSlain()
-        yell("glurp... glurp...")
+        val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+        yell(LlmTextEnhancer.enhanceBossDialog("Goo", "death", heroClass, Dungeon.depth, "glurp... glurp..."))
     }
     override fun notice() {
         super.notice()
-        yell("GLURP-GLURP!")
+        val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+        yell(LlmTextEnhancer.enhanceBossDialog("Goo", "notice", heroClass, Dungeon.depth, "GLURP-GLURP!"))
     }
     override fun description(): String {
         return "Little known about The Goo. It's quite possible that it is not even a creature, but rather a conglomerate of substances from the sewers that gained rudiments of free will."

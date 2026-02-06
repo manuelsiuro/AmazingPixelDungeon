@@ -19,6 +19,9 @@ object Preferences {
     const val KEY_LLM_NARRATION = "llm_narration"
     const val KEY_LLM_ITEM_DESC = "llm_item_desc"
     const val KEY_LLM_COMBAT_NARRATION = "llm_combat_narration"
+    const val KEY_LLM_STORY_MOMENTS = "llm_story_moments"
+    const val KEY_LLM_BOSS_ENCOUNTERS = "llm_boss_encounters"
+    const val KEY_LLM_BESTIARY = "llm_bestiary"
     const val KEY_LLM_SELECTED_MODEL = "llm_selected_model"
     const val KEY_LLM_HF_TOKEN = "llm_hf_token"
     private var prefs: SharedPreferences? = null

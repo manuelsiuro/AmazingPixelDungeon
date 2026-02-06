@@ -66,13 +66,46 @@ class WndLlmSettings : Window() {
         add(btnCombat)
         subToggles.add(btnCombat)
 
+        val btnStory = object : CheckBox(TXT_STORY_MOMENTS) {
+            override fun onClick() {
+                super.onClick()
+                PixelDungeon.llmStoryMoments(checked())
+            }
+        }
+        btnStory.setRect(0f, btnCombat.bottom() + GAP, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
+        btnStory.checked(PixelDungeon.llmStoryMoments())
+        add(btnStory)
+        subToggles.add(btnStory)
+
+        val btnBoss = object : CheckBox(TXT_BOSS_ENCOUNTERS) {
+            override fun onClick() {
+                super.onClick()
+                PixelDungeon.llmBossEncounters(checked())
+            }
+        }
+        btnBoss.setRect(0f, btnStory.bottom() + GAP, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
+        btnBoss.checked(PixelDungeon.llmBossEncounters())
+        add(btnBoss)
+        subToggles.add(btnBoss)
+
+        val btnBestiary = object : CheckBox(TXT_BESTIARY) {
+            override fun onClick() {
+                super.onClick()
+                PixelDungeon.llmBestiary(checked())
+            }
+        }
+        btnBestiary.setRect(0f, btnBoss.bottom() + GAP, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
+        btnBestiary.checked(PixelDungeon.llmBestiary())
+        add(btnBestiary)
+        subToggles.add(btnBestiary)
+
         val btnModels = object : RedButton(TXT_MODELS) {
             override fun onClick() {
                 hide()
                 Game.scene()?.add(WndLlmModels())
             }
         }
-        btnModels.setRect(0f, btnCombat.bottom() + GAP * 2, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
+        btnModels.setRect(0f, btnBestiary.bottom() + GAP * 2, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
         add(btnModels)
 
         updateSubToggles(PixelDungeon.llmEnabled())
@@ -92,6 +125,9 @@ class WndLlmSettings : Window() {
         private const val TXT_NARRATION = "Floor Narration"
         private const val TXT_ITEM_DESC = "Item Descriptions"
         private const val TXT_COMBAT = "Combat Narration"
+        private const val TXT_STORY_MOMENTS = "Story Moments"
+        private const val TXT_BOSS_ENCOUNTERS = "Boss Encounters"
+        private const val TXT_BESTIARY = "Bestiary & Lore"
         private const val TXT_MODELS = "Manage Models"
 
         private const val WIDTH = 112

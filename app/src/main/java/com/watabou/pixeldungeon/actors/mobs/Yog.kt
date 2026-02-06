@@ -10,6 +10,7 @@ import com.watabou.pixeldungeon.actors.blobs.ToxicGas
 import com.watabou.pixeldungeon.actors.buffs.*
 import com.watabou.pixeldungeon.effects.Pushing
 import com.watabou.pixeldungeon.effects.particles.ShadowParticle
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.items.keys.SkeletonKey
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfPsionicBlast
 import com.watabou.pixeldungeon.items.weapon.enchantments.Death
@@ -86,11 +87,13 @@ class Yog : Mob() {
         GameScene.bossSlain()
         level?.drop(SkeletonKey(), pos)?.sprite?.drop()
         super.die(src)
-        yell("...")
+        val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+        yell(LlmTextEnhancer.enhanceBossDialog("Yog-Dzewa", "death", heroClass, Dungeon.depth, "..."))
     }
     override fun notice() {
         super.notice()
-        yell("Hope is an illusion...")
+        val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+        yell(LlmTextEnhancer.enhanceBossDialog("Yog-Dzewa", "notice", heroClass, Dungeon.depth, "Hope is an illusion..."))
     }
     override fun description(): String {
         return TXT_DESC

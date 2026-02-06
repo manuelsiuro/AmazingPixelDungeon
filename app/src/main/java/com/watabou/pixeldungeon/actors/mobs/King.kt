@@ -21,6 +21,7 @@ import com.watabou.pixeldungeon.items.weapon.enchantments.Death
 import com.watabou.pixeldungeon.levels.CityBossLevel
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.scenes.GameScene
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.sprites.KingSprite
 import com.watabou.pixeldungeon.sprites.UndeadSprite
 import com.watabou.utils.Bundle
@@ -98,7 +99,8 @@ class King : Mob() {
         level?.drop(SkeletonKey(), pos)?.sprite?.drop()
         super.die(src)
         Badges.validateBossSlain()
-        Dungeon.hero?.let { yell("You cannot kill me, " + it.heroClass.title() + "... I am... immortal...") }
+        val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+        yell(LlmTextEnhancer.enhanceBossDialog("King of Dwarves", "death", heroClass, Dungeon.depth, "You cannot kill me, $heroClass... I am... immortal..."))
     }
     private fun maxArmySize(): Int {
         return 1 + MAX_ARMY_SIZE * (HT - HP) / HT
@@ -134,14 +136,15 @@ class King : Mob() {
                 dist++
             } while (dist < Level.LENGTH) // Added a safety bound here
         }
-        yell("Arise, slaves!")
+        yell(LlmTextEnhancer.enhanceBossDialog("King of Dwarves", "summon", Dungeon.hero?.heroClass?.title() ?: "adventurer", Dungeon.depth, "Arise, slaves!"))
     }
     private fun newFlare(r: Int, n: Int): Flare {
         return Flare(r, n.toFloat())
     }
     override fun notice() {
         super.notice()
-        yell("How dare you!")
+        val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+        yell(LlmTextEnhancer.enhanceBossDialog("King of Dwarves", "notice", heroClass, Dungeon.depth, "How dare you!"))
     }
     override fun description(): String {
         return "The last king of dwarves was known for his deep understanding of processes of life and death. He has persuaded members of his court to participate in a ritual, that should have granted them eternal youthfulness. In the end he was the only one, who got it - and an army of undead as a bonus."

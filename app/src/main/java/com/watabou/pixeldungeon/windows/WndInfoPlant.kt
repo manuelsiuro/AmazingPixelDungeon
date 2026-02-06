@@ -1,5 +1,6 @@
 package com.watabou.pixeldungeon.windows
 import com.watabou.noosa.BitmapTextMultiline
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.plants.Plant
 import com.watabou.pixeldungeon.scenes.PixelScene
 import com.watabou.pixeldungeon.sprites.PlantSprite
@@ -13,7 +14,8 @@ class WndInfoPlant(plant: Plant) : Window() {
         add(titlebar)
         val info = PixelScene.createMultiline(6f)
         add(info)
-        info.text(plant.desc())
+        val baseDesc = plant.desc() ?: ""
+        info.text(LlmTextEnhancer.enhancePlantDescription(plant.plantName ?: "plant", baseDesc))
         info.maxWidth = WIDTH
         info.measure()
         info.x = titlebar.left()

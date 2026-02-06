@@ -1,9 +1,11 @@
 package com.watabou.pixeldungeon.windows
 import com.watabou.noosa.Game
+import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.Rankings
 import com.watabou.pixeldungeon.Statistics
 import com.watabou.pixeldungeon.actors.hero.Hero
 import com.watabou.pixeldungeon.items.Ankh
+import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.scenes.InterlevelScene
 import com.watabou.pixeldungeon.scenes.PixelScene
 import com.watabou.pixeldungeon.sprites.ItemSprite
@@ -18,7 +20,9 @@ class WndResurrect(ankh: Ankh, causeOfDeath: Any?) : Window() {
         titlebar.label(ankh.name())
         titlebar.setRect(0f, 0f, WIDTH.toFloat(), 0f)
         add(titlebar)
-        val message = PixelScene.createMultiline(TXT_MESSAGE, 6f)
+        val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
+        val resText = LlmTextEnhancer.enhanceResurrectionText(heroClass, TXT_MESSAGE)
+        val message = PixelScene.createMultiline(resText, 6f)
         message.maxWidth = WIDTH
         message.measure()
         message.y = titlebar.bottom() + GAP
