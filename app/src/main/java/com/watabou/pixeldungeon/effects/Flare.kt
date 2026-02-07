@@ -109,7 +109,7 @@ class Flare(nRays: Int, radius: Float) : Visual(0f, 0f, 0f, 0f) {
             rm, gm, bm, am,
             ra, ga, ba, aa
         )
-        script.camera(camera)
+        script.camera(camera())
         script.drawElements(vertices, indices, nRays * 3)
     }
 }
