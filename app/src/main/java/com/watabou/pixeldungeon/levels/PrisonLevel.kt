@@ -38,6 +38,7 @@ open class PrisonLevel : RegularLevel() {
     override fun createMobs() {
         super.createMobs()
         roomEntrance?.let { Wandmaker.Quest.spawn(this, it) }
+        com.watabou.pixeldungeon.quests.AiNpcSpawner.spawn(this)
     }
     override fun decorate() {
         // Room-interior prison features

@@ -113,6 +113,7 @@ open class Item : Bundlable {
                 Badges.validateItemLevelAquired(this)
             }
             items.add(this)
+            com.watabou.pixeldungeon.quests.AiQuestBook.onItemCollected(this)
             QuickSlot.refresh()
             Collections.sort(items, itemComparator)
             return true

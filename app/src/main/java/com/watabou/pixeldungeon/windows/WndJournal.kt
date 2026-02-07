@@ -40,14 +40,8 @@ class WndJournal : Window() {
         private lateinit var icon: Image
         private val featureDesc = f.desc
         private val depthVal = d
-        override fun createChildren() {
-            feature = PixelScene.createText(9f)
-            add(feature)
-            depth = BitmapText(PixelScene.font1x)
-            add(depth)
-            icon = Icons.get(Icons.DEPTH)
-            add(icon)
-            // Logic moved from constructor
+        // init block runs after property initializers (featureDesc, depthVal are ready)
+        init {
             feature.text(featureDesc)
             feature.measure()
             depth.text(Integer.toString(depthVal))
@@ -56,6 +50,14 @@ class WndJournal : Window() {
                 feature.hardlight(TITLE_COLOR)
                 depth.hardlight(TITLE_COLOR)
             }
+        }
+        override fun createChildren() {
+            feature = PixelScene.createText(9f)
+            add(feature)
+            depth = BitmapText(PixelScene.font1x)
+            add(depth)
+            icon = Icons.get(Icons.DEPTH)
+            add(icon)
         }
         override fun layout() {
             icon.x = width - icon.width

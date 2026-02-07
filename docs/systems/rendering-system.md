@@ -744,6 +744,48 @@ class Camera(
 }
 ```
 
+### Camera Property vs Method (Kotlin Conversion Pitfall)
+
+`Gizmo` defines both a **property** and a **method** named `camera`:
+
+```kotlin
+// Gizmo.kt
+var camera: Camera? = null          // Property — direct field
+
+open fun camera(): Camera? {        // Method — traverses parent hierarchy
+    if (camera != null) {
+        return camera
+    } else if (parent != null) {
+        return parent!!.camera()
+    } else {
+        return null
+    }
+}
+```
+
+In Kotlin, `camera` (no parentheses) accesses the property and `camera()` (with parentheses) calls the method. The distinction is critical:
+
+| Access | Behavior | When to use |
+|--------|----------|-------------|
+| `camera` | Returns the directly-assigned camera field. Only non-null if explicitly set (e.g., `blocker.camera = uiCamera`). | When you explicitly assigned a camera to this Gizmo |
+| `camera()` | Walks up the parent chain via `parent.camera()` until it finds a non-null camera. Falls back to null if no ancestor has one. | When you need the nearest camera in the hierarchy (most common case) |
+
+**`Group.add(g)` does NOT set `g.camera`** — it only sets `g.parent`. Children are expected to find their camera via the `camera()` method traversal at draw time, or when explicitly needed in `layout()`.
+
+**Example bug** (found in `ScrollPane.layout()`):
+
+```kotlin
+// WRONG — property is null, layout exits early, content camera stays 1x1
+val cam = camera ?: return
+
+// CORRECT — traverses to Window's camera
+val cam = camera() ?: return
+```
+
+When `ScrollPane` is added to a `Window`, the Window's camera is set, but the ScrollPane's own `camera` property remains null. Using the property causes `layout()` to bail out, leaving the content camera at its initial 1x1 pixel size — making all ScrollPane content invisible.
+
+**Rule**: In `layout()` and other non-draw methods, always use `camera()` (the method) unless you specifically need the directly-assigned camera. The `draw()` pipeline already uses `camera()` internally.
+
 ## Visual Effects
 
 ### Flare

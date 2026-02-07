@@ -99,13 +99,24 @@ class WndLlmSettings : Window() {
         add(btnBestiary)
         subToggles.add(btnBestiary)
 
+        val btnAiNpc = object : CheckBox(TXT_AI_NPC_QUESTS) {
+            override fun onClick() {
+                super.onClick()
+                PixelDungeon.llmAiNpcQuests(checked())
+            }
+        }
+        btnAiNpc.setRect(0f, btnBestiary.bottom() + GAP, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
+        btnAiNpc.checked(PixelDungeon.llmAiNpcQuests())
+        add(btnAiNpc)
+        subToggles.add(btnAiNpc)
+
         val btnModels = object : RedButton(TXT_MODELS) {
             override fun onClick() {
                 hide()
                 Game.scene()?.add(WndLlmModels())
             }
         }
-        btnModels.setRect(0f, btnBestiary.bottom() + GAP * 2, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
+        btnModels.setRect(0f, btnAiNpc.bottom() + GAP * 2, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
         add(btnModels)
 
         updateSubToggles(PixelDungeon.llmEnabled())
@@ -128,6 +139,7 @@ class WndLlmSettings : Window() {
         private const val TXT_STORY_MOMENTS = "Story Moments"
         private const val TXT_BOSS_ENCOUNTERS = "Boss Encounters"
         private const val TXT_BESTIARY = "Bestiary & Lore"
+        private const val TXT_AI_NPC_QUESTS = "AI NPC Quests"
         private const val TXT_MODELS = "Manage Models"
 
         private const val WIDTH = 112

@@ -78,6 +78,10 @@ open class CityLevel : RegularLevel() {
             }
         }
     }
+    override fun createMobs() {
+        super.createMobs()
+        com.watabou.pixeldungeon.quests.AiNpcSpawner.spawn(this)
+    }
     override fun createItems() {
         super.createItems()
         roomEntrance?.let { Imp.Quest.spawn(this, it) }

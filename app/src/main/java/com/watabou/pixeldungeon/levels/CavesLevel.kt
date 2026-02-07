@@ -34,6 +34,10 @@ open class CavesLevel : RegularLevel() {
         super.assignRoomType()
         rooms?.let { Blacksmith.Quest.spawn(it) }
     }
+    override fun createMobs() {
+        super.createMobs()
+        com.watabou.pixeldungeon.quests.AiNpcSpawner.spawn(this)
+    }
     override fun decorate() {
         for (room in rooms.orEmpty()) {
             if (room.type != Type.STANDARD) {

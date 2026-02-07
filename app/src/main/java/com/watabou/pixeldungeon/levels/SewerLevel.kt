@@ -104,6 +104,7 @@ open class SewerLevel : RegularLevel() {
     override fun createMobs() {
         super.createMobs()
         Ghost.Quest.spawn(this)
+        com.watabou.pixeldungeon.quests.AiNpcSpawner.spawn(this)
     }
     override fun createItems() {
         if (Dungeon.dewVial && Random.Int(4 - Dungeon.depth) == 0) {

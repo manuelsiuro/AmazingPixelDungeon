@@ -194,18 +194,19 @@ object LlmTextEnhancer {
                 return cached
             }
 
-            // Synchronous generation — player is dead, can wait
+            // Async generation — avoid blocking GL thread (MediaPipe is not thread-safe)
+            Log.d(TAG, "generateDeathEpitaph CACHE MISS, submitting async generation")
             val prompt = LlmPromptBuilder.deathEpitaph(causeDesc, heroClass, depth, heroLevel)
-            val result = LlmManager.generateTextSync(prompt, 96)
-            if (result != null) {
-                val sanitized = sanitize(result, MAX_EPITAPH_LENGTH)
-                LlmResponseCache.put(cacheKey, sanitized)
-                Log.d(TAG, "generateDeathEpitaph GENERATED: ${sanitized.take(80)}")
-                sanitized
-            } else {
-                Log.d(TAG, "generateDeathEpitaph GENERATE FAILED")
-                fallback
+            LlmManager.generateText(prompt, 96, LlmManager.Priority.HIGH) { result ->
+                if (result != null) {
+                    val sanitized = sanitize(result, MAX_EPITAPH_LENGTH)
+                    LlmResponseCache.put(cacheKey, sanitized)
+                    Log.d(TAG, "generateDeathEpitaph GENERATED: ${sanitized.take(80)}")
+                } else {
+                    Log.d(TAG, "generateDeathEpitaph GENERATE FAILED")
+                }
             }
+            fallback
         } catch (e: Exception) {
             Log.e(TAG, "generateDeathEpitaph ERROR", e)
             PixelDungeon.reportException(e)
@@ -645,6 +646,49 @@ object LlmTextEnhancer {
             Log.e(TAG, "enhanceCellDescription ERROR", e)
             PixelDungeon.reportException(e)
             fallbackDesc
+        }
+    }
+
+    // AI Quest NPCs
+
+    fun generateAiQuestText(
+        npcName: String,
+        personality: String,
+        questType: String,
+        targetDesc: String,
+        heroClass: String,
+        depth: Int,
+        fallback: String
+    ): String {
+        Log.d(TAG, "generateAiQuestText: npc=$npcName quest=$questType")
+        if (!PixelDungeon.llmEnabled() || !PixelDungeon.llmAiNpcQuests() || !LlmManager.isAvailable()) {
+            Log.d(TAG, "generateAiQuestText SKIP")
+            return fallback
+        }
+        return try {
+            val cacheKey = LlmResponseCache.key("aiquest", npcName, questType, heroClass, depth.toString())
+            val cached = LlmResponseCache.get(cacheKey)
+            if (cached != null) {
+                Log.d(TAG, "generateAiQuestText CACHE HIT")
+                return cached
+            }
+
+            Log.d(TAG, "generateAiQuestText CACHE MISS, submitting async generation")
+            val prompt = LlmPromptBuilder.aiQuestDescription(npcName, personality, questType, targetDesc, heroClass, depth, fallback)
+            LlmManager.generateText(prompt) { result ->
+                if (result != null) {
+                    val sanitized = sanitize(result, MAX_NPC_LENGTH)
+                    LlmResponseCache.put(cacheKey, sanitized)
+                    Log.d(TAG, "generateAiQuestText GENERATED (len=${sanitized.length}): ${sanitized.take(80)}")
+                } else {
+                    Log.d(TAG, "generateAiQuestText GENERATE FAILED (null result)")
+                }
+            }
+            fallback
+        } catch (e: Exception) {
+            Log.e(TAG, "generateAiQuestText ERROR", e)
+            PixelDungeon.reportException(e)
+            fallback
         }
     }
 

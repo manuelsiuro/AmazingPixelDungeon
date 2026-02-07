@@ -85,6 +85,23 @@ class WndHero : WndTabbed() {
                 btnJournal.reqHeight() + 2
             )
             add(btnJournal)
+
+            if (com.watabou.pixeldungeon.PixelDungeon.llmEnabled()) {
+                val btnQuests = object : RedButton(TXT_QUESTS) {
+                    override fun onClick() {
+                        hide()
+                        GameScene.show(WndQuestBook())
+                    }
+                }
+                btnQuests.setRect(
+                    btnJournal.right() + 1,
+                    btnJournal.top(),
+                    btnQuests.reqWidth() + 2,
+                    btnQuests.reqHeight() + 2
+                )
+                add(btnQuests)
+            }
+
             pos = btnCatalogus.bottom() + GAP
             statSlot(TXT_STR, hero.STR())
             statSlot(TXT_HEALTH, "${hero.HP}/${hero.HT}")
@@ -149,6 +166,7 @@ class WndHero : WndTabbed() {
         private const val TXT_TITLE = "Level %d %s"
         private const val TXT_CATALOGUS = "Catalogus"
         private const val TXT_JOURNAL = "Journal"
+        private const val TXT_QUESTS = "Quests"
         private const val WIDTH = 100
         private const val TAB_WIDTH = 40
         private const val GAP = 5

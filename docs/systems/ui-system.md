@@ -667,45 +667,25 @@ class WndBag(
 ### ScrollPane.kt
 **Path**: `ui/ScrollPane.kt`
 
-Scrollable content container:
+Scrollable content container that uses a **separate Camera** for its content, enabling viewport clipping and scroll offset.
 
+**How it works:**
+1. In `init`, ScrollPane creates a tiny 1x1 content camera: `content.camera = Camera(0, 0, 1, 1, zoom)`
+2. In `layout()`, the content camera is repositioned and resized to match the ScrollPane's bounds
+3. Scrolling is achieved by adjusting `content.camera.scroll`
+
+**Usage pattern** (see `WndJournal` for reference):
 ```kotlin
-class ScrollPane(content: Component) : Component() {
-    protected var content: Component = content
-    protected var scrollY: Float = 0f
-    protected var maxScrollY: Float = 0f
+val content = Component()
+// ... add children to content, track vertical position ...
+content.setSize(WIDTH.toFloat(), pos)
 
-    private var dragging: Boolean = false
-    private var lastY: Float = 0f
-
-    override fun createChildren() {
-        add(content)
-    }
-
-    override fun layout() {
-        maxScrollY = maxOf(0f, content.height - height)
-    }
-
-    fun scrollTo(y: Float) {
-        scrollY = y.coerceIn(0f, maxScrollY)
-        content.y = this.y - scrollY
-    }
-
-    // Touch handling for scroll
-    fun onTouchDown(event: MotionEvent) {
-        dragging = true
-        lastY = event.y
-    }
-
-    fun onTouchMove(event: MotionEvent) {
-        if (dragging) {
-            val dy = event.y - lastY
-            scrollTo(scrollY - dy)
-            lastY = event.y
-        }
-    }
-}
+val list = ScrollPane(content)
+add(list)
+list.setRect(0f, titleHeight, WIDTH.toFloat(), height - titleHeight)
 ```
+
+**Important**: ScrollPane's `layout()` uses `camera()` (the method) to find the parent Window's camera via hierarchy traversal. See [Camera Property vs Method](rendering-system.md#camera-property-vs-method-kotlin-conversion-pitfall) for details on why this distinction matters. If `camera` (the property) were used instead, it would be null — causing layout to exit early and the content camera to remain at 1x1 pixels, making all content invisible.
 
 ## Toast Notifications
 

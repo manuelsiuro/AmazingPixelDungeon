@@ -119,7 +119,11 @@ object Badges {
         GAMES_PLAYED_4("2000 games played", 63, true),
         HAPPY_END("Happy end", 38),
         CHAMPION("Challenge won", 39, true),
-        SUPPORTER("Thanks for your support!", 31, true);
+        SUPPORTER("Thanks for your support!", 31, true),
+        AI_QUESTS_1("1 AI quest completed", 64),
+        AI_QUESTS_2("5 AI quests completed", 65),
+        AI_QUESTS_3("10 AI quests completed", 66),
+        AI_QUESTS_4("25 AI quests completed", 67, true);
     }
     private var global: HashSet<Badge>? = null
     private var local= HashSet<Badge>()
@@ -654,6 +658,28 @@ object Badges {
         }
         displayBadge(badge)
     }
+    fun validateAiQuestsCompleted() {
+        val count = com.watabou.pixeldungeon.quests.AiQuestBook.completedCount
+        var badge: Badge? = null
+        if (!local.contains(Badge.AI_QUESTS_1) && count >= 1) {
+            badge = Badge.AI_QUESTS_1
+            local.add(badge)
+        }
+        if (!local.contains(Badge.AI_QUESTS_2) && count >= 5) {
+            badge = Badge.AI_QUESTS_2
+            local.add(badge)
+        }
+        if (!local.contains(Badge.AI_QUESTS_3) && count >= 10) {
+            badge = Badge.AI_QUESTS_3
+            local.add(badge)
+        }
+        if (!local.contains(Badge.AI_QUESTS_4) && count >= 25) {
+            badge = Badge.AI_QUESTS_4
+            local.add(badge)
+        }
+        displayBadge(badge)
+    }
+
     fun validateHappyEnd() {
         displayBadge(Badge.HAPPY_END)
     }
@@ -770,6 +796,13 @@ object Badges {
             Badge.GAMES_PLAYED_2,
             Badge.GAMES_PLAYED_3,
             Badge.GAMES_PLAYED_4
+        )
+        leaveBest(
+            filtered,
+            Badge.AI_QUESTS_1,
+            Badge.AI_QUESTS_2,
+            Badge.AI_QUESTS_3,
+            Badge.AI_QUESTS_4
         )
         val list = ArrayList<Badge>(filtered)
         Collections.sort(list)

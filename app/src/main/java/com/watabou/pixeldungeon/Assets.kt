@@ -62,6 +62,7 @@ object Assets {
     const val RATKING = "ratking.png"
     const val BEE = "bee.png"
     const val MIMIC = "mimic.png"
+    const val AI_NPC = "ai_npc.png"
     const val ITEMS = "items.png"
     const val PLANTS = "plants.png"
     const val TILES_SEWERS = "tiles0.png"

@@ -36,6 +36,10 @@ open class HallsLevel : RegularLevel() {
     override fun grass(): BooleanArray {
         return Patch.generate(if (feeling === Level.Feeling.GRASS) 0.55f else 0.30f, 3)
     }
+    override fun createMobs() {
+        super.createMobs()
+        com.watabou.pixeldungeon.quests.AiNpcSpawner.spawn(this)
+    }
     override fun decorate() {
         // Room-interior demon halls features
         for (room in rooms.orEmpty()) {

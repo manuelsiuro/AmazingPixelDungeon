@@ -58,7 +58,7 @@ open class ScrollPane(val content: Component) : Component() {
         controller.height = height
         // content.camera is nullable? In Java `content.camera = new Camera(...)`.
         // In Component.java `public Camera camera`.
-        val cam = camera ?: return
+        val cam = camera() ?: return
         val p = cam.cameraToScreen(x, y)
         val cs = content.camera ?: return
         cs.x = p.x

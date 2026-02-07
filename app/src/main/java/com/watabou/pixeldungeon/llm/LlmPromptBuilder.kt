@@ -23,6 +23,7 @@ object LlmPromptBuilder {
 You are speaking to a $heroClass on dungeon floor $depth.
 Rewrite this dialog in your voice, keep quest instructions intact.
 Keep _highlighted_ words in underscores. Under 3 sentences.
+And use underscore in your response and never change it by star *.
 Original: "$originalText"
 Rewritten:"""
     }
@@ -160,5 +161,21 @@ Enhanced:"""
         return """Write an atmospheric description for a dungeon terrain: $tileName. One sentence, dark fantasy tone.
 Base description: "$fallbackDesc"
 Enhanced:"""
+    }
+
+    fun aiQuestDescription(
+        npcName: String,
+        personality: String,
+        questType: String,
+        targetDesc: String,
+        heroClass: String,
+        depth: Int,
+        fallback: String
+    ): String {
+        return """You are $npcName, a $personality, in a dark fantasy dungeon on floor $depth.
+You are offering a quest to a $heroClass. Quest type: $questType.
+Rewrite this quest offer dialog in your voice. Keep quest instructions intact. Keep _highlighted_ words in underscores. Under 4 sentences.
+Original: "$fallback"
+Rewritten:"""
     }
 }

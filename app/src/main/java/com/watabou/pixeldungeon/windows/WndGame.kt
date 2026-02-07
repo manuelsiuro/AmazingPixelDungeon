@@ -19,6 +19,15 @@ class WndGame : Window() {
                 GameScene.show(WndSettings(true))
             }
         })
+
+        if (PixelDungeon.llmEnabled()) {
+            addButton(object : RedButton(TXT_QUEST_BOOK) {
+                override fun onClick() {
+                    hide()
+                    GameScene.show(WndQuestBook())
+                }
+            })
+        }
         if (Dungeon.challenges > 0) {
             addButton(object : RedButton(TXT_CHALLEGES) {
                 override fun onClick() {
@@ -84,6 +93,7 @@ class WndGame : Window() {
         pos += BTN_HEIGHT
     }
     companion object {
+        private const val TXT_QUEST_BOOK = "Quest Book"
         private const val TXT_SETTINGS = "Settings"
         private const val TXT_CHALLEGES = "Challenges"
         private const val TXT_RANKINGS = "Rankings"

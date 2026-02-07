@@ -350,6 +350,9 @@ class PixelDungeon : Game(TitleScene::class.java) {
         fun llmBestiary(): Boolean = Preferences.getBoolean(Preferences.KEY_LLM_BESTIARY, false)
         fun llmBestiary(value: Boolean) { Preferences.put(Preferences.KEY_LLM_BESTIARY, value) }
 
+        fun llmAiNpcQuests(): Boolean = Preferences.getBoolean(Preferences.KEY_LLM_AI_NPC_QUESTS, true)
+        fun llmAiNpcQuests(value: Boolean) { Preferences.put(Preferences.KEY_LLM_AI_NPC_QUESTS, value) }
+
         fun llmSelectedModel(): String = Preferences.getString(Preferences.KEY_LLM_SELECTED_MODEL, "")
         fun llmSelectedModel(value: String) { Preferences.put(Preferences.KEY_LLM_SELECTED_MODEL, value) }
 

@@ -21,6 +21,7 @@ object LlmManager {
         private set
 
     private var inference: LlmInference? = null
+    private val inferenceLock = Any()
 
     private val sequenceCounter = AtomicLong(0)
 
@@ -162,8 +163,10 @@ object LlmManager {
     fun generateTextSync(prompt: String, maxTokens: Int = LlmConfig.DEFAULT_MAX_TOKENS): String? {
         val llm = inference ?: return null
         return try {
-            val result = llm.generateResponse(prompt)
-            result?.trim()
+            synchronized(inferenceLock) {
+                val result = llm.generateResponse(prompt)
+                result?.trim()
+            }
         } catch (e: Exception) {
             PixelDungeon.reportException(e)
             null

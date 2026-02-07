@@ -75,6 +75,7 @@ object Dungeon {
         Wandmaker.Quest.reset()
         Blacksmith.Quest.reset()
         Imp.Quest.reset()
+        com.watabou.pixeldungeon.quests.AiQuestBook.reset()
         Room.shuffleTypes()
         QuickSlot.primaryValue = null
         QuickSlot.secondaryValue = null
@@ -297,6 +298,7 @@ object Dungeon {
             Wandmaker.Quest.storeInBundle(quests)
             Blacksmith.Quest.storeInBundle(quests)
             Imp.Quest.storeInBundle(quests)
+            com.watabou.pixeldungeon.quests.AiQuestBook.storeInBundle(quests)
             bundle.put(QUESTS, quests)
             Room.storeRoomsInBundle(bundle)
             Statistics.storeInBundle(bundle)
@@ -381,11 +383,13 @@ object Dungeon {
                 Wandmaker.Quest.restoreFromBundle(quests)
                 Blacksmith.Quest.restoreFromBundle(quests)
                 Imp.Quest.restoreFromBundle(quests)
+                com.watabou.pixeldungeon.quests.AiQuestBook.restoreFromBundle(quests)
             } else {
                 Ghost.Quest.reset()
                 Wandmaker.Quest.reset()
                 Blacksmith.Quest.reset()
                 Imp.Quest.reset()
+                com.watabou.pixeldungeon.quests.AiQuestBook.reset()
             }
             Room.restoreRoomsFromBundle(bundle)
         }

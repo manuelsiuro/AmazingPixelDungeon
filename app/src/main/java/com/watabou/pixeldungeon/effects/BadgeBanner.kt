@@ -105,6 +105,7 @@ class BadgeBanner private constructor(private val index: Int) : Image(Assets.BAD
                 58 -> p.offset(6f, 4f)
                 59 -> p.offset(7f, 4f)
                 60, 61, 62, 63 -> p.offset(4f, 4f)
+                64, 65, 66, 67 -> p.offset(5f, 4f)
             }
             p.x *= image.scale.x
             p.y *= image.scale.y

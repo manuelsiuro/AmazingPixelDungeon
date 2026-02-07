@@ -253,6 +253,9 @@ abstract class Mob : Char() {
     }
     override fun die(src: Any?) {
         super.die(src)
+        if (hostile) {
+            com.watabou.pixeldungeon.quests.AiQuestBook.onMobKilled(this)
+        }
         val hero = Dungeon.hero ?: return
         if (hero.lvl <= maxLvl + 2) {
             dropLoot()
