@@ -280,6 +280,31 @@ abstract class NPC : Mob() {
 }
 ```
 
+### NPC Spawn Pattern
+
+All NPCs must avoid spawning on cells that already contain item heaps or other characters. The correct pattern combines `randomRespawnCell()` (which checks for characters) with an explicit heap check:
+
+```kotlin
+// Standard NPC spawn pattern
+do {
+    npc.pos = level.randomRespawnCell()
+} while (npc.pos == -1 || level.heaps[npc.pos] != null)
+level.mobs.add(npc)
+Actor.occupyCell(npc)
+```
+
+For NPCs placed in specific rooms (e.g., Wandmaker), check terrain, characters, and heaps:
+```kotlin
+do {
+    npc.pos = room.random()
+} while (level.map[npc.pos] == Terrain.ENTRANCE
+    || level.map[npc.pos] == Terrain.SIGN
+    || Actor.findChar(npc.pos) != null
+    || level.heaps[npc.pos] != null)
+```
+
+See [Level Generation — Entity Placement](../systems/level-generation.md#entity-placement-and-collision-avoidance) for the full collision avoidance reference.
+
 ---
 
 ## Mob AI States

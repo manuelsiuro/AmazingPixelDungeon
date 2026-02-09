@@ -465,7 +465,7 @@ abstract class RegularLevel : Level() {
             val room = randomRoom(Type.STANDARD, 1)
             if (room != null) {
                 val pos = room.random()
-                if (passable[pos]) {
+                if (passable[pos] && Actor.findChar(pos) == null) {
                     return pos
                 }
             }

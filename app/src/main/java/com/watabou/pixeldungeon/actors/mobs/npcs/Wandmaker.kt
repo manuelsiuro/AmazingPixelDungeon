@@ -110,7 +110,10 @@ class Wandmaker : NPC() {
                 val npc = Wandmaker()
                 do {
                     npc.pos = room.random()
-                } while (level.map[npc.pos] == Terrain.ENTRANCE || level.map[npc.pos] == Terrain.SIGN)
+                } while (level.map[npc.pos] == Terrain.ENTRANCE
+                    || level.map[npc.pos] == Terrain.SIGN
+                    || Actor.findChar(npc.pos) != null
+                    || level.heaps[npc.pos] != null)
                 level.mobs.add(npc)
                 Actor.occupyCell(npc)
                 spawned = true

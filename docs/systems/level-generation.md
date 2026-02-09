@@ -256,6 +256,59 @@ Terrain constants used by the decoration systems and their visual meaning:
 
 ---
 
+## Entity Placement and Collision Avoidance
+
+During level generation, mobs, NPCs, and items are placed on cells. The system must prevent overlaps — an NPC should not spawn on top of an item heap, and items should not drop onto a cell occupied by a mob.
+
+### Placement Methods
+
+| Method | Location | Purpose |
+|--------|----------|---------|
+| `randomRespawnCell()` | `Level.kt` | Find a cell for a mob/NPC. Checks: passable, not visible, no character (`Actor.findChar`) |
+| `randomRespawnCell()` | `RegularLevel.kt` (override) | Same but restricted to STANDARD rooms, 10-attempt limit |
+| `randomDropCell()` | `RegularLevel.kt` | Find a cell for an item. Checks: passable, no character (`Actor.findChar`) |
+| `drop(item, cell)` | `Level.kt` | Place an item heap at a cell. Special handling for alchemy pots and locked chests |
+
+### Collision Checks Required
+
+**NPC placement must check for heaps** — prevents NPCs from spawning on top of item piles:
+```kotlin
+// Correct pattern (from Imp.spawn):
+do {
+    npc.pos = level.randomRespawnCell()
+} while (npc.pos == -1 || level.heaps[npc.pos] != null)
+level.mobs.add(npc)
+Actor.occupyCell(npc)
+```
+
+**Item placement must check for characters** — prevents items from dropping onto mob/NPC cells:
+```kotlin
+// randomDropCell checks:
+if (passable[pos] && Actor.findChar(pos) == null) {
+    return pos
+}
+```
+
+### NPC Spawn Collision Summary
+
+| NPC | Method | Checks Character? | Checks Heaps? |
+|-----|--------|-------------------|---------------|
+| Ghost | `randomRespawnCell()` + heap check | Yes (via `randomRespawnCell`) | Yes |
+| Wandmaker | `room.random()` + terrain/character/heap check | Yes | Yes |
+| Blacksmith | `room.random(1)` + heap check | No (dedicated room, no other mobs) | Yes |
+| Imp | `randomRespawnCell()` + heap check | Yes (via `randomRespawnCell`) | Yes |
+| AI NPC | `randomRespawnCell()` + heap check | Yes (via `randomRespawnCell`) | Yes |
+
+### Key Invariant
+
+After level generation completes, every cell should have **at most one** of:
+- A character (mob or NPC) — tracked by `Actor.findChar(cell)`
+- An item heap — tracked by `level.heaps[cell]`
+
+Both can coexist at runtime (e.g., a mob walks onto a heap, or a mob drops loot on death), but during initial placement they should be kept separate to avoid visual overlap and interaction issues.
+
+---
+
 ## See Also
 
 - [Levels Catalog](../entities/levels.md) — All level types, room painters, and progression

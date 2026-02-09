@@ -40,7 +40,7 @@ object AiNpcSpawner {
             do {
                 pos = level.randomRespawnCell()
                 attempts++
-            } while (pos == -1 && attempts < 20)
+            } while ((pos == -1 || level.heaps[pos] != null) && attempts < 20)
 
             if (pos != -1) {
                 npc.pos = pos

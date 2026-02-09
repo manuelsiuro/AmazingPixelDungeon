@@ -166,7 +166,7 @@ class Ghost : NPC() {
                 val ghost = Ghost()
                 do {
                     ghost.pos = level.randomRespawnCell()
-                } while (ghost.pos == -1)
+                } while (ghost.pos == -1 || level.heaps[ghost.pos] != null)
                 level.mobs.add(ghost)
                 Actor.occupyCell(ghost)
                 spawned = true

@@ -183,6 +183,7 @@ When extending `ItemSlot`, implement these methods:
 5. **Missing layout()**: Positions elements correctly when window resizes
 6. **Component init order**: `Component()` constructor calls `createChildren()` BEFORE subclass property initializers run. Never access constructor parameters or `var x = null` properties in `createChildren()` — they'll be null/0. Create widgets in `createChildren()`, configure them in `init {}`. Use `lateinit var` instead of `var x: Type? = null` for fields set in `createChildren()`. See `docs/systems/ui-system.md` for details.
 7. **Gizmo `camera` vs `camera()`**: `camera` (property) is a direct field, null unless explicitly set. `camera()` (method) traverses the parent hierarchy. `Group.add()` does NOT set `camera`. Always use `camera()` when you need the effective camera. See `docs/systems/rendering-system.md` for details.
+8. **NPC/item placement collisions**: NPC spawns must check `level.heaps[pos] == null` (no item heap). Item drops via `randomDropCell()` must check `Actor.findChar(pos) == null` (no mob/NPC). See `docs/systems/level-generation.md` for the full pattern.
 
 ## Key Entry Points
 
