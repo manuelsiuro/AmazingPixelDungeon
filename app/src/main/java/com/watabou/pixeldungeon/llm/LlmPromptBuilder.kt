@@ -31,6 +31,8 @@ Rewritten:"""
     fun floorNarration(regionName: String, depth: Int, heroClass: String, originalText: String): String {
         return """Write atmospheric narration for a $heroClass entering $regionName (floor $depth).
 Base on this lore. 2-3 sentences, dark fantasy tone.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Lore: "$originalText"
 Narration:"""
     }
@@ -43,12 +45,16 @@ Narration:"""
         }
         return """Write a brief atmospheric description for: $itemName$attrs ($itemType).
 1-2 sentences, dark fantasy dungeon crawler.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Base description: "$originalDesc"
 Enhanced:"""
     }
 
     fun combatNarration(originalMessage: String): String {
         return """Rewrite this combat message in vivid dark fantasy style. One sentence max.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Original: "$originalMessage"
 Rewritten:"""
     }
@@ -56,18 +62,29 @@ Rewritten:"""
     // Phase 1: Story Moments
 
     fun deathEpitaph(causeDesc: String, heroClass: String, depth: Int, heroLevel: Int): String {
-        return """Write a 1-2 sentence dramatic epitaph for a level $heroLevel $heroClass who died on dungeon floor $depth. Cause of death: "$causeDesc". Dark fantasy eulogy tone, solemn and poetic.
+        return """Write a 1-2 sentence dramatic epitaph for a level $heroLevel $heroClass who died on dungeon floor $depth. Cause of death: "$causeDesc". 
+Dark fantasy eulogy tone, solemn and poetic.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Epitaph:"""
     }
 
     fun introNarration(heroClass: String, originalText: String): String {
-        return """Rewrite this game intro for a $heroClass entering a dangerous dungeon. Keep the core meaning: heroes have tried before, none found the Amulet of Yendor, and you feel ready. 2-3 sentences, dark fantasy tone.
+        return """Rewrite this game intro for a $heroClass entering a dangerous dungeon.
+Keep the core meaning: heroes have tried before, none found the Amulet of Yendor, and you feel ready. 
+2-3 sentences, dark fantasy tone.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Original: "$originalText"
 Rewritten:"""
     }
 
     fun victoryNarration(heroClass: String, originalText: String): String {
-        return """Rewrite this victory text for a $heroClass who found the Amulet of Yendor. Keep the core meaning: you hold the amulet, its power can change everything, your life changes forever. 2-3 sentences, triumphant dark fantasy tone.
+        return """Rewrite this victory text for a $heroClass who found the Amulet of Yendor.
+Keep the core meaning: you hold the amulet, its power can change everything, your life changes forever. 
+2-3 sentences, triumphant dark fantasy tone.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Original: "$originalText"
 Rewritten:"""
     }
@@ -77,7 +94,10 @@ Rewritten:"""
     fun bossNotice(bossName: String, heroClass: String, depth: Int, fallback: String): String {
         val personality = BOSS_PERSONALITIES[bossName] ?: "A powerful dungeon boss."
         return """You are $bossName, a dungeon boss on floor $depth. Personality: $personality
-A $heroClass has entered your domain. Write a short battle cry or notice (1 sentence max). Match the personality closely.
+A $heroClass has entered your domain. Write a short battle cry or notice (1 sentence max). 
+Match the personality closely.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Original line: "$fallback"
 Rewritten:"""
     }
@@ -85,7 +105,10 @@ Rewritten:"""
     fun bossDeath(bossName: String, heroClass: String, fallback: String): String {
         val personality = BOSS_PERSONALITIES[bossName] ?: "A powerful dungeon boss."
         return """You are $bossName, a dying dungeon boss. Personality: $personality
-You have been defeated by a $heroClass. Write dying words (1 sentence max). Match the personality closely.
+You have been defeated by a $heroClass. Write dying words (1 sentence max).
+Match the personality closely.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Original line: "$fallback"
 Rewritten:"""
     }
@@ -93,7 +116,10 @@ Rewritten:"""
     fun bossSummon(bossName: String, fallback: String): String {
         val personality = BOSS_PERSONALITIES[bossName] ?: "A powerful dungeon boss."
         return """You are $bossName. Personality: $personality
-You are summoning undead minions to fight. Write a summoning command (1 sentence max).
+You are summoning undead minions to fight. 
+Write a summoning command (1 sentence max).
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Original line: "$fallback"
 Rewritten:"""
     }
@@ -101,19 +127,28 @@ Rewritten:"""
     // Phase 3: Enhanced Atmosphere
 
     fun levelFeeling(feelingType: String, regionName: String, depth: Int, heroClass: String, fallback: String): String {
-        return """Write an atmospheric one-sentence observation for a $heroClass on floor $depth of $regionName. The feeling type is "$feelingType". Dark fantasy tone, evocative but brief.
+        return """Write an atmospheric one-sentence observation for a $heroClass on floor $depth of $regionName. 
+The feeling type is "$feelingType". Dark fantasy tone, evocative but brief.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Original: "$fallback"
 Rewritten:"""
     }
 
     fun signTip(depth: Int, heroClass: String, fallbackTip: String): String {
-        return """Rewrite this dungeon sign tip as advice scratched into a weathered sign. Keep the gameplay advice intact but add dark fantasy flavor. One sentence.
+        return """Rewrite this dungeon sign tip as advice scratched into a weathered sign.
+Keep the gameplay advice intact but add dark fantasy flavor. One sentence.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Original tip: "$fallbackTip"
 Rewritten:"""
     }
 
     fun mobDescription(mobName: String, mobState: String, depth: Int, fallbackDesc: String): String {
-        return """Write an atmospheric bestiary entry for: $mobName (currently $mobState, floor $depth). 1-2 sentences, dark fantasy dungeon crawler tone.
+        return """Write an atmospheric bestiary entry for: $mobName (currently $mobState, floor $depth). 
+1-2 sentences, dark fantasy dungeon crawler tone.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Base description: "$fallbackDesc"
 Enhanced:"""
     }
@@ -121,13 +156,19 @@ Enhanced:"""
     // Phase 4: Celebrations & Interactions
 
     fun badgeText(badgeName: String, heroClass: String, fallbackDesc: String): String {
-        return """Write a brief celebratory achievement text for a $heroClass who earned: "$badgeName". One sentence, triumphant tone.
+        return """Write a brief celebratory achievement text for a $heroClass who earned: "$badgeName". 
+One sentence, triumphant tone.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Original: "$fallbackDesc"
 Rewritten:"""
     }
 
     fun resurrectionText(heroClass: String, fallback: String): String {
-        return """Rewrite this resurrection message for a $heroClass brought back from death by an Ankh. Keep the choice element (accept or refuse). 1-2 sentences, dramatic dark fantasy tone.
+        return """Rewrite this resurrection message for a $heroClass brought back from death by an Ankh. 
+Keep the choice element (accept or refuse). 1-2 sentences, dramatic dark fantasy tone.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Original: "$fallback"
 Rewritten:"""
     }
@@ -139,6 +180,8 @@ Rewritten:"""
             "A stout, pragmatic shopkeeper doing business in a dangerous dungeon."
         return """You are a $shopkeeperName. $personality
 A $heroClass enters your shop on floor $depth. Write a brief greeting (1 sentence).
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Original: "$fallback"
 Rewritten:"""
     }
@@ -147,18 +190,24 @@ Rewritten:"""
 
     fun plantDescription(plantName: String, fallbackDesc: String): String {
         return """Write an atmospheric description for a dungeon plant: $plantName. 1-2 sentences, dark fantasy herbalism tone.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Base description: "$fallbackDesc"
 Enhanced:"""
     }
 
     fun buffDescription(buffName: String, fallbackDesc: String): String {
         return """Write a brief atmospheric description for a magical effect: $buffName. One sentence, dark fantasy tone.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Base description: "$fallbackDesc"
 Enhanced:"""
     }
 
     fun cellDescription(tileName: String, fallbackDesc: String): String {
         return """Write an atmospheric description for a dungeon terrain: $tileName. One sentence, dark fantasy tone.
+Keep _highlighted_ words in underscores. 
+And use underscore in your response and never change it by star *.
 Base description: "$fallbackDesc"
 Enhanced:"""
     }

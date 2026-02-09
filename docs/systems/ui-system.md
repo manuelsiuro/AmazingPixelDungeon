@@ -53,6 +53,99 @@ open class Component : Group() {
 }
 ```
 
+### Component Initialization Order (Kotlin Conversion Pitfall)
+
+The `Component()` constructor calls `createChildren()` **before** subclass property initializers and `init` blocks run. This is a critical difference from Java, where field initializers run before the constructor body.
+
+**Kotlin initialization order for `class Foo(val param: Type) : Component()`:**
+
+```
+1. Component() constructor runs
+   └── calls createChildren()    ← subclass override runs HERE
+   └── calls layout()
+2. Subclass property initializers run  (val x = ..., var y: Type? = null)
+3. Subclass init {} blocks run
+```
+
+This means:
+
+- **Constructor parameter properties** (`val`/`var` params) are **null/0** inside `createChildren()` — their backing fields are not yet assigned.
+- **Property initializers** like `var image: Image? = null` run AFTER `createChildren()` and will **reset** values that `createChildren()` set.
+- **`init {}` blocks** run AFTER both `createChildren()` and property initializers, so they can safely access both.
+
+#### Bug Pattern 1: Constructor param accessed in createChildren()
+
+```kotlin
+// WRONG — item is null when createChildren() runs
+class ItemButton(protected var item: Item) : Button() {
+    override fun createChildren() {
+        slot = ItemSlot()
+        add(slot)
+        slot.item(item)         // NPE! item backing field not assigned yet
+        if (item.cursed) { ... } // NPE!
+    }
+}
+
+// CORRECT — create widgets in createChildren(), configure in init
+class ItemButton(protected var item: Item) : Button() {
+    override fun createChildren() {
+        slot = ItemSlot()
+        add(slot)
+    }
+    init {
+        slot.item(item)         // item is assigned by now
+        if (item.cursed) { ... } // safe
+    }
+}
+```
+
+#### Bug Pattern 2: Nullable initializer resets createChildren() value
+
+```kotlin
+// WRONG — "= null" initializer runs AFTER createChildren(), resetting the value
+class ChallengeButton : Button() {
+    private var image: Image? = null  // resets to null after createChildren!
+    override fun createChildren() {
+        image = Icons.get(Icons.CHALLENGE_ON)  // set here...
+        add(image!!)
+    }
+    init {
+        width = image!!.width  // NPE! image was reset to null
+    }
+}
+
+// CORRECT — use lateinit (no initializer to reset)
+class ChallengeButton : Button() {
+    private lateinit var image: Image
+    override fun createChildren() {
+        image = Icons.get(Icons.CHALLENGE_ON)
+        add(image)
+    }
+    init {
+        width = image.width  // safe — lateinit has no resetting initializer
+    }
+}
+```
+
+#### Safe Pattern Summary
+
+| Where | Constructor params | lateinit properties from createChildren() |
+|-------|-------------------|------------------------------------------|
+| `createChildren()` | **NOT available** (null/0) | Being created here |
+| Property initializers | Available | Available but may **reset** values — use `lateinit` instead |
+| `init {}` blocks | Available | Available |
+| `layout()` (called later) | Available | Available |
+
+**Rule**: In `createChildren()`, only create widgets and add them. Move all configuration that depends on constructor parameters or widget values to an `init {}` block. Always use `lateinit var` (not `var x: Type? = null`) for properties assigned in `createChildren()`.
+
+**Fixed instances of this bug:**
+- `WndRanking.ItemButton` — `item` param accessed in `createChildren()`
+- `WndRanking.LabelledItemButton` — inherits from ItemButton
+- `WndJournal.ListItem` — `featureDesc`/`depthVal` params accessed in `createChildren()`
+- `BadgesList.ListItem` — `badge` param accessed in `createChildren()`
+- `StartScene.ClassShield` — `var avatar: Image? = null` reset value from `createChildren()`
+- `StartScene.ChallengeButton` — `var image: Image? = null` reset value from `createChildren()`
+
 ## Input Handling
 
 ### Signal/Listener Pattern

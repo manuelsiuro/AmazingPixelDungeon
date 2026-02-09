@@ -181,6 +181,8 @@ When extending `ItemSlot`, implement these methods:
 3. **Float vs Int**: Check parameter types in utility methods
 4. **createChildren order**: Background before super.createChildren()
 5. **Missing layout()**: Positions elements correctly when window resizes
+6. **Component init order**: `Component()` constructor calls `createChildren()` BEFORE subclass property initializers run. Never access constructor parameters or `var x = null` properties in `createChildren()` — they'll be null/0. Create widgets in `createChildren()`, configure them in `init {}`. Use `lateinit var` instead of `var x: Type? = null` for fields set in `createChildren()`. See `docs/systems/ui-system.md` for details.
+7. **Gizmo `camera` vs `camera()`**: `camera` (property) is a direct field, null unless explicitly set. `camera()` (method) traverses the parent hierarchy. `Group.add()` does NOT set `camera`. Always use `camera()` when you need the effective camera. See `docs/systems/rendering-system.md` for details.
 
 ## Key Entry Points
 
