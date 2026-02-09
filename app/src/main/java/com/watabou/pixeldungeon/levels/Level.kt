@@ -560,7 +560,10 @@ abstract class Level : Bundlable {
             Terrain.LIGHTNING_TRAP -> LightningTrap.trigger(cell, mob)
             Terrain.GRIPPING_TRAP -> GrippingTrap.trigger(cell, mob)
             Terrain.SUMMONING_TRAP -> SummoningTrap.trigger(cell, mob)
-            Terrain.DOOR -> Door.enter(cell)
+            Terrain.DOOR -> {
+                Door.enter(cell)
+                trap = false
+            }
             else -> trap = false
         }
         if (trap) {
