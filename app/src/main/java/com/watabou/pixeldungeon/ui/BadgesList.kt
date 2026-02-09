@@ -46,6 +46,9 @@ class BadgesList(global: Boolean) : ScrollPane(Component()) {
             add(icon)
             label = PixelScene.createText(6f)
             add(label)
+        }
+        // init runs after property initializers (badge is ready)
+        init {
             icon.copy(BadgeBanner.image(badge.image))
             label.text(badge.description)
         }

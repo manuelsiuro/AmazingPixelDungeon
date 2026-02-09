@@ -197,14 +197,15 @@ class WndRanking(gameFile: String) : WndTabbed() {
     private open inner class ItemButton(protected var item: Item) : Button() {
         protected lateinit var slot: ItemSlot
         private lateinit var bg: ColorBlock
-        init {
-            // Logic moved to createChildren or after construction because slot/bg are lateinit
-        }
         override fun createChildren() {
             bg = ColorBlock(ITEM_BUTTON_SIZE.toFloat(), ITEM_BUTTON_SIZE.toFloat(), 0xFF4A4D44.toInt())
             add(bg)
             slot = ItemSlot()
             add(slot)
+            super.createChildren()
+        }
+        // init runs after property initializers (item is ready)
+        init {
             slot.item(item)
             if (item.cursed && item.cursedKnown) {
                 bg.ra = +0.2f
@@ -213,7 +214,6 @@ class WndRanking(gameFile: String) : WndTabbed() {
                 bg.ra = 0.1f
                 bg.ba = 0.1f
             }
-            super.createChildren()
         }
         override fun layout() {
             bg.x = x

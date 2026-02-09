@@ -234,12 +234,22 @@ class StartScene : PixelScene() {
         }
     }
     private inner class ClassShield(private val cl: HeroClass) : Button() {
-        private var avatar: Image? = null
-        private var name: BitmapText? = null
-        private var emitter: Emitter? = null
+        private lateinit var avatar: Image
+        private lateinit var name: BitmapText
+        private lateinit var emitter: Emitter
         private var brightness: Float = 0.toFloat()
         private val normal: Int
         private val highlighted: Int
+        override fun createChildren() {
+            super.createChildren()
+            avatar = Image(Assets.AVATARS)
+            add(avatar)
+            name = PixelScene.createText(9f)
+            add(name)
+            emitter = BitmaskEmitter(avatar)
+            add(emitter)
+        }
+        // init runs after createChildren and property initializers
         init {
             val badge = cl.masteryBadge()
             if (badge != null && Badges.isUnlocked(badge)) {
@@ -249,33 +259,24 @@ class StartScene : PixelScene() {
                 normal = BASIC_NORMAL
                 highlighted = BASIC_HIGHLIGHTED
             }
-            avatar!!.frame(cl.ordinal * WIDTH, 0, WIDTH, HEIGHT)
-            avatar!!.scale.set(SCALE.toFloat())
-            name!!.text(cl.title()) 
-            name!!.measure()
-            name!!.hardlight(normal)
+            avatar.frame(cl.ordinal * WIDTH, 0, WIDTH, HEIGHT)
+            avatar.scale.set(SCALE.toFloat())
+            name.text(cl.title())
+            name.measure()
+            name.hardlight(normal)
             brightness = MIN_BRIGHTNESS
             updateBrightness()
         }
-        override fun createChildren() {
-            super.createChildren()
-            avatar = Image(Assets.AVATARS)
-            add(avatar!!)
-            name = PixelScene.createText(9f)
-            add(name!!)
-            emitter = BitmaskEmitter(avatar!!)
-            add(emitter!!)
-        }
         override fun layout() {
             super.layout()
-            avatar!!.x = PixelScene.align(x + (width - avatar!!.width) / 2)
-            avatar!!.y = PixelScene.align(y + (height - avatar!!.height - name!!.height()) / 2)
-            name!!.x = PixelScene.align(x + (width - name!!.width()) / 2)
-            name!!.y = avatar!!.y + avatar!!.height() + SCALE
+            avatar.x = PixelScene.align(x + (width - avatar.width) / 2)
+            avatar.y = PixelScene.align(y + (height - avatar.height - name.height()) / 2)
+            name.x = PixelScene.align(x + (width - name.width()) / 2)
+            name.y = avatar.y + avatar.height() + SCALE
         }
         override fun onTouchDown() {
-            emitter!!.revive()
-            emitter!!.start(Speck.factory(Speck.LIGHT), 0.05f, 7)
+            emitter.revive()
+            emitter.start(Speck.factory(Speck.LIGHT), 0.05f, 7)
             Sample.play(Assets.SND_CLICK, 1f, 1f, 1.2f)
             updateClass(cl)
         }
@@ -292,43 +293,44 @@ class StartScene : PixelScene() {
         fun highlight(value: Boolean) {
             if (value) {
                 brightness = 1.0f
-                name!!.hardlight(highlighted)
+                name.hardlight(highlighted)
             } else {
                 brightness = 0.999f
-                name!!.hardlight(normal)
+                name.hardlight(normal)
             }
             updateBrightness()
         }
         private fun updateBrightness() {
-            avatar!!.am = brightness
-            avatar!!.rm = brightness
-            avatar!!.bm = brightness
-            avatar!!.gm = brightness
+            avatar.am = brightness
+            avatar.rm = brightness
+            avatar.bm = brightness
+            avatar.gm = brightness
         }
     }
     private inner class ChallengeButton : Button() {
-        private var image: Image? = null
-        init {
-            width = image!!.width.toFloat()
-            height = image!!.height.toFloat()
-            image!!.am = if (Badges.isUnlocked(Badges.Badge.VICTORY)) 1.0f else 0.5f
-        }
+        private lateinit var image: Image
         override fun createChildren() {
             super.createChildren()
             image = Icons.get(if (PixelDungeon.challenges() > 0) Icons.CHALLENGE_ON else Icons.CHALLENGE_OFF)
-            add(image!!)
+            add(image)
+        }
+        // init runs after createChildren (image is ready)
+        init {
+            width = image.width.toFloat()
+            height = image.height.toFloat()
+            image.am = if (Badges.isUnlocked(Badges.Badge.VICTORY)) 1.0f else 0.5f
         }
         override fun layout() {
             super.layout()
-            image!!.x = PixelScene.align(x)
-            image!!.y = PixelScene.align(y)
+            image.x = PixelScene.align(x)
+            image.y = PixelScene.align(y)
         }
         override fun onClick() {
             if (Badges.isUnlocked(Badges.Badge.VICTORY)) {
                 this@StartScene.add(object : WndChallenges(PixelDungeon.challenges(), true) {
                     override fun onBackPressed() {
                         super.onBackPressed()
-                        image!!.copy(Icons.get(if (PixelDungeon.challenges() > 0)
+                        image.copy(Icons.get(if (PixelDungeon.challenges() > 0)
                             Icons.CHALLENGE_ON
                         else
                             Icons.CHALLENGE_OFF))
