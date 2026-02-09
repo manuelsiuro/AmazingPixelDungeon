@@ -4,7 +4,7 @@ import com.watabou.noosa.BitmapTextMultiline
 import com.watabou.noosa.Camera
 import com.watabou.noosa.Image
 import com.watabou.noosa.audio.Music
-import com.watabou.noosa.ui.Button
+import com.watabou.noosa.ui.Component
 import com.watabou.pixeldungeon.Assets
 import com.watabou.pixeldungeon.PixelDungeon
 import com.watabou.pixeldungeon.Rankings
@@ -14,6 +14,7 @@ import com.watabou.pixeldungeon.sprites.ItemSpriteSheet
 import com.watabou.pixeldungeon.ui.Archs
 import com.watabou.pixeldungeon.ui.ExitButton
 import com.watabou.pixeldungeon.ui.Icons
+import com.watabou.pixeldungeon.ui.ScrollPane
 import com.watabou.pixeldungeon.ui.Window
 import com.watabou.pixeldungeon.windows.WndError
 import com.watabou.pixeldungeon.windows.WndRanking
@@ -32,21 +33,66 @@ class RankingsScene : PixelScene() {
         Rankings.load()
         if (Rankings.records!!.size > 0) {
             val rowHeight = if (PixelDungeon.landscape()) ROW_HEIGHT_L else ROW_HEIGHT_P
-            val left = (w - Math.min(MAX_ROW_WIDTH, w.toFloat())) / 2 + GAP
-            val top = PixelScene.align((h - rowHeight * Rankings.records!!.size) / 2)
+            val listWidth = Math.min(MAX_ROW_WIDTH, w.toFloat())
+            val listLeft = (w - listWidth) / 2
+
+            // Title (fixed at top)
             val title = PixelScene.createText(TXT_TITLE, 9f)
             title.hardlight(Window.TITLE_COLOR)
             title.measure()
             title.x = PixelScene.align((w - title.width()) / 2)
-            title.y = PixelScene.align(top - title.height() - GAP)
+            title.y = GAP
             add(title)
+
+            val contentTop = title.y + title.height() + GAP
+
+            // Reserve space at bottom for total text
+            var bottomReserved = 0f
+            if (Rankings.totalNumber >= Rankings.TABLE_SIZE) {
+                bottomReserved = 12f + GAP
+            }
+
+            val availableHeight = h - contentTop - bottomReserved
+
+            // Build scrollable content
+            val content = Component()
+            val records = ArrayList<Record>()
             var pos = 0
             for (rec in Rankings.records!!) {
                 val row = Record(pos, pos == Rankings.lastRecord, rec)
-                row.setRect(left, top + pos * rowHeight, w - left * 2, rowHeight)
-                add(row)
+                row.setRect(GAP, pos * rowHeight, listWidth - GAP * 2, rowHeight)
+                content.add(row)
+                records.add(row)
                 pos++
             }
+            val contentHeight = pos * rowHeight
+            content.setSize(listWidth, contentHeight)
+
+            // Center vertically if content is shorter than available space
+            val listHeight = Math.min(availableHeight, contentHeight)
+            val listY = contentTop + (availableHeight - listHeight) / 2
+
+            val scene = this
+            val list = object : ScrollPane(content) {
+                override fun onClick(x: Float, y: Float) {
+                    for (record in records) {
+                        if (record.inside(x, y)) {
+                            val r = record.rec
+                            if (r.gameFile.length > 0) {
+                                scene.add(WndRanking(r.gameFile))
+                            } else {
+                                scene.add(WndError(TXT_NO_INFO))
+                            }
+                            break
+                        }
+                    }
+                }
+            }
+            add(list)
+            list.camera = Camera.main
+            list.setRect(listLeft, listY, listWidth, listHeight)
+
+            // Total text (fixed at bottom)
             if (Rankings.totalNumber >= Rankings.TABLE_SIZE) {
                 val label = PixelScene.createText(TXT_TOTAL, 8f)
                 label.hardlight(DEFAULT_COLOR)
@@ -59,16 +105,14 @@ class RankingsScene : PixelScene() {
                 val total = PixelScene.createText("/" + Rankings.totalNumber, 8f)
                 total.hardlight(DEFAULT_COLOR)
                 total.measure()
-                total.x = PixelScene.align((w - total.width()) / 2)
-                total.y = PixelScene.align(top + pos * rowHeight + GAP)
-                add(total)
                 val tw = label.width() + won.width() + total.width()
                 label.x = PixelScene.align((w - tw) / 2)
                 won.x = label.x + label.width()
                 total.x = won.x + won.width()
-                total.y = PixelScene.align(top + pos * rowHeight + GAP)
-                won.y = total.y
-                label.y = won.y
+                val totalY = PixelScene.align(h - bottomReserved + GAP)
+                label.y = totalY
+                won.y = totalY
+                total.y = totalY
             }
         } else {
             val title = PixelScene.createText(TXT_NO_GAMES, 8f)
@@ -86,8 +130,8 @@ class RankingsScene : PixelScene() {
     override fun onBackPressed() {
         PixelDungeon.switchNoFade(TitleScene::class.java)
     }
-    class Record(pos: Int, latest: Boolean, rec: Rankings.Record) : Button() {
-        private val rec: Rankings.Record = rec
+    class Record(pos: Int, latest: Boolean, rec: Rankings.Record) : Component() {
+        val rec: Rankings.Record = rec
         private var shield: ItemSprite? = null
         private var flare: Flare? = null
         private var position: BitmapText? = null
@@ -96,7 +140,6 @@ class RankingsScene : PixelScene() {
         private val _pos = pos
         private var _latest = latest
         override fun createChildren() {
-             super.createChildren()
              shield = ItemSprite(ItemSpriteSheet.TOMB, null)
              add(shield!!)
              position = BitmapText(PixelScene.font1x)
@@ -128,7 +171,6 @@ class RankingsScene : PixelScene() {
             }
         }
         override fun layout() {
-            super.layout()
             shield!!.x = x
             shield!!.y = y + (height - shield!!.height) / 2
             position!!.x = PixelScene.align(shield!!.x + (shield!!.width - position!!.width()) / 2)
@@ -142,13 +184,6 @@ class RankingsScene : PixelScene() {
             desc!!.maxWidth = (classIcon!!.x - desc!!.x).toInt()
             desc!!.measure()
             desc!!.y = position!!.y + position!!.baseLine() - desc!!.baseLine()
-        }
-        override fun onClick() {
-            if (rec.gameFile.length > 0) {
-                parent!!.add(WndRanking(rec.gameFile))
-            } else {
-                parent!!.add(WndError(TXT_NO_INFO))
-            }
         }
         companion object {
             private const val GAP = 4f
