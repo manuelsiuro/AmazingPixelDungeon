@@ -22,6 +22,7 @@ import com.watabou.pixeldungeon.actors.mobs.Mob
 import com.watabou.pixeldungeon.effects.particles.FlowParticle
 import com.watabou.pixeldungeon.effects.particles.WindParticle
 import com.watabou.pixeldungeon.items.Generator
+import com.watabou.pixeldungeon.quests.AiQuestBook
 import com.watabou.pixeldungeon.items.Gold
 import com.watabou.pixeldungeon.items.Heap
 import com.watabou.pixeldungeon.items.Item
@@ -535,6 +536,7 @@ abstract class Level : Bundlable {
             Sample.play(Assets.SND_TRAP)
             if (ch === Dungeon.hero) {
                 Dungeon.hero?.interrupt()
+                AiQuestBook.onTrapTriggered()
             }
             set(cell, Terrain.INACTIVE_TRAP)
             GameScene.updateMap(cell)

@@ -9,7 +9,7 @@ object LlmTextEnhancer {
     private const val MAX_NPC_LENGTH = 500
     private const val MAX_COMBAT_LENGTH = 200
     private const val MAX_ITEM_LENGTH = 400
-    private const val MAX_EPITAPH_LENGTH = 300
+    private const val MAX_EPITAPH_LENGTH = 120
     private const val MAX_STORY_LENGTH = 500
     private const val MAX_BOSS_LENGTH = 200
     private const val MAX_FEELING_LENGTH = 200
@@ -191,7 +191,7 @@ object LlmTextEnhancer {
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
                 Log.d(TAG, "generateDeathEpitaph CACHE HIT")
-                return cached
+                return sanitize(cached, MAX_EPITAPH_LENGTH)
             }
 
             // Async generation — avoid blocking GL thread (MediaPipe is not thread-safe)
@@ -835,8 +835,26 @@ object LlmTextEnhancer {
         }
     }
 
+    private val PROMPT_ECHO_KEYWORDS = arrayOf(
+        "epitaph", "sentence", "write", "tailored", "perished",
+        "horror", "dramatic", "eulogy", "poetic", "solemn",
+        "rewrite", "narration", "rewritten", "enhanced", "output"
+    )
+
     private fun sanitize(text: String, maxLength: Int): String {
         var result = text.trim()
+
+        // Strip prompt echo: small on-device models often echo the prompt
+        // instructions before the actual content. Detect colon-terminated
+        // preambles that contain prompt keywords and strip them.
+        result = stripPromptEcho(result)
+
+        // Remove leading/trailing quotes that models sometimes add
+        if (result.length >= 2 && result.startsWith('"') && result.endsWith('"')) {
+            result = result.substring(1, result.length - 1).trim()
+        }
+
+        // Truncate to max length, breaking at last period if possible
         if (result.length > maxLength) {
             result = result.substring(0, maxLength)
             val lastPeriod = result.lastIndexOf('.')
@@ -845,5 +863,27 @@ object LlmTextEnhancer {
             }
         }
         return result
+    }
+
+    private fun stripPromptEcho(text: String): String {
+        // Scan for colons in the first 2/3 of the text. If the preceding text
+        // contains prompt-like keywords, everything up to the colon is echo.
+        val searchLimit = (text.length * 2) / 3
+        var lastEchoColon = -1
+        var idx = 0
+        while (idx < searchLimit) {
+            val colonIdx = text.indexOf(':', idx)
+            if (colonIdx < 0 || colonIdx >= searchLimit) break
+            val preamble = text.substring(0, colonIdx + 1).lowercase()
+            if (PROMPT_ECHO_KEYWORDS.any { it in preamble }) {
+                lastEchoColon = colonIdx
+            }
+            idx = colonIdx + 1
+        }
+        return if (lastEchoColon >= 0 && lastEchoColon < text.length - 5) {
+            text.substring(lastEchoColon + 1).trim()
+        } else {
+            text
+        }
     }
 }

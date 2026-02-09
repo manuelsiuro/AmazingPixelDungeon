@@ -109,7 +109,7 @@ class RankingsScene : PixelScene() {
         init {
              position!!.text(Integer.toString(_pos + 1))
              position!!.measure()
-             desc!!.text(rec.info)
+             desc!!.text(trimForRow(rec.info))
              desc!!.measure()
              if (rec.win) {
                  shield!!.view(ItemSpriteSheet.AMULET, null)
@@ -156,6 +156,19 @@ class RankingsScene : PixelScene() {
             private const val TEXT_LOSE = 0xCCCCCC
             private const val FLARE_WIN = 0x888866
             private const val FLARE_LOSE = 0x666666
+            private const val MAX_DESC_LENGTH = 80
+
+            private fun trimForRow(text: String?): String {
+                if (text == null) return ""
+                if (text.length <= MAX_DESC_LENGTH) return text
+                val truncated = text.substring(0, MAX_DESC_LENGTH)
+                val lastSpace = truncated.lastIndexOf(' ')
+                return if (lastSpace > MAX_DESC_LENGTH / 2) {
+                    truncated.substring(0, lastSpace) + "..."
+                } else {
+                    "$truncated..."
+                }
+            }
         }
     }
     companion object {
@@ -164,8 +177,8 @@ class RankingsScene : PixelScene() {
         private const val TXT_TOTAL = "Games played: "
         private const val TXT_NO_GAMES = "No games have been played yet."
         private const val TXT_NO_INFO = "No additional information"
-        private const val ROW_HEIGHT_L = 22f
-        private const val ROW_HEIGHT_P = 28f
+        private const val ROW_HEIGHT_L = 30f
+        private const val ROW_HEIGHT_P = 42f
         private const val MAX_ROW_WIDTH = 180f
         private const val GAP = 4f
     }

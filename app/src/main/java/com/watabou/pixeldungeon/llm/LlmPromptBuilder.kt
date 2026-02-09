@@ -62,11 +62,9 @@ Rewritten:"""
     // Phase 1: Story Moments
 
     fun deathEpitaph(causeDesc: String, heroClass: String, depth: Int, heroLevel: Int): String {
-        return """Write a 1-2 sentence dramatic epitaph for a level $heroLevel $heroClass who died on dungeon floor $depth. Cause of death: "$causeDesc". 
-Dark fantasy eulogy tone, solemn and poetic.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
-Epitaph:"""
+        return """Level-$heroLevel $heroClass died on floor $depth. Cause: "$causeDesc".
+Dark fantasy epitaph, 1-2 sentences, solemn. Use _underscores_ for emphasis, never *.
+Only output the epitaph text, nothing else:"""
     }
 
     fun introNarration(heroClass: String, originalText: String): String {

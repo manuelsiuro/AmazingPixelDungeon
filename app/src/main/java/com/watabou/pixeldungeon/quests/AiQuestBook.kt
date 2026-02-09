@@ -3,6 +3,7 @@ package com.watabou.pixeldungeon.quests
 import com.watabou.pixeldungeon.Badges
 import com.watabou.pixeldungeon.actors.mobs.Mob
 import com.watabou.pixeldungeon.items.Item
+import com.watabou.pixeldungeon.plants.Plant
 import com.watabou.utils.Bundle
 
 object AiQuestBook {
@@ -49,12 +50,25 @@ object AiQuestBook {
     fun onItemCollected(item: Item) {
         for (quest in activeQuests) {
             if (quest.status != AiQuest.Status.ACTIVE) continue
-            if (quest.type == AiQuest.Type.FIND_ITEM) {
-                val targetClass = quest.targetMobClass // reusing field for item class
-                if (targetClass != null && item.javaClass.name == targetClass) {
-                    quest.currentCount++
+            when (quest.type) {
+                AiQuest.Type.FIND_ITEM -> {
+                    val targetClass = quest.targetMobClass // reusing field for item class
+                    if (targetClass != null && item.javaClass.name == targetClass) {
+                        quest.currentCount++
+                    }
                 }
+                AiQuest.Type.COLLECT_SEEDS -> {
+                    if (item is Plant.Seed) quest.currentCount++
+                }
+                else -> {}
             }
+        }
+    }
+
+    fun onTrapTriggered() {
+        for (quest in activeQuests) {
+            if (quest.status != AiQuest.Status.ACTIVE) continue
+            if (quest.type == AiQuest.Type.DISARM_TRAPS) quest.currentCount++
         }
     }
 

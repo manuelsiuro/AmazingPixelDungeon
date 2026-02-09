@@ -6,7 +6,8 @@ import com.watabou.utils.Bundle
 class AiQuest : Bundlable {
 
     enum class Type {
-        KILL_MOBS, COLLECT_GOLD, SURVIVE_TURNS, FIND_ITEM, EXPLORE_ROOMS, KILL_TYPE
+        KILL_MOBS, COLLECT_GOLD, SURVIVE_TURNS, FIND_ITEM, EXPLORE_ROOMS, KILL_TYPE,
+        COLLECT_SEEDS, DISARM_TRAPS
     }
 
     enum class Status {
@@ -82,6 +83,8 @@ class AiQuest : Bundlable {
             Type.SURVIVE_TURNS -> "$currentCount/$targetCount turns"
             Type.FIND_ITEM -> if (currentCount >= targetCount) "Found!" else "Searching..."
             Type.EXPLORE_ROOMS -> "$currentCount/$targetCount rooms"
+            Type.COLLECT_SEEDS -> "$currentCount/$targetCount seeds"
+            Type.DISARM_TRAPS -> "$currentCount/$targetCount traps"
         }
     }
 
@@ -93,6 +96,8 @@ class AiQuest : Bundlable {
             Type.FIND_ITEM -> "Find Item"
             Type.EXPLORE_ROOMS -> "Explore"
             Type.KILL_TYPE -> "Hunt"
+            Type.COLLECT_SEEDS -> "Gather Seeds"
+            Type.DISARM_TRAPS -> "Disarm Traps"
         }
     }
 
