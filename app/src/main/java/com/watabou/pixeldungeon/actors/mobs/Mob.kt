@@ -14,6 +14,7 @@ import com.watabou.pixeldungeon.actors.hero.HeroSubClass
 import com.watabou.pixeldungeon.effects.Flare
 import com.watabou.pixeldungeon.effects.Wound
 import com.watabou.pixeldungeon.items.Generator
+import com.watabou.pixeldungeon.items.Gold
 import com.watabou.pixeldungeon.items.Item
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.sprites.CharSprite
@@ -259,6 +260,7 @@ abstract class Mob : Char() {
         val hero = Dungeon.hero ?: return
         if (hero.lvl <= maxLvl + 2) {
             dropLoot()
+            dropBonusLoot()
         }
         if (hero.isAlive && !Dungeon.visible[pos]) {
             GLog.i(TXT_DIED)
@@ -286,6 +288,20 @@ abstract class Mob : Char() {
             }
         }
     }
+    protected open fun dropBonusLoot() {
+        if (!hostile) return
+        if (Random.Float() >= BONUS_DROP_CHANCE) return
+
+        val item: Item = if (Random.Float() < BONUS_GOLD_RATIO) {
+            val depth = Dungeon.depth
+            Gold(Random.Int(5 + depth * 3, 10 + depth * 7))
+        } else {
+            Generator.random(Generator.Category.FOOD) ?: return
+        }
+
+        Dungeon.level?.drop(item, pos)?.sprite?.drop()
+    }
+
     open fun reset(): Boolean {
         return false
     }
@@ -418,6 +434,9 @@ abstract class Mob : Char() {
         }
     }
     companion object {
+        private const val BONUS_DROP_CHANCE = 0.25f
+        private const val BONUS_GOLD_RATIO = 0.7f
+
         private const val TXT_DIED = "You hear something died in the distance"
         const val TXT_ECHO = "echo of "
         const val TXT_NOTICE1 = "?!"
