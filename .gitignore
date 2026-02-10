@@ -89,6 +89,15 @@ Thumbs.db
 # Kotlin
 *.kotlin_module
 
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# Sprite generation tool output
+tools/sprite_gen/output/
+
 # Claude Code
 .claude/
 .plan/

@@ -17,6 +17,9 @@ Welcome to the comprehensive documentation for **Amazing Pixel Dungeon**, an And
 - [Level Generation](systems/level-generation.md) - Procedural dungeon generation pipeline, room shapes, and decorations
 - [LLM System](systems/llm-system.md) - On-device AI text generation for enhanced game content
 
+### Tools
+- [Sprite Generation](tools/sprite-generation.md) - AI-powered pixel art sprite generation tool
+
 ### Entity Catalogs
 - [Items](entities/items.md) - All weapons, armor, potions, scrolls, rings, wands, and more
 - [Mobs](entities/mobs.md) - All enemies organized by dungeon region

@@ -3,9 +3,16 @@ import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.actors.hero.Hero
 import com.watabou.pixeldungeon.items.armor.*
 import com.watabou.pixeldungeon.items.bags.Bag
+import com.watabou.pixeldungeon.items.food.Apple
+import com.watabou.pixeldungeon.items.food.ElvenWaybread
 import com.watabou.pixeldungeon.items.food.Food
+import com.watabou.pixeldungeon.items.food.HoneyBread
+import com.watabou.pixeldungeon.items.food.MushroomSoup
 import com.watabou.pixeldungeon.items.food.MysteryMeat
 import com.watabou.pixeldungeon.items.food.Pasty
+import com.watabou.pixeldungeon.items.food.PixieDustCake
+import com.watabou.pixeldungeon.items.food.SmokeyBacon
+import com.watabou.pixeldungeon.items.food.StaleRation
 import com.watabou.pixeldungeon.items.potions.*
 import com.watabou.pixeldungeon.items.rings.*
 import com.watabou.pixeldungeon.items.scrolls.*
@@ -126,9 +133,16 @@ object Generator {
         Category.FOOD.classes = arrayOf(
             Food::class.java,
             Pasty::class.java,
-            MysteryMeat::class.java
+            MysteryMeat::class.java,
+            StaleRation::class.java,
+            Apple::class.java,
+            SmokeyBacon::class.java,
+            MushroomSoup::class.java,
+            HoneyBread::class.java,
+            ElvenWaybread::class.java,
+            PixieDustCake::class.java
         )
-        Category.FOOD.probs = floatArrayOf(4f, 1f, 0f)
+        Category.FOOD.probs = floatArrayOf(4f, 1f, 0f, 3f, 2f, 1f, 1f, 0.5f, 0.2f, 0.3f)
         Category.RING.classes = arrayOf(
             RingOfMending::class.java,
             RingOfDetection::class.java,

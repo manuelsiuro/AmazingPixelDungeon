@@ -1,0 +1,968 @@
+[
+  {
+    "id": "BONES",
+    "index": 0,
+    "category": "heap",
+    "name": "pile of bones",
+    "prompt_hints": "skeletal remains, dungeon floor"
+  },
+  {
+    "id": "ANKH",
+    "index": 1,
+    "category": "misc",
+    "name": "golden ankh",
+    "prompt_hints": "egyptian cross, resurrection symbol, glowing"
+  },
+  {
+    "id": "SHORT_SWORD",
+    "index": 2,
+    "category": "weapon_melee",
+    "name": "short sword",
+    "prompt_hints": "small steel blade, simple crossguard"
+  },
+  {
+    "id": "WAND_MAGIC_MISSILE",
+    "index": 3,
+    "category": "wand",
+    "name": "magic missile",
+    "prompt_hints": "arcane wand, glowing white tip, ornate"
+  },
+  {
+    "id": "RATION",
+    "index": 4,
+    "category": "food",
+    "name": "food ration",
+    "prompt_hints": "wrapped bread, cloth bundle, brown"
+  },
+  {
+    "id": "WEAPON",
+    "index": 5,
+    "category": "weapon_melee",
+    "name": "generic weapon",
+    "prompt_hints": "simple blade, placeholder"
+  },
+  {
+    "id": "ARMOR",
+    "index": 6,
+    "category": "armor",
+    "name": "generic armor",
+    "prompt_hints": "simple chestplate, placeholder"
+  },
+  {
+    "id": "RING",
+    "index": 7,
+    "category": "ring",
+    "name": "generic",
+    "prompt_hints": "simple band, placeholder"
+  },
+  {
+    "id": "SKELETON_KEY",
+    "index": 8,
+    "category": "key",
+    "name": "skeleton",
+    "prompt_hints": "bone-white key, ornate skull design"
+  },
+  {
+    "id": "IRON_KEY",
+    "index": 9,
+    "category": "key",
+    "name": "iron",
+    "prompt_hints": "dark iron, simple design, sturdy"
+  },
+  {
+    "id": "GOLDEN_KEY",
+    "index": 10,
+    "category": "key",
+    "name": "golden",
+    "prompt_hints": "shiny gold, ornate, precious"
+  },
+  {
+    "id": "CHEST",
+    "index": 11,
+    "category": "heap",
+    "name": "wooden chest",
+    "prompt_hints": "treasure chest, iron bands, brown wood"
+  },
+  {
+    "id": "LOCKED_CHEST",
+    "index": 12,
+    "category": "heap",
+    "name": "locked chest",
+    "prompt_hints": "treasure chest with lock, iron bands"
+  },
+  {
+    "id": "TOMB",
+    "index": 13,
+    "category": "heap",
+    "name": "tomb",
+    "prompt_hints": "stone sarcophagus, ancient, gray"
+  },
+  {
+    "id": "GOLD",
+    "index": 14,
+    "category": "misc",
+    "name": "gold coins",
+    "prompt_hints": "pile of gold coins, shiny, treasure"
+  },
+  {
+    "id": "SHURIKEN",
+    "index": 15,
+    "category": "weapon_missile",
+    "name": "shuriken",
+    "prompt_hints": "throwing star, sharp metal, four-pointed"
+  },
+  {
+    "id": "KNUCKLEDUSTER",
+    "index": 16,
+    "category": "weapon_melee",
+    "name": "knuckleduster",
+    "prompt_hints": "brass knuckles, metal fist weapon"
+  },
+  {
+    "id": "QUARTERSTAFF",
+    "index": 17,
+    "category": "weapon_melee",
+    "name": "quarterstaff",
+    "prompt_hints": "long wooden staff, simple, brown"
+  },
+  {
+    "id": "MACE",
+    "index": 18,
+    "category": "weapon_melee",
+    "name": "mace",
+    "prompt_hints": "flanged mace, metal head, wooden handle"
+  },
+  {
+    "id": "DAGGER",
+    "index": 19,
+    "category": "weapon_melee",
+    "name": "dagger",
+    "prompt_hints": "short blade, leather grip, pointed"
+  },
+  {
+    "id": "SWORD",
+    "index": 20,
+    "category": "weapon_melee",
+    "name": "steel sword",
+    "prompt_hints": "crossguard, leather grip, straight blade"
+  },
+  {
+    "id": "LONG_SWORD",
+    "index": 21,
+    "category": "weapon_melee",
+    "name": "longsword",
+    "prompt_hints": "two-handed, large crossguard, steel blade"
+  },
+  {
+    "id": "BATTLE_AXE",
+    "index": 22,
+    "category": "weapon_melee",
+    "name": "battle axe",
+    "prompt_hints": "double-headed axe, large metal blade, wooden haft"
+  },
+  {
+    "id": "WAR_HAMMER",
+    "index": 23,
+    "category": "weapon_melee",
+    "name": "war hammer",
+    "prompt_hints": "heavy metal head, long handle, blunt weapon"
+  },
+  {
+    "id": "ARMOR_CLOTH",
+    "index": 24,
+    "category": "armor",
+    "name": "cloth armor",
+    "prompt_hints": "simple tunic, fabric, light protection"
+  },
+  {
+    "id": "ARMOR_LEATHER",
+    "index": 25,
+    "category": "armor",
+    "name": "leather armor",
+    "prompt_hints": "brown leather, stitched, medium protection"
+  },
+  {
+    "id": "ARMOR_MAIL",
+    "index": 26,
+    "category": "armor",
+    "name": "mail armor",
+    "prompt_hints": "chainmail, interlocking rings, metallic"
+  },
+  {
+    "id": "ARMOR_SCALE",
+    "index": 27,
+    "category": "armor",
+    "name": "scale armor",
+    "prompt_hints": "overlapping metal scales, heavy protection"
+  },
+  {
+    "id": "ARMOR_PLATE",
+    "index": 28,
+    "category": "armor",
+    "name": "plate armor",
+    "prompt_hints": "full plate, shiny metal, heavy, knight"
+  },
+  {
+    "id": "SPEAR",
+    "index": 29,
+    "category": "weapon_melee",
+    "name": "spear",
+    "prompt_hints": "long shaft, pointed metal tip, polearm"
+  },
+  {
+    "id": "GLAIVE",
+    "index": 30,
+    "category": "weapon_melee",
+    "name": "glaive",
+    "prompt_hints": "polearm, curved blade on long shaft"
+  },
+  {
+    "id": "DART",
+    "index": 31,
+    "category": "weapon_missile",
+    "name": "dart",
+    "prompt_hints": "small throwing dart, feathered, sharp tip"
+  },
+  {
+    "id": "RING_DIAMOND",
+    "index": 32,
+    "category": "ring",
+    "name": "diamond",
+    "prompt_hints": "clear sparkling gemstone, brilliant cut"
+  },
+  {
+    "id": "RING_OPAL",
+    "index": 33,
+    "category": "ring",
+    "name": "opal",
+    "prompt_hints": "iridescent gemstone, rainbow shimmer"
+  },
+  {
+    "id": "RING_GARNET",
+    "index": 34,
+    "category": "ring",
+    "name": "garnet",
+    "prompt_hints": "deep red gemstone, dark crimson"
+  },
+  {
+    "id": "RING_RUBY",
+    "index": 35,
+    "category": "ring",
+    "name": "ruby",
+    "prompt_hints": "bright red gemstone, precious"
+  },
+  {
+    "id": "RING_AMETHYST",
+    "index": 36,
+    "category": "ring",
+    "name": "amethyst",
+    "prompt_hints": "purple gemstone, violet crystal"
+  },
+  {
+    "id": "RING_TOPAZ",
+    "index": 37,
+    "category": "ring",
+    "name": "topaz",
+    "prompt_hints": "golden yellow gemstone, warm glow"
+  },
+  {
+    "id": "RING_ONYX",
+    "index": 38,
+    "category": "ring",
+    "name": "onyx",
+    "prompt_hints": "black gemstone, dark, polished"
+  },
+  {
+    "id": "RING_TOURMALINE",
+    "index": 39,
+    "category": "ring",
+    "name": "tourmaline",
+    "prompt_hints": "green gemstone, translucent"
+  },
+  {
+    "id": "SCROLL_KAUNAN",
+    "index": 40,
+    "category": "scroll",
+    "name": "kaunan rune scroll",
+    "prompt_hints": "ancient rune, fire symbol"
+  },
+  {
+    "id": "SCROLL_SOWILO",
+    "index": 41,
+    "category": "scroll",
+    "name": "sowilo rune scroll",
+    "prompt_hints": "sun rune, lightning bolt symbol"
+  },
+  {
+    "id": "SCROLL_LAGUZ",
+    "index": 42,
+    "category": "scroll",
+    "name": "laguz rune scroll",
+    "prompt_hints": "water rune, flowing symbol"
+  },
+  {
+    "id": "SCROLL_YNGVI",
+    "index": 43,
+    "category": "scroll",
+    "name": "yngvi rune scroll",
+    "prompt_hints": "fertility rune, diamond symbol"
+  },
+  {
+    "id": "SCROLL_GYFU",
+    "index": 44,
+    "category": "scroll",
+    "name": "gyfu rune scroll",
+    "prompt_hints": "gift rune, X symbol"
+  },
+  {
+    "id": "SCROLL_RAIDO",
+    "index": 45,
+    "category": "scroll",
+    "name": "raido rune scroll",
+    "prompt_hints": "journey rune, R-like symbol"
+  },
+  {
+    "id": "SCROLL_ISAZ",
+    "index": 46,
+    "category": "scroll",
+    "name": "isaz rune scroll",
+    "prompt_hints": "ice rune, vertical line symbol"
+  },
+  {
+    "id": "SCROLL_MANNAZ",
+    "index": 47,
+    "category": "scroll",
+    "name": "mannaz rune scroll",
+    "prompt_hints": "human rune, M-like symbol"
+  },
+  {
+    "id": "WAND_HOLLY",
+    "index": 48,
+    "category": "wand",
+    "name": "holly",
+    "prompt_hints": "light wood, reddish tint, natural"
+  },
+  {
+    "id": "WAND_YEW",
+    "index": 49,
+    "category": "wand",
+    "name": "yew",
+    "prompt_hints": "dark reddish-brown wood, ancient"
+  },
+  {
+    "id": "WAND_EBONY",
+    "index": 50,
+    "category": "wand",
+    "name": "ebony",
+    "prompt_hints": "jet black wood, polished, elegant"
+  },
+  {
+    "id": "WAND_CHERRY",
+    "index": 51,
+    "category": "wand",
+    "name": "cherry",
+    "prompt_hints": "warm reddish wood, smooth grain"
+  },
+  {
+    "id": "WAND_TEAK",
+    "index": 52,
+    "category": "wand",
+    "name": "teak",
+    "prompt_hints": "golden-brown wood, sturdy, tropical"
+  },
+  {
+    "id": "WAND_ROWAN",
+    "index": 53,
+    "category": "wand",
+    "name": "rowan",
+    "prompt_hints": "pale wood, magical protection"
+  },
+  {
+    "id": "WAND_WILLOW",
+    "index": 54,
+    "category": "wand",
+    "name": "willow",
+    "prompt_hints": "flexible light wood, slender"
+  },
+  {
+    "id": "WAND_MAHOGANY",
+    "index": 55,
+    "category": "wand",
+    "name": "mahogany",
+    "prompt_hints": "rich dark red-brown wood, luxurious"
+  },
+  {
+    "id": "POTION_TURQUOISE",
+    "index": 56,
+    "category": "potion",
+    "name": "turquoise",
+    "prompt_hints": "blue-green liquid, teal glow"
+  },
+  {
+    "id": "POTION_CRIMSON",
+    "index": 57,
+    "category": "potion",
+    "name": "crimson",
+    "prompt_hints": "deep red liquid, blood-like"
+  },
+  {
+    "id": "POTION_AZURE",
+    "index": 58,
+    "category": "potion",
+    "name": "azure",
+    "prompt_hints": "bright blue liquid, sky blue"
+  },
+  {
+    "id": "POTION_JADE",
+    "index": 59,
+    "category": "potion",
+    "name": "jade",
+    "prompt_hints": "deep green liquid, emerald glow"
+  },
+  {
+    "id": "POTION_GOLDEN",
+    "index": 60,
+    "category": "potion",
+    "name": "golden",
+    "prompt_hints": "gold shimmering liquid, precious"
+  },
+  {
+    "id": "POTION_MAGENTA",
+    "index": 61,
+    "category": "potion",
+    "name": "magenta",
+    "prompt_hints": "pink-purple liquid, vibrant"
+  },
+  {
+    "id": "POTION_CHARCOAL",
+    "index": 62,
+    "category": "potion",
+    "name": "charcoal",
+    "prompt_hints": "dark gray liquid, smoky, murky"
+  },
+  {
+    "id": "POTION_IVORY",
+    "index": 63,
+    "category": "potion",
+    "name": "ivory",
+    "prompt_hints": "white creamy liquid, milky"
+  },
+  {
+    "id": "POTION_AMBER",
+    "index": 64,
+    "category": "potion",
+    "name": "amber",
+    "prompt_hints": "warm orange-brown liquid, honey-like"
+  },
+  {
+    "id": "POTION_BISTRE",
+    "index": 65,
+    "category": "potion",
+    "name": "bistre",
+    "prompt_hints": "dark brown liquid, earthy"
+  },
+  {
+    "id": "POTION_INDIGO",
+    "index": 66,
+    "category": "potion",
+    "name": "indigo",
+    "prompt_hints": "deep blue-violet liquid, dark"
+  },
+  {
+    "id": "POTION_SILVER",
+    "index": 67,
+    "category": "potion",
+    "name": "silver",
+    "prompt_hints": "metallic silver liquid, mercury-like"
+  },
+  {
+    "id": "WAND_BAMBOO",
+    "index": 68,
+    "category": "wand",
+    "name": "bamboo",
+    "prompt_hints": "green segmented wood, hollow, eastern"
+  },
+  {
+    "id": "WAND_PURPLEHEART",
+    "index": 69,
+    "category": "wand",
+    "name": "purpleheart",
+    "prompt_hints": "vivid purple wood, exotic, dense"
+  },
+  {
+    "id": "WAND_OAK",
+    "index": 70,
+    "category": "wand",
+    "name": "oak",
+    "prompt_hints": "sturdy brown wood, traditional"
+  },
+  {
+    "id": "WAND_BIRCH",
+    "index": 71,
+    "category": "wand",
+    "name": "birch",
+    "prompt_hints": "white bark wood, pale, delicate"
+  },
+  {
+    "id": "RING_EMERALD",
+    "index": 72,
+    "category": "ring",
+    "name": "emerald",
+    "prompt_hints": "vivid green gemstone, precious"
+  },
+  {
+    "id": "RING_SAPPHIRE",
+    "index": 73,
+    "category": "ring",
+    "name": "sapphire",
+    "prompt_hints": "deep blue gemstone, royal"
+  },
+  {
+    "id": "RING_QUARTZ",
+    "index": 74,
+    "category": "ring",
+    "name": "quartz",
+    "prompt_hints": "clear crystal gemstone, translucent"
+  },
+  {
+    "id": "RING_AGATE",
+    "index": 75,
+    "category": "ring",
+    "name": "agate",
+    "prompt_hints": "banded multicolor gemstone, layered"
+  },
+  {
+    "id": "SCROLL_NAUDIZ",
+    "index": 76,
+    "category": "scroll",
+    "name": "naudiz rune scroll",
+    "prompt_hints": "need rune, crossed lines symbol"
+  },
+  {
+    "id": "SCROLL_BERKANAN",
+    "index": 77,
+    "category": "scroll",
+    "name": "berkanan rune scroll",
+    "prompt_hints": "birch rune, B-like symbol"
+  },
+  {
+    "id": "SCROLL_ODAL",
+    "index": 78,
+    "category": "scroll",
+    "name": "odal rune scroll",
+    "prompt_hints": "heritage rune, diamond-topped symbol"
+  },
+  {
+    "id": "SCROLL_TIWAZ",
+    "index": 79,
+    "category": "scroll",
+    "name": "tiwaz rune scroll",
+    "prompt_hints": "warrior rune, arrow-up symbol"
+  },
+  {
+    "id": "STYLUS",
+    "index": 80,
+    "category": "misc",
+    "name": "arcane stylus",
+    "prompt_hints": "writing implement, magical pen, glowing tip"
+  },
+  {
+    "id": "DEWDROP",
+    "index": 81,
+    "category": "misc",
+    "name": "dewdrop",
+    "prompt_hints": "water droplet, clear, shiny, small"
+  },
+  {
+    "id": "MASTERY",
+    "index": 82,
+    "category": "misc",
+    "name": "tome of mastery",
+    "prompt_hints": "ancient book, leather bound, glowing"
+  },
+  {
+    "id": "POUCH",
+    "index": 83,
+    "category": "bag",
+    "name": "seed pouch",
+    "prompt_hints": "small leather bag, drawstring, brown"
+  },
+  {
+    "id": "TORCH",
+    "index": 84,
+    "category": "misc",
+    "name": "torch",
+    "prompt_hints": "burning torch, flame, wooden handle"
+  },
+  {
+    "id": "BEACON",
+    "index": 85,
+    "category": "misc",
+    "name": "lloyd's beacon",
+    "prompt_hints": "magical crystal device, blue glow, teleportation"
+  },
+  {
+    "id": "KIT",
+    "index": 86,
+    "category": "misc",
+    "name": "armor kit",
+    "prompt_hints": "repair tools, hammer and anvil, metal"
+  },
+  {
+    "id": "AMULET",
+    "index": 87,
+    "category": "misc",
+    "name": "amulet of yendor",
+    "prompt_hints": "golden amulet, ancient, powerful, glowing"
+  },
+  {
+    "id": "SEED_FIREBLOOM",
+    "index": 88,
+    "category": "seed",
+    "name": "firebloom",
+    "prompt_hints": "red-orange seed, fiery, hot"
+  },
+  {
+    "id": "SEED_ICECAP",
+    "index": 89,
+    "category": "seed",
+    "name": "icecap",
+    "prompt_hints": "blue-white seed, frozen, crystalline"
+  },
+  {
+    "id": "SEED_SORROWMOSS",
+    "index": 90,
+    "category": "seed",
+    "name": "sorrowmoss",
+    "prompt_hints": "dark green seed, poisonous, toxic"
+  },
+  {
+    "id": "SEED_DREAMWEED",
+    "index": 91,
+    "category": "seed",
+    "name": "dreamweed",
+    "prompt_hints": "purple seed, mystical, dreamy"
+  },
+  {
+    "id": "SEED_SUNGRASS",
+    "index": 92,
+    "category": "seed",
+    "name": "sungrass",
+    "prompt_hints": "golden seed, bright, healing, warm"
+  },
+  {
+    "id": "SEED_EARTHROOT",
+    "index": 93,
+    "category": "seed",
+    "name": "earthroot",
+    "prompt_hints": "brown seed, earthy, sturdy, protective"
+  },
+  {
+    "id": "SEED_FADELEAF",
+    "index": 94,
+    "category": "seed",
+    "name": "fadeleaf",
+    "prompt_hints": "pale green seed, translucent, ethereal"
+  },
+  {
+    "id": "SEED_ROTBERRY",
+    "index": 95,
+    "category": "seed",
+    "name": "rotberry",
+    "prompt_hints": "dark purple-brown seed, decaying, corrupt"
+  },
+  {
+    "id": "ARMOR_ROGUE",
+    "index": 96,
+    "category": "armor",
+    "name": "rogue garb",
+    "prompt_hints": "dark leather, hooded cloak, stealthy"
+  },
+  {
+    "id": "ARMOR_WARRIOR",
+    "index": 97,
+    "category": "armor",
+    "name": "warrior suit",
+    "prompt_hints": "heavy plate, battle-worn, red accents"
+  },
+  {
+    "id": "ARMOR_MAGE",
+    "index": 98,
+    "category": "armor",
+    "name": "mage robes",
+    "prompt_hints": "blue wizard robes, magical symbols, flowing"
+  },
+  {
+    "id": "ARMOR_HUNTRESS",
+    "index": 99,
+    "category": "armor",
+    "name": "huntress cloak",
+    "prompt_hints": "green leather, nature-themed, agile"
+  },
+  {
+    "id": "ROSE",
+    "index": 100,
+    "category": "quest",
+    "name": "dried rose",
+    "prompt_hints": "withered red rose, dried petals"
+  },
+  {
+    "id": "PICKAXE",
+    "index": 101,
+    "category": "quest",
+    "name": "pickaxe",
+    "prompt_hints": "mining pickaxe, iron head, wooden handle"
+  },
+  {
+    "id": "ORE",
+    "index": 102,
+    "category": "quest",
+    "name": "dark gold ore",
+    "prompt_hints": "raw ore chunk, dark gold, metallic, rough"
+  },
+  {
+    "id": "SKULL",
+    "index": 103,
+    "category": "quest",
+    "name": "corpse dust skull",
+    "prompt_hints": "human skull, bleached bone, spooky"
+  },
+  {
+    "id": "HOLDER",
+    "index": 104,
+    "category": "bag",
+    "name": "scroll holder",
+    "prompt_hints": "cylindrical leather case, scroll container"
+  },
+  {
+    "id": "CRYSTAL_CHEST",
+    "index": 105,
+    "category": "heap",
+    "name": "crystal chest",
+    "prompt_hints": "transparent crystal chest, magical, glowing"
+  },
+  {
+    "id": "BOOMERANG",
+    "index": 106,
+    "category": "weapon_missile",
+    "name": "boomerang",
+    "prompt_hints": "curved throwing weapon, wooden, returning"
+  },
+  {
+    "id": "TOMAHAWK",
+    "index": 107,
+    "category": "weapon_missile",
+    "name": "tomahawk",
+    "prompt_hints": "throwing axe, small, sharp blade"
+  },
+  {
+    "id": "INCENDIARY_DART",
+    "index": 108,
+    "category": "weapon_missile",
+    "name": "incendiary dart",
+    "prompt_hints": "fire-tipped dart, flaming, red glow"
+  },
+  {
+    "id": "CURARE_DART",
+    "index": 109,
+    "category": "weapon_missile",
+    "name": "curare dart",
+    "prompt_hints": "poison-tipped dart, green glow, toxic"
+  },
+  {
+    "id": "JAVELIN",
+    "index": 110,
+    "category": "weapon_missile",
+    "name": "javelin",
+    "prompt_hints": "throwing spear, long shaft, metal tip"
+  },
+  {
+    "id": "HOLSTER",
+    "index": 111,
+    "category": "bag",
+    "name": "wand holster",
+    "prompt_hints": "leather holster, wand-shaped slots"
+  },
+  {
+    "id": "PASTY",
+    "index": 112,
+    "category": "food",
+    "name": "pasty",
+    "prompt_hints": "meat pie, golden crust, baked"
+  },
+  {
+    "id": "MEAT",
+    "index": 113,
+    "category": "food",
+    "name": "raw meat",
+    "prompt_hints": "mystery meat, raw, red, uncooked"
+  },
+  {
+    "id": "STEAK",
+    "index": 114,
+    "category": "food",
+    "name": "cooked steak",
+    "prompt_hints": "chargrilled steak, brown, cooked"
+  },
+  {
+    "id": "OVERPRICED",
+    "index": 115,
+    "category": "food",
+    "name": "overpriced ration",
+    "prompt_hints": "fancy wrapped food, expensive, gold trim"
+  },
+  {
+    "id": "CARPACCIO",
+    "index": 116,
+    "category": "food",
+    "name": "frozen carpaccio",
+    "prompt_hints": "thin-sliced frozen meat, blue tint, icy"
+  },
+  {
+    "id": "SCROLL_WIPE_OUT",
+    "index": 117,
+    "category": "scroll",
+    "name": "wipe out rune scroll",
+    "prompt_hints": "destruction rune, red glowing symbol"
+  },
+  {
+    "id": "PHANTOM",
+    "index": 118,
+    "category": "quest",
+    "name": "phantom fish",
+    "prompt_hints": "ghostly translucent fish, ethereal"
+  },
+  {
+    "id": "HIDDEN",
+    "index": 119,
+    "category": "heap",
+    "name": "hidden heap",
+    "prompt_hints": "concealed items, partially visible, dusty"
+  },
+  {
+    "id": "VIAL",
+    "index": 120,
+    "category": "misc",
+    "name": "dew vial",
+    "prompt_hints": "small glass vial, dew collecting, clear"
+  },
+  {
+    "id": "DUST",
+    "index": 121,
+    "category": "quest",
+    "name": "corpse dust",
+    "prompt_hints": "pile of gray dust, ashes, death"
+  },
+  {
+    "id": "TOKEN",
+    "index": 122,
+    "category": "quest",
+    "name": "dwarf token",
+    "prompt_hints": "small metal token, dwarven craft, round"
+  },
+  {
+    "id": "WEIGHT",
+    "index": 123,
+    "category": "misc",
+    "name": "iron weight",
+    "prompt_hints": "heavy iron weight, curse, dark metal"
+  },
+  {
+    "id": "BOMB",
+    "index": 124,
+    "category": "misc",
+    "name": "bomb",
+    "prompt_hints": "round black bomb, fuse, explosive"
+  },
+  {
+    "id": "HONEYPOT",
+    "index": 125,
+    "category": "misc",
+    "name": "honeypot",
+    "prompt_hints": "clay pot, honey, golden liquid, bee"
+  },
+  {
+    "id": "KEYRING",
+    "index": 126,
+    "category": "bag",
+    "name": "keyring",
+    "prompt_hints": "metal ring with keys, jangling"
+  },
+  {
+    "id": "SMTH",
+    "index": 127,
+    "category": "misc",
+    "name": "something",
+    "prompt_hints": "unknown item, mysterious, question mark"
+  },
+  {
+    "id": "STALE_RATION",
+    "index": 128,
+    "category": "food",
+    "name": "stale ration",
+    "prompt_hints": "dried bread, crumbly, gray-brown, old"
+  },
+  {
+    "id": "APPLE",
+    "index": 129,
+    "category": "food",
+    "name": "fresh apple",
+    "prompt_hints": "red apple, shiny, fruit, round"
+  },
+  {
+    "id": "CHEESE_WEDGE",
+    "index": 130,
+    "category": "food",
+    "name": "cheese wedge",
+    "prompt_hints": "yellow cheese, triangular wedge, holes"
+  },
+  {
+    "id": "SMOKEY_BACON",
+    "index": 131,
+    "category": "food",
+    "name": "smokey bacon",
+    "prompt_hints": "bacon strip, red-brown, crispy, smoky"
+  },
+  {
+    "id": "HONEY_BREAD",
+    "index": 132,
+    "category": "food",
+    "name": "honey bread",
+    "prompt_hints": "golden bread, honey drizzle, warm, glowing"
+  },
+  {
+    "id": "MUSHROOM_SOUP",
+    "index": 133,
+    "category": "food",
+    "name": "mushroom soup",
+    "prompt_hints": "brown soup bowl, mushroom, steaming"
+  },
+  {
+    "id": "DRAGON_PEPPER",
+    "index": 134,
+    "category": "food",
+    "name": "dragon pepper",
+    "prompt_hints": "small red pepper, fiery, glowing hot"
+  },
+  {
+    "id": "FROST_BERRY",
+    "index": 135,
+    "category": "food",
+    "name": "frost berry",
+    "prompt_hints": "blue berry, icy, crystalline, cold"
+  },
+  {
+    "id": "ELVEN_WAYBREAD",
+    "index": 136,
+    "category": "food",
+    "name": "elven waybread",
+    "prompt_hints": "golden elvish bread, leaf-wrapped, glowing"
+  },
+  {
+    "id": "PIXIE_DUST_CAKE",
+    "index": 137,
+    "category": "food",
+    "name": "pixie dust cake",
+    "prompt_hints": "small cake, sparkly, pink, magical dust"
+  }
+]

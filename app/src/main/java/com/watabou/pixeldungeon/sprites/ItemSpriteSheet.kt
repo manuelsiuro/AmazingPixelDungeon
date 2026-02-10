@@ -124,6 +124,17 @@ object ItemSpriteSheet {
     const val STEAK = 114
     const val OVERPRICED = 115
     const val CARPACCIO = 116
+    // Food (new)
+    const val STALE_RATION = 128
+    const val APPLE = 129
+    const val CHEESE_WEDGE = 130
+    const val SMOKEY_BACON = 131
+    const val HONEY_BREAD = 132
+    const val MUSHROOM_SOUP = 133
+    const val DRAGON_PEPPER = 134
+    const val FROST_BERRY = 135
+    const val ELVEN_WAYBREAD = 136
+    const val PIXIE_DUST_CAKE = 137
     // Bags
     const val POUCH = 83
     const val HOLDER = 104

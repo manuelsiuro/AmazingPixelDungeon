@@ -15,6 +15,9 @@ import com.watabou.pixeldungeon.items.armor.ScaleArmor
 import com.watabou.pixeldungeon.items.bags.ScrollHolder
 import com.watabou.pixeldungeon.items.bags.SeedPouch
 import com.watabou.pixeldungeon.items.bags.WandHolster
+import com.watabou.pixeldungeon.items.food.CheeseWedge
+import com.watabou.pixeldungeon.items.food.DragonPepper
+import com.watabou.pixeldungeon.items.food.FrostBerry
 import com.watabou.pixeldungeon.items.food.OverpricedRation
 import com.watabou.pixeldungeon.items.potions.PotionOfHealing
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfIdentify
@@ -76,12 +79,15 @@ object ShopPainter : Painter() {
                 items.add(MailArmor().identify())
                 items.add(ScrollHolder())
                 items.add(Weightstone())
+                items.add(FrostBerry())
             }
             16 -> {
                 items.add((if (Random.Int(2) == 0) Longsword() else BattleAxe()).identify())
                 items.add(ScaleArmor().identify())
                 items.add(WandHolster())
                 items.add(Weightstone())
+                items.add(FrostBerry())
+                items.add(DragonPepper())
             }
             21 -> {
                 when (Random.Int(3)) {
@@ -91,6 +97,7 @@ object ShopPainter : Painter() {
                 }
                 items.add(Torch())
                 items.add(Torch())
+                items.add(DragonPepper())
             }
         }
         items.add(PotionOfHealing())
@@ -103,6 +110,7 @@ object ShopPainter : Painter() {
         Generator.random(Generator.Category.SCROLL)?.let { items.add(it) }
         items.add(OverpricedRation())
         items.add(OverpricedRation())
+        items.add(CheeseWedge())
         items.add(Ankh())
         val range = items.toTypedArray()
         Random.shuffle(range)
