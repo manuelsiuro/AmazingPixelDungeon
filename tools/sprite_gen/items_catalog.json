@@ -964,5 +964,131 @@
     "category": "food",
     "name": "pixie dust cake",
     "prompt_hints": "small cake, sparkly, pink, magical dust"
+  },
+  {
+    "id": "WHIP",
+    "index": 138,
+    "category": "weapon_melee",
+    "name": "leather whip",
+    "prompt_hints": "braided leather, brown, curled"
+  },
+  {
+    "id": "SCIMITAR",
+    "index": 139,
+    "category": "weapon_melee",
+    "name": "scimitar",
+    "prompt_hints": "curved blade, steel, golden hilt"
+  },
+  {
+    "id": "HALBERD",
+    "index": 140,
+    "category": "weapon_melee",
+    "name": "halberd",
+    "prompt_hints": "axe on long pole, steel, sharp"
+  },
+  {
+    "id": "GREATAXE",
+    "index": 141,
+    "category": "weapon_melee",
+    "name": "greataxe",
+    "prompt_hints": "large double axe, dark steel"
+  },
+  {
+    "id": "SMOKE_BOMB",
+    "index": 142,
+    "category": "misc",
+    "name": "smoke bomb",
+    "prompt_hints": "small black sphere, smoking fuse"
+  },
+  {
+    "id": "HOLY_WATER",
+    "index": 143,
+    "category": "misc",
+    "name": "holy water",
+    "prompt_hints": "glass vial, blue-white liquid, holy"
+  },
+  {
+    "id": "THROWING_NET",
+    "index": 144,
+    "category": "misc",
+    "name": "throwing net",
+    "prompt_hints": "rope net, brown, weighted edges"
+  },
+  {
+    "id": "THROWING_KNIFE",
+    "index": 145,
+    "category": "weapon_missile",
+    "name": "throwing knife",
+    "prompt_hints": "small blade, sleek, steel"
+  },
+  {
+    "id": "BOLAS",
+    "index": 146,
+    "category": "weapon_missile",
+    "name": "bolas",
+    "prompt_hints": "three balls on cord, brown"
+  },
+  {
+    "id": "EXPLOSIVE_BOLT",
+    "index": 147,
+    "category": "weapon_missile",
+    "name": "explosive bolt",
+    "prompt_hints": "bolt with red tip, glowing fuse"
+  },
+  {
+    "id": "SEED_THORNVINE",
+    "index": 148,
+    "category": "seed",
+    "name": "thornvine",
+    "prompt_hints": "green seed, thorny, red barbs"
+  },
+  {
+    "id": "SEED_MISTBLOOM",
+    "index": 149,
+    "category": "seed",
+    "name": "mistbloom",
+    "prompt_hints": "white seed, misty, pale"
+  },
+  {
+    "id": "SEED_BRIGHTCAP",
+    "index": 150,
+    "category": "seed",
+    "name": "brightcap",
+    "prompt_hints": "golden seed, luminous, round"
+  },
+  {
+    "id": "SEED_VENOMROOT",
+    "index": 151,
+    "category": "seed",
+    "name": "venomroot",
+    "prompt_hints": "green seed, toxic, purple veins"
+  },
+  {
+    "id": "POTION_ROSE",
+    "index": 152,
+    "category": "potion",
+    "name": "rose",
+    "prompt_hints": "pink liquid, rosy glow"
+  },
+  {
+    "id": "POTION_PEARL",
+    "index": 153,
+    "category": "potion",
+    "name": "pearl",
+    "prompt_hints": "white liquid, pearlescent shimmer"
+  },
+  {
+    "id": "SCROLL_ALGIZ",
+    "index": 154,
+    "category": "scroll",
+    "name": "algiz rune scroll",
+    "prompt_hints": "protection rune, Y-shaped symbol"
+  },
+  {
+    "id": "SCROLL_THURISAZ",
+    "index": 155,
+    "category": "scroll",
+    "name": "thurisaz rune scroll",
+    "prompt_hints": "thorn rune, pointed symbol"
   }
 ]

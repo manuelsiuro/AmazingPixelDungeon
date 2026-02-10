@@ -36,8 +36,8 @@ def load_pipeline(model_key=DEFAULT_MODEL, device=None):
     model_id = model_cfg["model_id"]
     dtype = torch.float16 if model_cfg["dtype"] == "float16" else torch.float32
 
-    # CPU doesn't support float16
-    if device == "cpu":
+    # CPU and MPS don't reliably support float16 (MPS produces NaN values)
+    if device in ("cpu", "mps"):
         dtype = torch.float32
 
     print(f"Loading model '{model_id}' on {device} ({dtype})...")

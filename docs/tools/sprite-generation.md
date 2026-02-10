@@ -12,7 +12,7 @@ Generate **new item sprites** (weapons, armor, potions, food, scrolls, etc.) fro
 - ~4 GB download (one-time, cached at `~/.cache/huggingface/`)
 - ~4-6 GB runtime memory
 - Trigger word: `"pixelsprite"`
-- ~2-3 sec per sprite at 128x128 generation resolution on Apple Silicon (MPS)
+- ~10-15 sec per sprite at 512x512 generation resolution on Apple Silicon (MPS)
 
 ### Optional: SDXL + `nerijs/pixel-art-xl` LoRA
 - ~12 GB download, 8-10 GB runtime
@@ -37,11 +37,11 @@ tools/
 
 ## Post-Processing Pipeline
 
-Raw 128x128 diffusion output goes through 8 steps to become a game-ready 16x16 sprite:
+Raw 512x512 diffusion output goes through 8 steps to become a game-ready 16x16 sprite:
 
 1. **Background removal** — flood-fill from corners to detect and zero-out background
 2. **Center crop** — find bounding box of opaque content, center within canvas
-3. **Downscale** — `Image.resize((16, 16), Image.NEAREST)` preserves pixel crispness
+3. **Downscale** — `Image.resize((16, 16), Image.LANCZOS)` for clean averaged colors
 4. **Palette reduction** — median-cut quantize to 12-16 colors per sprite
 5. **Reference palette mapping** — snap colors to nearest in extracted game palette (Euclidean RGB distance)
 6. **Alpha cleanup** — 3-level quantization: 0 (transparent), 102/0x66 (semi-transparent shadow), 255 (opaque)
@@ -209,30 +209,35 @@ Each category has a tuned prompt template with the `pixelsprite` trigger word:
 
 | Category | Template Pattern |
 |----------|-----------------|
-| `weapon_melee` | `pixelsprite {name}, rpg weapon icon, fantasy, metallic, top-down, centered, single item, pixel art, 16-bit` |
-| `armor` | `pixelsprite {name}, rpg armor icon, fantasy, metallic, centered, single item, pixel art, 16-bit` |
-| `potion` | `pixelsprite {color} potion bottle, glass flask, glowing liquid, rpg item, centered, pixel art, 16-bit` |
-| `scroll` | `pixelsprite rolled parchment scroll with {rune} rune, rpg item, centered, pixel art, 16-bit` |
+| `weapon_melee` | `pixelsprite {name}, rpg item icon, simple flat colors, centered, single object, black background, pixel art, 16-bit` |
+| `weapon_missile` | `pixelsprite {name}, rpg item icon, simple flat colors, centered, single object, black background, pixel art, 16-bit` |
+| `armor` | `pixelsprite {name}, rpg armor icon, simple flat colors, centered, single object, black background, pixel art, 16-bit` |
+| `potion` | `pixelsprite {color} potion bottle, rpg item icon, simple flat colors, centered, single object, black background, pixel art, 16-bit` |
+| `scroll` | `pixelsprite {name}, rolled parchment, rpg item icon, simple flat colors, centered, single object, black background, pixel art, 16-bit` |
 | `ring` | `pixelsprite {gem} ring, jewelry, rpg item, shiny, centered, pixel art, 16-bit` |
 | `wand` | `pixelsprite {wood} wooden wand, magic, glowing tip, rpg item, centered, pixel art, 16-bit` |
 | `food` | `pixelsprite {name}, rpg food item, centered, pixel art, 16-bit` |
-| `seed` | `pixelsprite {plant} seed, small, nature, rpg item, centered, pixel art, 16-bit` |
+| `seed` | `pixelsprite {plant} seed, rpg item icon, simple flat colors, centered, single object, black background, pixel art, 16-bit` |
 | `key` | `pixelsprite {material} key, rpg item, centered, pixel art, 16-bit` |
-| `misc` | `pixelsprite {name}, rpg item icon, fantasy, centered, pixel art, 16-bit` |
+| `misc` | `pixelsprite {name}, rpg item icon, simple flat colors, centered, single object, black background, pixel art, 16-bit` |
 
 ### Negative Prompt
 
 Applied to all generations:
 ```
-3d render, realistic, blurry, photograph, text, watermark, signature, smooth, anti-aliased
+3d render, realistic, blurry, photograph, text, watermark, signature, smooth, anti-aliased, multiple items, border, frame, background pattern, gradient, shiny, reflective, detailed shading, complex lighting
 ```
+
+### Auto-Retry on QA Failure
+
+When a generated sprite fails QA checks (transparency ratio, color count, outline, etc.), the tool automatically retries up to 3 times with different seeds (offset +1000 per attempt). This handles occasional bad generations without manual intervention.
 
 ### Tips for Good Results
 
-- Keep descriptions concrete and visual: "steel sword with crossguard" > "a weapon"
-- Include material descriptors: "iron", "wooden", "crystal", "leather"
-- Specify color when it matters: "blue potion", "golden key"
-- Use `prompt_hints` in the catalog for item-specific details
+- Keep `prompt_hints` short (2-3 simple physical descriptors): "curved blade, steel, golden hilt" > "curved blade, arabian sword, gleaming steel, golden hilt"
+- Use material and color descriptors: "iron", "wooden", "brown", "steel"
+- Avoid abstract/mechanic words: "heavy", "two-handed", "entangling" produce noise
+- Avoid style modifiers: "fantasy", "metallic", "glowing" cause gradients that downscale poorly
 - Seeds ensure reproducibility — record good seeds for items you like
 
 ## Quality Checks
@@ -251,10 +256,10 @@ Automated QA validates each sprite:
 
 | Operation | Time |
 |-----------|------|
-| Single sprite (SD 1.5) | ~2-3 sec |
-| Full sheet (128 sprites) | ~5-7 min |
+| Single sprite (SD 1.5, 512x512) | ~10-15 sec |
+| Full sheet (128 sprites) | ~25-35 min |
 | Post-processing per sprite | <100ms |
-| Full sheet with QA | ~8 min total |
+| Full sheet with QA + retries | ~40 min total |
 
 ## Dependencies
 

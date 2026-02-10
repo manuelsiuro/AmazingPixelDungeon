@@ -15,8 +15,8 @@ PALETTE_CACHE = os.path.join(OUTPUT_DIR, "palette_cache.json")
 # --- Sprite Sheet Constants ---
 SPRITE_SIZE = 16
 SHEET_COLS = 8
-SHEET_ROWS = 16  # Current rows in items.png (128 slots)
-GENERATION_SIZE = 128  # Generate at this resolution, then downscale
+SHEET_ROWS = 20  # Current rows in items.png (160 slots)
+GENERATION_SIZE = 512  # SD 1.5 native resolution; downscaled to 16x16 in post-processing
 
 # --- Model Configurations ---
 MODELS = {
@@ -43,16 +43,16 @@ DEFAULT_MODEL = "sd15"
 # {name} and {prompt_hints} are filled from items_catalog.json
 CATEGORY_PROMPTS = {
     "weapon_melee": (
-        "{trigger} {name}, rpg weapon icon, fantasy, metallic, "
-        "top-down, centered, single item, pixel art, 16-bit, {prompt_hints}"
+        "{trigger} {name}, rpg item icon, simple flat colors, "
+        "centered, single object, black background, pixel art, 16-bit, {prompt_hints}"
     ),
     "weapon_missile": (
-        "{trigger} {name}, rpg projectile icon, fantasy, sharp, "
-        "top-down, centered, single item, pixel art, 16-bit, {prompt_hints}"
+        "{trigger} {name}, rpg item icon, simple flat colors, "
+        "centered, single object, black background, pixel art, 16-bit, {prompt_hints}"
     ),
     "armor": (
-        "{trigger} {name}, rpg armor icon, fantasy, metallic, "
-        "centered, single item, pixel art, 16-bit, {prompt_hints}"
+        "{trigger} {name}, rpg armor icon, simple flat colors, "
+        "centered, single object, black background, pixel art, 16-bit, {prompt_hints}"
     ),
     "wand": (
         "{trigger} {name} wooden wand, magic, glowing tip, "
@@ -63,16 +63,16 @@ CATEGORY_PROMPTS = {
         "centered, pixel art, 16-bit, {prompt_hints}"
     ),
     "potion": (
-        "{trigger} {name} potion bottle, glass flask, glowing liquid, "
-        "rpg item, centered, pixel art, 16-bit, {prompt_hints}"
+        "{trigger} {name} potion bottle, rpg item icon, simple flat colors, "
+        "centered, single object, black background, pixel art, 16-bit, {prompt_hints}"
     ),
     "scroll": (
-        "{trigger} rolled parchment scroll, {name}, "
-        "rpg item, centered, pixel art, 16-bit, {prompt_hints}"
+        "{trigger} {name}, rolled parchment, rpg item icon, simple flat colors, "
+        "centered, single object, black background, pixel art, 16-bit, {prompt_hints}"
     ),
     "seed": (
-        "{trigger} {name} seed, small, nature, "
-        "rpg item, centered, pixel art, 16-bit, {prompt_hints}"
+        "{trigger} {name} seed, rpg item icon, simple flat colors, "
+        "centered, single object, black background, pixel art, 16-bit, {prompt_hints}"
     ),
     "food": (
         "{trigger} {name}, rpg food item, "
@@ -95,14 +95,15 @@ CATEGORY_PROMPTS = {
         "centered, pixel art, 16-bit, {prompt_hints}"
     ),
     "misc": (
-        "{trigger} {name}, rpg item icon, fantasy, "
-        "centered, pixel art, 16-bit, {prompt_hints}"
+        "{trigger} {name}, rpg item icon, simple flat colors, "
+        "centered, single object, black background, pixel art, 16-bit, {prompt_hints}"
     ),
 }
 
 NEGATIVE_PROMPT = (
     "3d render, realistic, blurry, photograph, text, watermark, signature, "
-    "smooth, anti-aliased, multiple items, border, frame, background pattern"
+    "smooth, anti-aliased, multiple items, border, frame, background pattern, "
+    "gradient, shiny, reflective, detailed shading, complex lighting"
 )
 
 # --- Post-Processing ---

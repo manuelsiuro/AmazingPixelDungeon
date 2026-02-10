@@ -96,8 +96,8 @@ def center_crop(image):
 
 
 def downscale(image, target_size=SPRITE_SIZE):
-    """Step 3: Downscale to target size using nearest-neighbor interpolation."""
-    return image.resize((target_size, target_size), Image.NEAREST)
+    """Step 3: Downscale to target size using Lanczos for clean averaging."""
+    return image.resize((target_size, target_size), Image.LANCZOS)
 
 
 def reduce_palette(image, max_colors=SPRITE_MAX_COLORS):

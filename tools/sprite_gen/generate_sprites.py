@@ -195,9 +195,16 @@ def cmd_generate(args):
         if args.seed is not None:
             item_seed = args.seed + idx
 
-        sprite, qa_passed, issues = generate_single(
-            pipeline, device, item, args.model, item_seed, palette
-        )
+        # Retry with different seeds on QA failure
+        max_retries = 3
+        for attempt in range(max_retries):
+            current_seed = item_seed + (attempt * 1000) if item_seed else None
+            sprite, qa_passed, issues = generate_single(
+                pipeline, device, item, args.model, current_seed, palette
+            )
+            if qa_passed or attempt == max_retries - 1:
+                break
+            print(f"  Retry {attempt + 1}/{max_retries} (QA failed, trying new seed)...")
 
         generated_sprites[idx] = sprite
         qa_results[item_id] = (qa_passed, issues)
