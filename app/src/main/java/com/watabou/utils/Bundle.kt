@@ -47,10 +47,7 @@ class Bundle {
     }
     private fun get(): Bundlable? {
         try {
-            var clName = getString(CLASS_NAME)
-            if (aliases.containsKey(clName)) {
-                clName = aliases[clName] ?: clName
-            }
+            val clName = getString(CLASS_NAME)
             val cl = Class.forName(clName)
             val `object` = cl.getDeclaredConstructor().newInstance() as Bundlable
             `object`.restoreFromBundle(this)
@@ -218,7 +215,6 @@ class Bundle {
     }
     companion object {
         private const val CLASS_NAME = "__className"
-        private val aliases = HashMap<String, String>()
         fun read(stream: InputStream): Bundle? {
             try {
                 val reader = BufferedReader(InputStreamReader(stream))
@@ -252,9 +248,6 @@ class Bundle {
             } catch (e: IOException) {
                 false
             }
-        }
-        fun addAlias(cl: Class<*>, alias: String) {
-            aliases[alias] = cl.name
         }
     }
 }
