@@ -95,7 +95,9 @@ abstract class Scroll : Item() {
             ScrollOfPsionicBlast::class.java,
             ScrollOfMirrorImage::class.java,
             ScrollOfUpgrade::class.java,
-            ScrollOfEnchantment::class.java
+            ScrollOfEnchantment::class.java,
+            ScrollOfTransmutation::class.java,
+            ScrollOfForesight::class.java
         )
         private val runes = arrayOf(
             "KAUNAN",
@@ -109,7 +111,9 @@ abstract class Scroll : Item() {
             "NAUDIZ",
             "BERKANAN",
             "ODAL",
-            "TIWAZ"
+            "TIWAZ",
+            "ALGIZ",
+            "THURISAZ"
         )
         private val images = arrayOf(
             ItemSpriteSheet.SCROLL_KAUNAN,
@@ -123,7 +127,9 @@ abstract class Scroll : Item() {
             ItemSpriteSheet.SCROLL_NAUDIZ,
             ItemSpriteSheet.SCROLL_BERKANAN,
             ItemSpriteSheet.SCROLL_ODAL,
-            ItemSpriteSheet.SCROLL_TIWAZ
+            ItemSpriteSheet.SCROLL_TIWAZ,
+            ItemSpriteSheet.SCROLL_ALGIZ,
+            ItemSpriteSheet.SCROLL_THURISAZ
         )
         private var handler: ItemStatusHandler<Scroll>? = null
         fun initLabels() {

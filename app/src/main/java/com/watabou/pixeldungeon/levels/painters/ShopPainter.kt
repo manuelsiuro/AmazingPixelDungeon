@@ -3,9 +3,13 @@ import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.actors.mobs.npcs.ImpShopkeeper
 import com.watabou.pixeldungeon.actors.mobs.npcs.Shopkeeper
 import com.watabou.pixeldungeon.items.Ankh
+import com.watabou.pixeldungeon.items.Bomb
 import com.watabou.pixeldungeon.items.Generator
 import com.watabou.pixeldungeon.items.Heap
+import com.watabou.pixeldungeon.items.HolyWater
 import com.watabou.pixeldungeon.items.Item
+import com.watabou.pixeldungeon.items.SmokeBomb
+import com.watabou.pixeldungeon.items.ThrowingNet
 import com.watabou.pixeldungeon.items.Torch
 import com.watabou.pixeldungeon.items.Weightstone
 import com.watabou.pixeldungeon.items.armor.LeatherArmor
@@ -73,6 +77,9 @@ object ShopPainter : Painter() {
                 items.add(LeatherArmor().identify())
                 items.add(SeedPouch())
                 items.add(Weightstone())
+                items.add(ThrowingNet().apply { quantity = 2 })
+                Generator.random(Generator.Category.SEED)?.let { items.add(it) }
+                Generator.random(Generator.Category.SEED)?.let { items.add(it) }
             }
             11 -> {
                 items.add((if (Random.Int(2) == 0) Sword() else Mace()).identify())
@@ -80,6 +87,8 @@ object ShopPainter : Painter() {
                 items.add(ScrollHolder())
                 items.add(Weightstone())
                 items.add(FrostBerry())
+                items.add(SmokeBomb().apply { quantity = 2 })
+                items.add(HolyWater().apply { quantity = 2 })
             }
             16 -> {
                 items.add((if (Random.Int(2) == 0) Longsword() else BattleAxe()).identify())
@@ -88,6 +97,10 @@ object ShopPainter : Painter() {
                 items.add(Weightstone())
                 items.add(FrostBerry())
                 items.add(DragonPepper())
+                for (i in 0 until 5) {
+                    Generator.random(Generator.Category.WEAPON)?.let { items.add(it) }
+                }
+                items.add(Ankh())
             }
             21 -> {
                 when (Random.Int(3)) {
@@ -98,6 +111,7 @@ object ShopPainter : Painter() {
                 items.add(Torch())
                 items.add(Torch())
                 items.add(DragonPepper())
+                items.add(Bomb().apply { quantity = 3 })
             }
         }
         items.add(PotionOfHealing())

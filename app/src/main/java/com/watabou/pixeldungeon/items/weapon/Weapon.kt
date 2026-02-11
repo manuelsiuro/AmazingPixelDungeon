@@ -162,9 +162,9 @@ abstract class Weapon : KindOfWeapon() {
             private val enchants = arrayOf<Class<*>>(
                 Fire::class.java, Poison::class.java, Death::class.java, Paralysis::class.java, Leech::class.java,
                 Slow::class.java, Shock::class.java, Instability::class.java, Horror::class.java, Luck::class.java,
-                Tempering::class.java
+                Tempering::class.java, Vorpal::class.java, Chaining::class.java, Draining::class.java
             )
-            private val chances = floatArrayOf(10f, 10f, 1f, 2f, 1f, 2f, 6f, 3f, 2f, 2f, 3f)
+            private val chances = floatArrayOf(10f, 10f, 1f, 2f, 1f, 2f, 6f, 3f, 2f, 2f, 3f, 2f, 3f, 2f)
             fun random(): Enchantment? {
                 try {
                     return enchants[Random.chances(chances)].getDeclaredConstructor().newInstance() as Enchantment

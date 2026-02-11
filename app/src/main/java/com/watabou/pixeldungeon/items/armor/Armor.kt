@@ -264,9 +264,10 @@ abstract class Armor(val tier: Int) : EquipableItem() {
             private val glyphs = arrayOf<Class<*>>(
                 Bounce::class.java, Affection::class.java, AntiEntropy::class.java, Multiplicity::class.java,
                 Potential::class.java, Metabolism::class.java, Stench::class.java, Viscosity::class.java,
-                Displacement::class.java, Entanglement::class.java, AutoRepair::class.java
+                Displacement::class.java, Entanglement::class.java, AutoRepair::class.java,
+                Fortification::class.java, Thorny::class.java, Swiftness::class.java
             )
-            private val chances = floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)
+            private val chances = floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)
             fun random(): Glyph? {
                 try {
                     return glyphs[Random.chances(chances)].getDeclaredConstructor().newInstance() as Glyph

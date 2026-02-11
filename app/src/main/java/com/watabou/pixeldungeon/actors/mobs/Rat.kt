@@ -1,6 +1,7 @@
 package com.watabou.pixeldungeon.actors.mobs
 import com.watabou.pixeldungeon.actors.Char
 import com.watabou.pixeldungeon.actors.mobs.npcs.Ghost
+import com.watabou.pixeldungeon.items.Generator
 import com.watabou.pixeldungeon.sprites.RatSprite
 import com.watabou.utils.Random
 open class Rat : Mob() {
@@ -11,6 +12,9 @@ open class Rat : Mob() {
         HP = HT
         defenseSkill = 3
         maxLvl = 5
+
+        loot = Generator.Category.FOOD
+        lootChance = 0.1f
     }
     override fun damageRoll(): Int {
         return Random.NormalIntRange(1, 5)

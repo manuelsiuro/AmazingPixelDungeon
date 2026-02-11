@@ -157,4 +157,34 @@ object ItemSpriteSheet {
     const val WEIGHT = 123
     const val BOMB = 124
     const val HONEYPOT = 125
+
+    // New melee weapons (TODO: create unique sprites in items.png)
+    const val WHIP = 138
+    const val SCIMITAR = 139
+    const val HALBERD = 140
+    const val GREATAXE = 141
+
+    // New throwable consumables
+    const val SMOKE_BOMB = 142
+    const val HOLY_WATER = 143
+    const val THROWING_NET = 144
+
+    // New missile weapons
+    const val THROWING_KNIFE = 145
+    const val BOLAS = 146
+    const val EXPLOSIVE_BOLT = 147
+
+    // New plants/seeds
+    const val SEED_THORNVINE = 148
+    const val SEED_MISTBLOOM = 149
+    const val SEED_BRIGHTCAP = 150
+    const val SEED_VENOMROOT = 151
+
+    // New potions
+    const val POTION_ROSE = 152
+    const val POTION_PEARL = 153
+
+    // New scrolls
+    const val SCROLL_ALGIZ = 154
+    const val SCROLL_THURISAZ = 155
 }

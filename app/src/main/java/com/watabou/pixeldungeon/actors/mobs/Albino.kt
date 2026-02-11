@@ -3,6 +3,7 @@ import com.watabou.pixeldungeon.Badges
 import com.watabou.pixeldungeon.actors.Char
 import com.watabou.pixeldungeon.actors.buffs.Bleeding
 import com.watabou.pixeldungeon.actors.buffs.Buffs
+import com.watabou.pixeldungeon.items.potions.PotionOfHealing
 import com.watabou.pixeldungeon.sprites.AlbinoSprite
 import com.watabou.utils.Random
 class Albino : Rat() {
@@ -11,6 +12,9 @@ class Albino : Rat() {
         spriteClass = AlbinoSprite::class.java
         HT = 15
         HP = HT
+
+        loot = PotionOfHealing()
+        lootChance = 0.25f
     }
     override fun die(src: Any?) {
         super.die(src)

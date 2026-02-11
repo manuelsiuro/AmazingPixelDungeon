@@ -2,6 +2,7 @@ package com.watabou.pixeldungeon.actors.mobs
 import com.watabou.noosa.tweeners.AlphaTweener
 import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.actors.Actor
+import com.watabou.pixeldungeon.items.Generator
 import com.watabou.pixeldungeon.actors.Char
 import com.watabou.pixeldungeon.actors.buffs.Terror
 import com.watabou.pixeldungeon.effects.particles.ShadowParticle
@@ -21,6 +22,9 @@ class Wraith : Mob() {
         HP = HT
         EXP = 0
         flying = true
+
+        loot = Generator.Category.SCROLL
+        lootChance = 0.15f
     }
     override fun storeInBundle(bundle: Bundle) {
         super.storeInBundle(bundle)

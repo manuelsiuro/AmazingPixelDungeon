@@ -3,12 +3,16 @@ import com.watabou.pixeldungeon.Badges
 import com.watabou.pixeldungeon.actors.Char
 import com.watabou.pixeldungeon.actors.buffs.Buffs
 import com.watabou.pixeldungeon.actors.buffs.Paralysis
+import com.watabou.pixeldungeon.items.Generator
 import com.watabou.pixeldungeon.sprites.SeniorSprite
 import com.watabou.utils.Random
 class Senior : Monk() {
     init {
         name = "senior monk"
         spriteClass = SeniorSprite::class.java
+
+        loot = Generator.Category.WAND
+        lootChance = 0.1f
     }
     override fun damageRoll(): Int {
         return Random.NormalIntRange(12, 20)

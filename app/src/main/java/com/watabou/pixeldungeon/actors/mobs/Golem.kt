@@ -1,6 +1,7 @@
 package com.watabou.pixeldungeon.actors.mobs
 import com.watabou.pixeldungeon.actors.Char
 import com.watabou.pixeldungeon.actors.buffs.Amok
+import com.watabou.pixeldungeon.items.Generator
 import com.watabou.pixeldungeon.actors.buffs.Sleep
 import com.watabou.pixeldungeon.actors.buffs.Terror
 import com.watabou.pixeldungeon.actors.mobs.npcs.Imp
@@ -17,6 +18,9 @@ class Golem : Mob() {
         defenseSkill = 18
         EXP = 12
         maxLvl = 22
+
+        loot = Generator.Category.RING
+        lootChance = 0.03f
     }
     override fun damageRoll(): Int {
         return Random.NormalIntRange(20, 40)

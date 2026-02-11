@@ -1,12 +1,16 @@
 package com.watabou.pixeldungeon.actors.mobs
 import com.watabou.pixeldungeon.Badges
 import com.watabou.pixeldungeon.actors.Char
+import com.watabou.pixeldungeon.items.potions.PotionOfToxicGas
 import com.watabou.pixeldungeon.sprites.AcidicSprite
 import com.watabou.utils.Random
 class Acidic : Scorpio() {
     init {
         name = "acidic scorpio"
         spriteClass = AcidicSprite::class.java
+
+        loot = PotionOfToxicGas()
+        lootChance = 0.3f
     }
     override fun defenseProc(enemy: Char, damage: Int): Int {
         val dmg = Random.IntRange(0, damage)

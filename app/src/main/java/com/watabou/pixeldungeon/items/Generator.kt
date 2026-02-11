@@ -67,9 +67,11 @@ object Generator {
             ScrollOfPsionicBlast::class.java,
             ScrollOfMirrorImage::class.java,
             ScrollOfUpgrade::class.java,
-            ScrollOfEnchantment::class.java
+            ScrollOfEnchantment::class.java,
+            ScrollOfTransmutation::class.java,
+            ScrollOfForesight::class.java
         )
-        Category.SCROLL.probs = floatArrayOf(30f, 10f, 15f, 10f, 15f, 12f, 8f, 8f, 4f, 6f, 0f, 1f)
+        Category.SCROLL.probs = floatArrayOf(30f, 10f, 15f, 10f, 15f, 12f, 8f, 8f, 4f, 6f, 0f, 1f, 4f, 8f)
         Category.POTION.classes = arrayOf(
             PotionOfHealing::class.java,
             PotionOfExperience::class.java,
@@ -82,9 +84,11 @@ object Generator {
             PotionOfPurity::class.java,
             PotionOfInvisibility::class.java,
             PotionOfMight::class.java,
-            PotionOfFrost::class.java
+            PotionOfFrost::class.java,
+            PotionOfSpeed::class.java,
+            PotionOfShielding::class.java
         )
-        Category.POTION.probs = floatArrayOf(45f, 4f, 15f, 10f, 15f, 10f, 0f, 20f, 12f, 10f, 0f, 10f)
+        Category.POTION.probs = floatArrayOf(45f, 4f, 15f, 10f, 15f, 10f, 0f, 20f, 12f, 10f, 0f, 10f, 8f, 10f)
         Category.WAND.classes = arrayOf(
             WandOfTeleportation::class.java,
             WandOfSlowness::class.java,
@@ -119,9 +123,19 @@ object Generator {
             CurareDart::class.java,
             Shuriken::class.java,
             Boomerang::class.java,
-            Tamahawk::class.java
+            Tamahawk::class.java,
+            Whip::class.java,
+            Scimitar::class.java,
+            Halberd::class.java,
+            Greataxe::class.java,
+            ThrowingKnife::class.java,
+            Bolas::class.java,
+            ExplosiveBolt::class.java
         )
-        Category.WEAPON.probs = floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0f, 0f, 1f, 1f, 1f, 1f, 0f, 1f)
+        Category.WEAPON.probs = floatArrayOf(
+            1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0f, 0f, 1f, 1f, 1f, 1f, 0f, 1f,
+            1f, 1f, 1f, 1f, 1f, 1f, 1f
+        )
         Category.ARMOR.classes = arrayOf(
             ClothArmor::class.java,
             LeatherArmor::class.java,
@@ -166,14 +180,21 @@ object Generator {
             Sungrass.Seed::class.java,
             Earthroot.Seed::class.java,
             Fadeleaf.Seed::class.java,
-            Rotberry.Seed::class.java
+            Rotberry.Seed::class.java,
+            Thornvine.Seed::class.java,
+            Mistbloom.Seed::class.java,
+            Brightcap.Seed::class.java,
+            Venomroot.Seed::class.java
         )
-        Category.SEED.probs = floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 0f)
+        Category.SEED.probs = floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 0f, 1f, 1f, 1f, 1f)
         Category.MISC.classes = arrayOf(
             Bomb::class.java,
-            Honeypot::class.java
+            Honeypot::class.java,
+            SmokeBomb::class.java,
+            HolyWater::class.java,
+            ThrowingNet::class.java
         )
-        Category.MISC.probs = floatArrayOf(2f, 1f)
+        Category.MISC.probs = floatArrayOf(2f, 1f, 1.5f, 1f, 1.5f)
     }
     fun reset() {
         for (cat in Category.values()) {

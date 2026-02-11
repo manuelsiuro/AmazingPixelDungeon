@@ -61,7 +61,9 @@ open class Potion : Item() {
                             this is PotionOfMindVision ||
                             this is PotionOfStrength ||
                             this is PotionOfInvisibility ||
-                            this is PotionOfMight)
+                            this is PotionOfMight ||
+                            this is PotionOfSpeed ||
+                            this is PotionOfShielding)
         ) {
             GameScene.show(
                 object : WndOptions(TXT_BENEFICIAL, TXT_R_U_SURE_THROW, TXT_YES, TXT_NO) {
@@ -163,11 +165,14 @@ open class Potion : Item() {
             PotionOfPurity::class.java,
             PotionOfInvisibility::class.java,
             PotionOfMight::class.java,
-            PotionOfFrost::class.java
+            PotionOfFrost::class.java,
+            PotionOfSpeed::class.java,
+            PotionOfShielding::class.java
         )
         private val colors = arrayOf(
             "turquoise", "crimson", "azure", "jade", "golden", "magenta",
-            "charcoal", "ivory", "amber", "bistre", "indigo", "silver"
+            "charcoal", "ivory", "amber", "bistre", "indigo", "silver",
+            "rose", "pearl"
         )
         private val images = arrayOf(
             ItemSpriteSheet.POTION_TURQUOISE,
@@ -181,7 +186,9 @@ open class Potion : Item() {
             ItemSpriteSheet.POTION_AMBER,
             ItemSpriteSheet.POTION_BISTRE,
             ItemSpriteSheet.POTION_INDIGO,
-            ItemSpriteSheet.POTION_SILVER
+            ItemSpriteSheet.POTION_SILVER,
+            ItemSpriteSheet.POTION_ROSE,
+            ItemSpriteSheet.POTION_PEARL
         )
         private var handler: ItemStatusHandler<Potion>? = null
         fun initColors() {
