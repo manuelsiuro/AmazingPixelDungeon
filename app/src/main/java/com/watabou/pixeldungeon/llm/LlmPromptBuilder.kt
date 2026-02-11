@@ -2,13 +2,6 @@ package com.watabou.pixeldungeon.llm
 
 object LlmPromptBuilder {
 
-    private val NPC_PERSONALITIES = mapOf(
-        "sad ghost" to "You are melancholy and ethereal. You speak with pauses (ellipses). You are sorrowful and fading.",
-        "troll blacksmith" to "You are a gruff troll who speaks broken common tongue. You are impatient and blunt but fair.",
-        "old wandmaker" to "You are a wise elderly wizard, slightly confused but formal. You are polite and scholarly.",
-        "ambitious imp" to "You are a sly, deal-making imp. You speak quickly and persuasively. You love bargains."
-    )
-
     private val BOSS_PERSONALITIES = mapOf(
         "Goo" to "Mindless ooze. Gurgles and drips. Sounds, not words.",
         "Tengu" to "Master assassin. Cunning, theatrical, dark humor.",
@@ -17,196 +10,274 @@ object LlmPromptBuilder {
         "Yog-Dzewa" to "Imprisoned old god. Cosmic, alien, otherworldly whispers."
     )
 
-    fun npcDialog(npcName: String, questState: String, heroClass: String, depth: Int, originalText: String): String {
-        val personality = NPC_PERSONALITIES[npcName] ?: "You are a mysterious dungeon dweller."
-        return """You are $npcName in a dark fantasy dungeon. $personality
-You are speaking to a $heroClass on dungeon floor $depth.
-Rewrite this dialog in your voice, keep quest instructions intact.
-Keep _highlighted_ words in underscores. Under 3 sentences.
-And use underscore in your response and never change it by star *.
+    // --- NPC Dialog (with variety system) ---
+
+    fun npcDialog(
+        personality: NpcPersonality,
+        npcName: String,
+        heroClass: String,
+        depth: Int,
+        originalText: String,
+        encounterCount: Int,
+        situational: String,
+        classFlavor: String,
+        toneSuffix: String
+    ): String {
+        val regionTone = DialogContext.regionTone(depth)
+        val encounter = DialogContext.encounterContext(encounterCount)
+
+        // Build context lines — only include non-empty ones
+        val contextParts = listOfNotNull(
+            regionTone,
+            encounter.ifEmpty { null },
+            situational.ifEmpty { null },
+            classFlavor.ifEmpty { null }
+        ).joinToString(" ")
+
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+
+        return """${personality.toPromptLine(npcName)}
+Speaking to a $heroClass on floor $depth. $contextParts
+Rewrite in your voice, keep quest details. Under 3 sentences. Use _underscores_ for emphasis, never *.$toneDirective
 Original: "$originalText"
 Rewritten:"""
     }
 
-    fun floorNarration(regionName: String, depth: Int, heroClass: String, originalText: String): String {
-        return """Write atmospheric narration for a $heroClass entering $regionName (floor $depth).
-Base on this lore. 2-3 sentences, dark fantasy tone.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
+    // --- Floor Narration ---
+
+    fun floorNarration(
+        regionName: String,
+        depth: Int,
+        heroClass: String,
+        originalText: String,
+        seed: Int
+    ): String {
+        val tone = DialogContext.regionTone(depth)
+        val style = DialogContext.narrationStyle(seed)
+        val atmo = DialogContext.atmosphereWords(seed, depth)
+        val urgency = DialogContext.urgencyModifier(depth)
+        val urgencyLine = if (urgency.isNotEmpty()) " $urgency" else ""
+
+        return """Write atmospheric narration for a $heroClass entering the $atmo depths of $regionName (floor $depth).
+$tone.$urgencyLine $style
+2-3 sentences, dark fantasy. Use _underscores_ for emphasis, never *.
 Lore: "$originalText"
 Narration:"""
     }
 
-    fun itemDescription(itemName: String, itemType: String, level: Int, enchantment: String?, cursed: Boolean, originalDesc: String): String {
+    // --- Item Description ---
+
+    fun itemDescription(
+        itemName: String,
+        itemType: String,
+        level: Int,
+        enchantment: String?,
+        cursed: Boolean,
+        originalDesc: String,
+        seed: Int
+    ): String {
         val attrs = buildString {
             if (level > 0) append(" +$level")
             if (enchantment != null) append(" [$enchantment]")
             if (cursed) append(" [cursed]")
         }
-        return """Write a brief atmospheric description for: $itemName$attrs ($itemType).
-1-2 sentences, dark fantasy dungeon crawler.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
-Base description: "$originalDesc"
+        val cursedLine = if (cursed) " A dark aura clings to it." else ""
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+
+        return """Write a brief atmospheric description for: $itemName$attrs ($itemType).$cursedLine
+1-2 sentences, dark fantasy. Use _underscores_ for emphasis, never *.$toneDirective
+Base: "$originalDesc"
 Enhanced:"""
     }
 
-    fun combatNarration(originalMessage: String): String {
-        return """Rewrite this combat message in vivid dark fantasy style. One sentence max.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
+    // --- Combat Narration ---
+
+    fun combatNarration(originalMessage: String, seed: Int): String {
+        val style = DialogContext.combatStyle(seed)
+        return """Rewrite this combat message in dark fantasy style. $style One sentence max.
+Use _underscores_ for emphasis, never *.
 Original: "$originalMessage"
 Rewritten:"""
     }
 
-    // Phase 1: Story Moments
+    // --- Death Epitaph ---
 
     fun deathEpitaph(causeDesc: String, heroClass: String, depth: Int, heroLevel: Int): String {
         return """Level-$heroLevel $heroClass died on floor $depth. Cause: "$causeDesc".
 Dark fantasy epitaph, 1-2 sentences, solemn. Use _underscores_ for emphasis, never *.
-Only output the epitaph text, nothing else:"""
+Only output the epitaph text:"""
     }
 
-    fun introNarration(heroClass: String, originalText: String): String {
+    // --- Story Moments ---
+
+    fun introNarration(heroClass: String, originalText: String, seed: Int): String {
+        val style = DialogContext.narrationStyle(seed)
         return """Rewrite this game intro for a $heroClass entering a dangerous dungeon.
-Keep the core meaning: heroes have tried before, none found the Amulet of Yendor, and you feel ready. 
-2-3 sentences, dark fantasy tone.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
+Keep core meaning: heroes tried before, none found the Amulet of Yendor, you feel ready.
+2-3 sentences, dark fantasy. $style Use _underscores_ for emphasis, never *.
 Original: "$originalText"
 Rewritten:"""
     }
 
-    fun victoryNarration(heroClass: String, originalText: String): String {
+    fun victoryNarration(heroClass: String, originalText: String, seed: Int): String {
+        val style = DialogContext.narrationStyle(seed)
         return """Rewrite this victory text for a $heroClass who found the Amulet of Yendor.
-Keep the core meaning: you hold the amulet, its power can change everything, your life changes forever. 
-2-3 sentences, triumphant dark fantasy tone.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
+Keep core meaning: you hold the amulet, its power can change everything.
+2-3 sentences, triumphant dark fantasy. $style Use _underscores_ for emphasis, never *.
 Original: "$originalText"
 Rewritten:"""
     }
 
-    // Phase 2: Boss Encounters
+    // --- Boss Encounters ---
 
-    fun bossNotice(bossName: String, heroClass: String, depth: Int, fallback: String): String {
+    fun bossNotice(bossName: String, heroClass: String, depth: Int, fallback: String, seed: Int): String {
         val personality = BOSS_PERSONALITIES[bossName] ?: "A powerful dungeon boss."
-        return """You are $bossName, a dungeon boss on floor $depth. Personality: $personality
-A $heroClass has entered your domain. Write a short battle cry or notice (1 sentence max). 
-Match the personality closely.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
-Original line: "$fallback"
-Rewritten:"""
-    }
-
-    fun bossDeath(bossName: String, heroClass: String, fallback: String): String {
-        val personality = BOSS_PERSONALITIES[bossName] ?: "A powerful dungeon boss."
-        return """You are $bossName, a dying dungeon boss. Personality: $personality
-You have been defeated by a $heroClass. Write dying words (1 sentence max).
-Match the personality closely.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
-Original line: "$fallback"
-Rewritten:"""
-    }
-
-    fun bossSummon(bossName: String, fallback: String): String {
-        val personality = BOSS_PERSONALITIES[bossName] ?: "A powerful dungeon boss."
-        return """You are $bossName. Personality: $personality
-You are summoning undead minions to fight. 
-Write a summoning command (1 sentence max).
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
-Original line: "$fallback"
-Rewritten:"""
-    }
-
-    // Phase 3: Enhanced Atmosphere
-
-    fun levelFeeling(feelingType: String, regionName: String, depth: Int, heroClass: String, fallback: String): String {
-        return """Write an atmospheric one-sentence observation for a $heroClass on floor $depth of $regionName. 
-The feeling type is "$feelingType". Dark fantasy tone, evocative but brief.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+        return """You are $bossName, boss on floor $depth. $personality
+A $heroClass enters your domain. Battle cry or threat (1 sentence). Match personality.
+Use _underscores_ for emphasis, never *.$toneDirective
 Original: "$fallback"
 Rewritten:"""
     }
 
-    fun signTip(depth: Int, heroClass: String, fallbackTip: String): String {
-        return """Rewrite this dungeon sign tip as advice scratched into a weathered sign.
-Keep the gameplay advice intact but add dark fantasy flavor. One sentence.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
-Original tip: "$fallbackTip"
+    fun bossDeath(bossName: String, heroClass: String, fallback: String, seed: Int): String {
+        val personality = BOSS_PERSONALITIES[bossName] ?: "A powerful dungeon boss."
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+        return """You are $bossName, dying boss. $personality
+Defeated by a $heroClass. Dying words (1 sentence). Match personality.
+Use _underscores_ for emphasis, never *.$toneDirective
+Original: "$fallback"
 Rewritten:"""
     }
 
-    fun mobDescription(mobName: String, mobState: String, depth: Int, fallbackDesc: String): String {
-        return """Write an atmospheric bestiary entry for: $mobName (currently $mobState, floor $depth). 
-1-2 sentences, dark fantasy dungeon crawler tone.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
-Base description: "$fallbackDesc"
+    fun bossSummon(bossName: String, fallback: String, seed: Int): String {
+        val personality = BOSS_PERSONALITIES[bossName] ?: "A powerful dungeon boss."
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+        return """You are $bossName. $personality
+Summoning undead minions. Summoning command (1 sentence).
+Use _underscores_ for emphasis, never *.$toneDirective
+Original: "$fallback"
+Rewritten:"""
+    }
+
+    // --- Atmosphere ---
+
+    fun levelFeeling(
+        feelingType: String,
+        regionName: String,
+        depth: Int,
+        heroClass: String,
+        fallback: String,
+        seed: Int
+    ): String {
+        val tone = DialogContext.regionTone(depth)
+        val atmo = DialogContext.atmosphereWords(seed, depth)
+        return """Write an atmospheric one-sentence observation for a $heroClass on floor $depth of $regionName.
+Feeling: "$feelingType". $tone. The air is $atmo. Dark fantasy, evocative, brief.
+Use _underscores_ for emphasis, never *.
+Original: "$fallback"
+Rewritten:"""
+    }
+
+    fun signTip(depth: Int, heroClass: String, fallbackTip: String, seed: Int): String {
+        val tone = DialogContext.regionTone(depth)
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+        return """Rewrite as advice scratched into a weathered dungeon sign. $tone.
+Keep gameplay advice intact, add dark fantasy flavor. One sentence.
+Use _underscores_ for emphasis, never *.$toneDirective
+Original: "$fallbackTip"
+Rewritten:"""
+    }
+
+    fun mobDescription(
+        mobName: String,
+        mobState: String,
+        depth: Int,
+        fallbackDesc: String,
+        seed: Int
+    ): String {
+        val tone = DialogContext.regionTone(depth)
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+        return """Write a bestiary entry for: $mobName (currently $mobState, floor $depth).
+$tone. 1-2 sentences, dark fantasy. Use _underscores_ for emphasis, never *.$toneDirective
+Base: "$fallbackDesc"
 Enhanced:"""
     }
 
-    // Phase 4: Celebrations & Interactions
+    // --- Celebrations & Interactions ---
 
-    fun badgeText(badgeName: String, heroClass: String, fallbackDesc: String): String {
-        return """Write a brief celebratory achievement text for a $heroClass who earned: "$badgeName". 
-One sentence, triumphant tone.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
+    fun badgeText(badgeName: String, heroClass: String, fallbackDesc: String, seed: Int): String {
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+        return """Brief celebratory achievement text for a $heroClass who earned: "$badgeName".
+One sentence, triumphant. Use _underscores_ for emphasis, never *.$toneDirective
 Original: "$fallbackDesc"
 Rewritten:"""
     }
 
-    fun resurrectionText(heroClass: String, fallback: String): String {
-        return """Rewrite this resurrection message for a $heroClass brought back from death by an Ankh. 
-Keep the choice element (accept or refuse). 1-2 sentences, dramatic dark fantasy tone.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
+    fun resurrectionText(heroClass: String, fallback: String, seed: Int): String {
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+        return """Rewrite this resurrection message for a $heroClass brought back by an Ankh.
+Keep the choice element (accept or refuse). 1-2 sentences, dramatic dark fantasy.
+Use _underscores_ for emphasis, never *.$toneDirective
 Original: "$fallback"
 Rewritten:"""
     }
 
-    fun shopkeeperGreeting(shopkeeperName: String, heroClass: String, depth: Int, fallback: String): String {
+    fun shopkeeperGreeting(
+        shopkeeperName: String,
+        heroClass: String,
+        depth: Int,
+        fallback: String,
+        seed: Int
+    ): String {
         val personality = if (shopkeeperName == "ambitious imp")
-            "A sly, fast-talking imp merchant who loves a good deal."
+            "Sly, fast-talking imp merchant who loves deals."
         else
-            "A stout, pragmatic shopkeeper doing business in a dangerous dungeon."
-        return """You are a $shopkeeperName. $personality
-A $heroClass enters your shop on floor $depth. Write a brief greeting (1 sentence).
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
+            "Stout, pragmatic shopkeeper in a dangerous dungeon."
+        val tone = DialogContext.regionTone(depth)
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+        return """You are $shopkeeperName. $personality $tone.
+A $heroClass enters your shop. Brief greeting (1 sentence).
+Use _underscores_ for emphasis, never *.$toneDirective
 Original: "$fallback"
 Rewritten:"""
     }
 
-    // Phase 5: Content Polish
+    // --- Content Polish ---
 
-    fun plantDescription(plantName: String, fallbackDesc: String): String {
-        return """Write an atmospheric description for a dungeon plant: $plantName. 1-2 sentences, dark fantasy herbalism tone.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
-Base description: "$fallbackDesc"
+    fun plantDescription(plantName: String, fallbackDesc: String, seed: Int): String {
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+        return """Atmospheric description for dungeon plant: $plantName. 1-2 sentences, dark fantasy herbalism.
+Use _underscores_ for emphasis, never *.$toneDirective
+Base: "$fallbackDesc"
 Enhanced:"""
     }
 
-    fun buffDescription(buffName: String, fallbackDesc: String): String {
-        return """Write a brief atmospheric description for a magical effect: $buffName. One sentence, dark fantasy tone.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
-Base description: "$fallbackDesc"
+    fun buffDescription(buffName: String, fallbackDesc: String, seed: Int): String {
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+        return """Brief atmospheric description for magical effect: $buffName. One sentence, dark fantasy.
+Use _underscores_ for emphasis, never *.$toneDirective
+Base: "$fallbackDesc"
 Enhanced:"""
     }
 
-    fun cellDescription(tileName: String, fallbackDesc: String): String {
-        return """Write an atmospheric description for a dungeon terrain: $tileName. One sentence, dark fantasy tone.
-Keep _highlighted_ words in underscores. 
-And use underscore in your response and never change it by star *.
-Base description: "$fallbackDesc"
+    fun cellDescription(tileName: String, fallbackDesc: String, seed: Int): String {
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+        return """Atmospheric description for dungeon terrain: $tileName. One sentence, dark fantasy.
+Use _underscores_ for emphasis, never *.$toneDirective
+Base: "$fallbackDesc"
 Enhanced:"""
     }
 
@@ -217,11 +288,15 @@ Enhanced:"""
         targetDesc: String,
         heroClass: String,
         depth: Int,
-        fallback: String
+        fallback: String,
+        seed: Int
     ): String {
-        return """You are $npcName, a $personality, in a dark fantasy dungeon on floor $depth.
-You are offering a quest to a $heroClass. Quest type: $questType.
-Rewrite this quest offer dialog in your voice. Keep quest instructions intact. Keep _highlighted_ words in underscores. Under 4 sentences.
+        val tone = DialogContext.regionTone(depth)
+        val toneSuffix = DialogContext.toneSuffix(seed)
+        val toneDirective = if (toneSuffix.isNotEmpty()) " $toneSuffix" else ""
+        return """You are $npcName, a $personality, on floor $depth. $tone.
+Offering a quest to a $heroClass. Quest: $questType.
+Rewrite in your voice. Keep quest details. Under 4 sentences. Use _underscores_ for emphasis, never *.$toneDirective
 Original: "$fallback"
 Rewritten:"""
     }

@@ -1,6 +1,7 @@
 package com.watabou.pixeldungeon.llm
 
 import android.util.Log
+import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.PixelDungeon
 
 object LlmTextEnhancer {
@@ -32,20 +33,34 @@ object LlmTextEnhancer {
             return fallbackText
         }
         return try {
-            val cacheKey = LlmResponseCache.key("npc", npcName, questState, heroClass, depth.toString())
+            val seed = DialogContext.variationSeed()
+            val hpPercent = DialogContext.heroHpPercent()
+            val gold = Dungeon.gold
+            val heroLevel = Dungeon.hero?.lvl ?: 1
+            val encounterCount = DialogContext.recordEncounter(npcName)
+
+            val cacheKey = LlmResponseCache.key("npc", npcName, questState, heroClass, depth.toString(), seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhanceNpcDialog CACHE HIT")
+                Log.d(TAG, "enhanceNpcDialog CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhanceNpcDialog CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.npcDialog(npcName, questState, heroClass, depth, fallbackText)
+            Log.d(TAG, "enhanceNpcDialog CACHE MISS (seed=$seed), submitting async generation")
+            val personality = NpcPersonality.resolve(npcName, heroClass, hpPercent, gold, heroLevel)
+            val situational = DialogContext.situationalLine(hpPercent, depth, gold, heroLevel)
+            val classFlavor = DialogContext.classFlavorLine(heroClass, npcName)
+            val toneSuffix = DialogContext.toneSuffix(seed)
+
+            val prompt = LlmPromptBuilder.npcDialog(
+                personality, npcName, heroClass, depth, fallbackText,
+                encounterCount, situational, classFlavor, toneSuffix
+            )
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_NPC_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhanceNpcDialog GENERATED (len=${sanitized.length}): ${sanitized.take(80)}")
+                    Log.d(TAG, "enhanceNpcDialog GENERATED (seed=$seed len=${sanitized.length}): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhanceNpcDialog GENERATE FAILED (null result)")
                 }
@@ -70,20 +85,21 @@ object LlmTextEnhancer {
             return fallbackText
         }
         return try {
-            val cacheKey = LlmResponseCache.key("floor", regionName, depth.toString(), heroClass)
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("floor", regionName, depth.toString(), heroClass, seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "floorNarration CACHE HIT")
+                Log.d(TAG, "floorNarration CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "floorNarration CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.floorNarration(regionName, depth, heroClass, fallbackText)
+            Log.d(TAG, "floorNarration CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.floorNarration(regionName, depth, heroClass, fallbackText, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_NPC_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "floorNarration GENERATED (len=${sanitized.length}): ${sanitized.take(80)}")
+                    Log.d(TAG, "floorNarration GENERATED (seed=$seed len=${sanitized.length}): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "floorNarration GENERATE FAILED (null result)")
                 }
@@ -110,23 +126,24 @@ object LlmTextEnhancer {
             return fallbackDesc
         }
         return try {
+            val seed = DialogContext.variationSeed()
             val cacheKey = LlmResponseCache.key(
                 "item", itemName, itemType, level.toString(),
-                enchantment ?: "", cursed.toString()
+                enchantment ?: "", cursed.toString(), seed.toString()
             )
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhanceItemInfo CACHE HIT")
+                Log.d(TAG, "enhanceItemInfo CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhanceItemInfo CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.itemDescription(itemName, itemType, level, enchantment, cursed, fallbackDesc)
+            Log.d(TAG, "enhanceItemInfo CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.itemDescription(itemName, itemType, level, enchantment, cursed, fallbackDesc, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_ITEM_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhanceItemInfo GENERATED (len=${sanitized.length}): ${sanitized.take(80)}")
+                    Log.d(TAG, "enhanceItemInfo GENERATED (seed=$seed len=${sanitized.length}): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhanceItemInfo GENERATE FAILED (null result)")
                 }
@@ -146,20 +163,21 @@ object LlmTextEnhancer {
             return null
         }
         return try {
-            val cacheKey = LlmResponseCache.key("combat", originalMessage)
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("combat", originalMessage, seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhanceCombatMessage CACHE HIT")
+                Log.d(TAG, "enhanceCombatMessage CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhanceCombatMessage CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.combatNarration(originalMessage)
+            Log.d(TAG, "enhanceCombatMessage CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.combatNarration(originalMessage, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_COMBAT_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhanceCombatMessage GENERATED (len=${sanitized.length}): ${sanitized.take(80)}")
+                    Log.d(TAG, "enhanceCombatMessage GENERATED (seed=$seed len=${sanitized.length}): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhanceCombatMessage GENERATE FAILED (null result)")
                 }
@@ -172,7 +190,7 @@ object LlmTextEnhancer {
         }
     }
 
-    // Phase 1: Story Moments
+    // Story Moments
 
     fun generateDeathEpitaph(
         causeDesc: String,
@@ -187,6 +205,7 @@ object LlmTextEnhancer {
             return fallback
         }
         return try {
+            // Death epitaphs always use seed 0 — unique enough from cause+class+depth
             val cacheKey = LlmResponseCache.key("epitaph", causeDesc, heroClass, depth.toString(), heroLevel.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
@@ -194,7 +213,6 @@ object LlmTextEnhancer {
                 return sanitize(cached, MAX_EPITAPH_LENGTH)
             }
 
-            // Async generation — avoid blocking GL thread (MediaPipe is not thread-safe)
             Log.d(TAG, "generateDeathEpitaph CACHE MISS, submitting async generation")
             val prompt = LlmPromptBuilder.deathEpitaph(causeDesc, heroClass, depth, heroLevel)
             LlmManager.generateText(prompt, 96, LlmManager.Priority.HIGH) { result ->
@@ -221,20 +239,21 @@ object LlmTextEnhancer {
             return fallback
         }
         return try {
-            val cacheKey = LlmResponseCache.key("intro", heroClass)
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("intro", heroClass, seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "generateIntroNarration CACHE HIT")
+                Log.d(TAG, "generateIntroNarration CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "generateIntroNarration CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.introNarration(heroClass, fallback)
+            Log.d(TAG, "generateIntroNarration CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.introNarration(heroClass, fallback, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_STORY_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "generateIntroNarration GENERATED: ${sanitized.take(80)}")
+                    Log.d(TAG, "generateIntroNarration GENERATED (seed=$seed): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "generateIntroNarration GENERATE FAILED")
                 }
@@ -254,20 +273,21 @@ object LlmTextEnhancer {
             return fallback
         }
         return try {
-            val cacheKey = LlmResponseCache.key("victory", heroClass)
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("victory", heroClass, seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "generateVictoryNarration CACHE HIT")
+                Log.d(TAG, "generateVictoryNarration CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "generateVictoryNarration CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.victoryNarration(heroClass, fallback)
+            Log.d(TAG, "generateVictoryNarration CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.victoryNarration(heroClass, fallback, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_STORY_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "generateVictoryNarration GENERATED: ${sanitized.take(80)}")
+                    Log.d(TAG, "generateVictoryNarration GENERATED (seed=$seed): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "generateVictoryNarration GENERATE FAILED")
                 }
@@ -280,7 +300,7 @@ object LlmTextEnhancer {
         }
     }
 
-    // Phase 2: Boss Encounters
+    // Boss Encounters
 
     fun enhanceBossDialog(
         bossName: String,
@@ -295,25 +315,26 @@ object LlmTextEnhancer {
             return fallback
         }
         return try {
-            val cacheKey = LlmResponseCache.key("boss", bossName, dialogType, heroClass)
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("boss", bossName, dialogType, heroClass, seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhanceBossDialog CACHE HIT")
+                Log.d(TAG, "enhanceBossDialog CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhanceBossDialog CACHE MISS, submitting async generation")
+            Log.d(TAG, "enhanceBossDialog CACHE MISS (seed=$seed), submitting async generation")
             val prompt = when (dialogType) {
-                "notice" -> LlmPromptBuilder.bossNotice(bossName, heroClass, depth, fallback)
-                "death" -> LlmPromptBuilder.bossDeath(bossName, heroClass, fallback)
-                "summon" -> LlmPromptBuilder.bossSummon(bossName, fallback)
-                else -> LlmPromptBuilder.bossNotice(bossName, heroClass, depth, fallback)
+                "notice" -> LlmPromptBuilder.bossNotice(bossName, heroClass, depth, fallback, seed)
+                "death" -> LlmPromptBuilder.bossDeath(bossName, heroClass, fallback, seed)
+                "summon" -> LlmPromptBuilder.bossSummon(bossName, fallback, seed)
+                else -> LlmPromptBuilder.bossNotice(bossName, heroClass, depth, fallback, seed)
             }
             LlmManager.generateText(prompt, LlmConfig.DEFAULT_MAX_TOKENS, LlmManager.Priority.HIGH) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_BOSS_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhanceBossDialog GENERATED: ${sanitized.take(80)}")
+                    Log.d(TAG, "enhanceBossDialog GENERATED (seed=$seed): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhanceBossDialog GENERATE FAILED")
                 }
@@ -326,7 +347,7 @@ object LlmTextEnhancer {
         }
     }
 
-    // Phase 3: Enhanced Atmosphere
+    // Atmosphere
 
     fun enhanceLevelFeeling(
         feelingType: String,
@@ -341,20 +362,21 @@ object LlmTextEnhancer {
             return fallback
         }
         return try {
-            val cacheKey = LlmResponseCache.key("feeling", feelingType, regionName, depth.toString())
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("feeling", feelingType, regionName, depth.toString(), seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhanceLevelFeeling CACHE HIT")
+                Log.d(TAG, "enhanceLevelFeeling CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhanceLevelFeeling CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.levelFeeling(feelingType, regionName, depth, heroClass, fallback)
+            Log.d(TAG, "enhanceLevelFeeling CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.levelFeeling(feelingType, regionName, depth, heroClass, fallback, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_FEELING_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhanceLevelFeeling GENERATED: ${sanitized.take(80)}")
+                    Log.d(TAG, "enhanceLevelFeeling GENERATED (seed=$seed): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhanceLevelFeeling GENERATE FAILED")
                 }
@@ -374,20 +396,21 @@ object LlmTextEnhancer {
             return fallbackTip
         }
         return try {
-            val cacheKey = LlmResponseCache.key("sign", depth.toString(), heroClass)
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("sign", depth.toString(), heroClass, seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhanceSignTip CACHE HIT")
+                Log.d(TAG, "enhanceSignTip CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhanceSignTip CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.signTip(depth, heroClass, fallbackTip)
+            Log.d(TAG, "enhanceSignTip CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.signTip(depth, heroClass, fallbackTip, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_SIGN_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhanceSignTip GENERATED: ${sanitized.take(80)}")
+                    Log.d(TAG, "enhanceSignTip GENERATED (seed=$seed): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhanceSignTip GENERATE FAILED")
                 }
@@ -412,20 +435,21 @@ object LlmTextEnhancer {
             return fallbackDesc
         }
         return try {
-            val cacheKey = LlmResponseCache.key("mob", mobName, mobState)
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("mob", mobName, mobState, seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhanceMobDescription CACHE HIT")
+                Log.d(TAG, "enhanceMobDescription CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhanceMobDescription CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.mobDescription(mobName, mobState, depth, fallbackDesc)
+            Log.d(TAG, "enhanceMobDescription CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.mobDescription(mobName, mobState, depth, fallbackDesc, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_MOB_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhanceMobDescription GENERATED: ${sanitized.take(80)}")
+                    Log.d(TAG, "enhanceMobDescription GENERATED (seed=$seed): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhanceMobDescription GENERATE FAILED")
                 }
@@ -438,7 +462,7 @@ object LlmTextEnhancer {
         }
     }
 
-    // Phase 4: Celebrations & Interactions
+    // Celebrations & Interactions
 
     fun enhanceBadgeText(
         badgeName: String,
@@ -451,20 +475,21 @@ object LlmTextEnhancer {
             return fallbackDesc
         }
         return try {
-            val cacheKey = LlmResponseCache.key("badge", badgeName, heroClass)
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("badge", badgeName, heroClass, seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhanceBadgeText CACHE HIT")
+                Log.d(TAG, "enhanceBadgeText CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhanceBadgeText CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.badgeText(badgeName, heroClass, fallbackDesc)
+            Log.d(TAG, "enhanceBadgeText CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.badgeText(badgeName, heroClass, fallbackDesc, seed)
             LlmManager.generateText(prompt, 48) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_BADGE_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhanceBadgeText GENERATED: ${sanitized.take(80)}")
+                    Log.d(TAG, "enhanceBadgeText GENERATED (seed=$seed): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhanceBadgeText GENERATE FAILED")
                 }
@@ -484,20 +509,21 @@ object LlmTextEnhancer {
             return fallback
         }
         return try {
-            val cacheKey = LlmResponseCache.key("resurrect", heroClass)
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("resurrect", heroClass, seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhanceResurrectionText CACHE HIT")
+                Log.d(TAG, "enhanceResurrectionText CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhanceResurrectionText CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.resurrectionText(heroClass, fallback)
+            Log.d(TAG, "enhanceResurrectionText CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.resurrectionText(heroClass, fallback, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_STORY_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhanceResurrectionText GENERATED: ${sanitized.take(80)}")
+                    Log.d(TAG, "enhanceResurrectionText GENERATED (seed=$seed): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhanceResurrectionText GENERATE FAILED")
                 }
@@ -522,20 +548,21 @@ object LlmTextEnhancer {
             return fallback
         }
         return try {
-            val cacheKey = LlmResponseCache.key("shopkeeper", shopkeeperName, heroClass, depth.toString())
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("shopkeeper", shopkeeperName, heroClass, depth.toString(), seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhanceShopkeeperGreeting CACHE HIT")
+                Log.d(TAG, "enhanceShopkeeperGreeting CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhanceShopkeeperGreeting CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.shopkeeperGreeting(shopkeeperName, heroClass, depth, fallback)
+            Log.d(TAG, "enhanceShopkeeperGreeting CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.shopkeeperGreeting(shopkeeperName, heroClass, depth, fallback, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_NPC_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhanceShopkeeperGreeting GENERATED: ${sanitized.take(80)}")
+                    Log.d(TAG, "enhanceShopkeeperGreeting GENERATED (seed=$seed): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhanceShopkeeperGreeting GENERATE FAILED")
                 }
@@ -548,7 +575,7 @@ object LlmTextEnhancer {
         }
     }
 
-    // Phase 5: Content Polish
+    // Content Polish
 
     fun enhancePlantDescription(plantName: String, fallbackDesc: String): String {
         Log.d(TAG, "enhancePlantDescription: plant=$plantName")
@@ -557,20 +584,21 @@ object LlmTextEnhancer {
             return fallbackDesc
         }
         return try {
-            val cacheKey = LlmResponseCache.key("plant", plantName)
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("plant", plantName, seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhancePlantDescription CACHE HIT")
+                Log.d(TAG, "enhancePlantDescription CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhancePlantDescription CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.plantDescription(plantName, fallbackDesc)
+            Log.d(TAG, "enhancePlantDescription CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.plantDescription(plantName, fallbackDesc, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_PLANT_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhancePlantDescription GENERATED: ${sanitized.take(80)}")
+                    Log.d(TAG, "enhancePlantDescription GENERATED (seed=$seed): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhancePlantDescription GENERATE FAILED")
                 }
@@ -590,20 +618,21 @@ object LlmTextEnhancer {
             return fallbackDesc
         }
         return try {
-            val cacheKey = LlmResponseCache.key("buff", buffName)
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("buff", buffName, seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhanceBuffDescription CACHE HIT")
+                Log.d(TAG, "enhanceBuffDescription CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhanceBuffDescription CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.buffDescription(buffName, fallbackDesc)
+            Log.d(TAG, "enhanceBuffDescription CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.buffDescription(buffName, fallbackDesc, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_BADGE_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhanceBuffDescription GENERATED: ${sanitized.take(80)}")
+                    Log.d(TAG, "enhanceBuffDescription GENERATED (seed=$seed): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhanceBuffDescription GENERATE FAILED")
                 }
@@ -623,20 +652,21 @@ object LlmTextEnhancer {
             return fallbackDesc
         }
         return try {
-            val cacheKey = LlmResponseCache.key("cell", tileName)
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("cell", tileName, seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "enhanceCellDescription CACHE HIT")
+                Log.d(TAG, "enhanceCellDescription CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "enhanceCellDescription CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.cellDescription(tileName, fallbackDesc)
+            Log.d(TAG, "enhanceCellDescription CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.cellDescription(tileName, fallbackDesc, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_CELL_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "enhanceCellDescription GENERATED: ${sanitized.take(80)}")
+                    Log.d(TAG, "enhanceCellDescription GENERATED (seed=$seed): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "enhanceCellDescription GENERATE FAILED")
                 }
@@ -666,20 +696,21 @@ object LlmTextEnhancer {
             return fallback
         }
         return try {
-            val cacheKey = LlmResponseCache.key("aiquest", npcName, questType, heroClass, depth.toString())
+            val seed = DialogContext.variationSeed()
+            val cacheKey = LlmResponseCache.key("aiquest", npcName, questType, heroClass, depth.toString(), seed.toString())
             val cached = LlmResponseCache.get(cacheKey)
             if (cached != null) {
-                Log.d(TAG, "generateAiQuestText CACHE HIT")
+                Log.d(TAG, "generateAiQuestText CACHE HIT (seed=$seed)")
                 return cached
             }
 
-            Log.d(TAG, "generateAiQuestText CACHE MISS, submitting async generation")
-            val prompt = LlmPromptBuilder.aiQuestDescription(npcName, personality, questType, targetDesc, heroClass, depth, fallback)
+            Log.d(TAG, "generateAiQuestText CACHE MISS (seed=$seed), submitting async generation")
+            val prompt = LlmPromptBuilder.aiQuestDescription(npcName, personality, questType, targetDesc, heroClass, depth, fallback, seed)
             LlmManager.generateText(prompt) { result ->
                 if (result != null) {
                     val sanitized = sanitize(result, MAX_NPC_LENGTH)
                     LlmResponseCache.put(cacheKey, sanitized)
-                    Log.d(TAG, "generateAiQuestText GENERATED (len=${sanitized.length}): ${sanitized.take(80)}")
+                    Log.d(TAG, "generateAiQuestText GENERATED (seed=$seed len=${sanitized.length}): ${sanitized.take(80)}")
                 } else {
                     Log.d(TAG, "generateAiQuestText GENERATE FAILED (null result)")
                 }
@@ -701,14 +732,17 @@ object LlmTextEnhancer {
             return
         }
         try {
+            // Use seed 0 for pre-warming — let other seeds fill organically
+            val seed = 0
+
             // Pre-warm floor narration
             if (PixelDungeon.llmNarration()) {
-                val cacheKey = LlmResponseCache.key("floor", regionName, depth.toString(), heroClass)
+                val cacheKey = LlmResponseCache.key("floor", regionName, depth.toString(), heroClass, seed.toString())
                 if (LlmResponseCache.get(cacheKey) == null) {
                     val regionText = getRegionLore(regionName)
                     if (regionText != null) {
                         Log.d(TAG, "preWarmCache floor CACHE MISS, submitting async generation")
-                        val prompt = LlmPromptBuilder.floorNarration(regionName, depth, heroClass, regionText)
+                        val prompt = LlmPromptBuilder.floorNarration(regionName, depth, heroClass, regionText, seed)
                         LlmManager.generateText(prompt) { result ->
                             if (result != null) {
                                 val sanitized = sanitize(result, MAX_NPC_LENGTH)
@@ -722,10 +756,10 @@ object LlmTextEnhancer {
                 // Pre-warm level feelings
                 val feelings = arrayOf("chasm", "water", "grass", "secrets")
                 for (feeling in feelings) {
-                    val feelingKey = LlmResponseCache.key("feeling", feeling, regionName, depth.toString())
+                    val feelingKey = LlmResponseCache.key("feeling", feeling, regionName, depth.toString(), seed.toString())
                     if (LlmResponseCache.get(feelingKey) == null) {
                         val fallback = getFeelingFallback(feeling)
-                        val prompt = LlmPromptBuilder.levelFeeling(feeling, regionName, depth, heroClass, fallback)
+                        val prompt = LlmPromptBuilder.levelFeeling(feeling, regionName, depth, heroClass, fallback, seed)
                         LlmManager.generateText(prompt, LlmConfig.DEFAULT_MAX_TOKENS, LlmManager.Priority.LOW) { result ->
                             if (result != null) {
                                 val sanitized = sanitize(result, MAX_FEELING_LENGTH)
@@ -746,13 +780,13 @@ object LlmTextEnhancer {
                     arrayOf("notice", "death")
                 }
                 for (type in dialogTypes) {
-                    val bossKey = LlmResponseCache.key("boss", bossName, type, heroClass)
+                    val bossKey = LlmResponseCache.key("boss", bossName, type, heroClass, seed.toString())
                     if (LlmResponseCache.get(bossKey) == null) {
                         val fallback = getBossDialogFallback(bossName, type)
                         val prompt = when (type) {
-                            "notice" -> LlmPromptBuilder.bossNotice(bossName, heroClass, depth, fallback)
-                            "death" -> LlmPromptBuilder.bossDeath(bossName, heroClass, fallback)
-                            "summon" -> LlmPromptBuilder.bossSummon(bossName, fallback)
+                            "notice" -> LlmPromptBuilder.bossNotice(bossName, heroClass, depth, fallback, seed)
+                            "death" -> LlmPromptBuilder.bossDeath(bossName, heroClass, fallback, seed)
+                            "summon" -> LlmPromptBuilder.bossSummon(bossName, fallback, seed)
                             else -> continue
                         }
                         LlmManager.generateText(prompt, LlmConfig.DEFAULT_MAX_TOKENS, LlmManager.Priority.CRITICAL) { result ->
