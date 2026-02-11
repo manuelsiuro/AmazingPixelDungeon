@@ -39,9 +39,12 @@ object Sign {
         "Pixel-Mart. Special prices for demon hunters!"
     )
     private const val TXT_BURN = "As you try to read the sign it bursts into greenish flames."
+    private const val TXT_VILLAGE_SIGN = "Prepare well, adventurer. The dungeon shows no mercy."
     fun read(pos: Int) {
         if (Dungeon.level is DeadEndLevel) {
             GameScene.show(WndMessage(TXT_DEAD_END))
+        } else if (Dungeon.depth == 0) {
+            GameScene.show(WndMessage(TXT_VILLAGE_SIGN))
         } else {
             val index = Dungeon.depth - 1
             if (index < TIPS.size) {

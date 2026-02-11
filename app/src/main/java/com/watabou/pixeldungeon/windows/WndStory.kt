@@ -51,8 +51,15 @@ open class WndStory(text: String) : Window(0, 0, Chrome.get(Chrome.Type.SCROLL)!
         const val ID_CAVES = 2
         const val ID_METROPOLIS = 3
         const val ID_HALLS = 4
+        const val ID_VILLAGE = 5
         private val CHAPTERS = SparseArray<String>()
         init {
+            CHAPTERS.put(
+                ID_VILLAGE,
+                "A small village sits at the edge of the known world, the last bastion of civilization " +
+                        "before the dungeon depths. Brave adventurers gather here to stock up on supplies " +
+                        "before descending into the darkness below."
+            )
             CHAPTERS.put(
                 ID_SEWERS,
                 "The Dungeon lies right beneath the City, its upper levels actually constitute the City's sewer system. " +
@@ -95,6 +102,7 @@ open class WndStory(text: String) : Window(0, 0, Chrome.get(Chrome.Type.SCROLL)!
             val staticText = CHAPTERS[id]
             if (staticText != null) {
                 val regionName = when (id) {
+                    ID_VILLAGE -> "Village"
                     ID_SEWERS -> "Sewers"
                     ID_PRISON -> "Prison"
                     ID_CAVES -> "Caves"

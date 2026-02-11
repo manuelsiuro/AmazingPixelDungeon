@@ -76,7 +76,7 @@ class GameScene : PixelScene() {
     private var toolbar: Toolbar? = null
     private var prompt: Toast? = null
     override fun create() {
-        Music.play(Assets.TUNE, true)
+        Music.play(if (Dungeon.depth == 0) Assets.HAPPY else Assets.TUNE, true)
         Music.volume(1f)
         // Ensure Dungeon.hero is not null, or handle it. Assuming it's initialized before GameScene.
         if (Dungeon.hero != null) {
@@ -183,6 +183,7 @@ class GameScene : PixelScene() {
             InterlevelScene.Mode.FALL -> Chasm.heroLand()
             InterlevelScene.Mode.DESCEND -> {
                 when (Dungeon.depth) {
+                    0 -> WndStory.showChapter(WndStory.ID_VILLAGE)
                     1 -> WndStory.showChapter(WndStory.ID_SEWERS)
                     6 -> WndStory.showChapter(WndStory.ID_PRISON)
                     11 -> WndStory.showChapter(WndStory.ID_CAVES)
@@ -212,13 +213,16 @@ class GameScene : PixelScene() {
         }
         Camera.main?.target = this.hero
         if (InterlevelScene.mode != InterlevelScene.Mode.NONE) {
-            if (Dungeon.depth < Statistics.deepestFloor) {
+            if (Dungeon.depth == 0) {
+                GLog.h("Welcome to the village!")
+            } else if (Dungeon.depth < Statistics.deepestFloor) {
                 GLog.h(TXT_WELCOME_BACK, Dungeon.depth)
             } else {
                 GLog.h(TXT_WELCOME, Dungeon.depth)
                 Sample.play(Assets.SND_DESCEND)
             }
             val regionName = when {
+                Dungeon.depth == 0 -> "Village"
                 Dungeon.depth <= 5 -> "Sewers"
                 Dungeon.depth <= 10 -> "Prison"
                 Dungeon.depth <= 15 -> "Caves"

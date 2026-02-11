@@ -462,15 +462,15 @@ class Hero : Char() {
         val stairs = action.dst
         val currentLevel = Dungeon.level ?: return false
         if (pos == stairs && pos == currentLevel.entrance) {
-            if (Dungeon.depth == 1) {
-                if (belongings.getItem(Amulet::class.java) == null) {
-                    GameScene.show(WndMessage(TXT_LEAVE))
-                    ready()
-                } else {
-                    Dungeon.win(ResultDescriptions.WIN)
-                    Dungeon.hero?.let { Dungeon.deleteGame(it.heroClass, true) }
-                    Game.switchScene(SurfaceScene::class.java)
-                }
+            if (Dungeon.depth == 0) {
+                // At village entrance - can't go further
+                GameScene.show(WndMessage(TXT_LEAVE))
+                ready()
+            } else if (Dungeon.depth == 1 && belongings.getItem(Amulet::class.java) != null) {
+                // Win: ascending from dungeon with the Amulet
+                Dungeon.win(ResultDescriptions.WIN)
+                Dungeon.hero?.let { Dungeon.deleteGame(it.heroClass, true) }
+                Game.switchScene(SurfaceScene::class.java)
             } else {
                 curAction = null
                 val hunger = buff(Hunger::class.java)

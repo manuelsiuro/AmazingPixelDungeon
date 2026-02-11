@@ -1,0 +1,319 @@
+package com.watabou.pixeldungeon.levels
+
+import com.watabou.noosa.Game
+import com.watabou.noosa.Scene
+import com.watabou.noosa.particles.Emitter
+import com.watabou.noosa.particles.PixelParticle
+import com.watabou.pixeldungeon.Assets
+import com.watabou.pixeldungeon.Dungeon
+import com.watabou.pixeldungeon.DungeonTilemap
+import com.watabou.pixeldungeon.Journal
+import com.watabou.pixeldungeon.actors.Actor
+import com.watabou.pixeldungeon.actors.blobs.WaterOfHealth
+import com.watabou.pixeldungeon.actors.mobs.Rat
+import com.watabou.pixeldungeon.actors.mobs.npcs.Shopkeeper
+import com.watabou.pixeldungeon.actors.mobs.npcs.VillageElder
+import com.watabou.pixeldungeon.effects.particles.FlameParticle
+import com.watabou.pixeldungeon.items.Generator
+import com.watabou.pixeldungeon.items.Gold
+import com.watabou.pixeldungeon.items.Heap
+import com.watabou.pixeldungeon.items.Item
+import com.watabou.pixeldungeon.items.Torch
+import com.watabou.pixeldungeon.items.Weightstone
+import com.watabou.pixeldungeon.items.armor.ClothArmor
+import com.watabou.pixeldungeon.items.armor.LeatherArmor
+import com.watabou.pixeldungeon.items.bags.SeedPouch
+import com.watabou.pixeldungeon.items.food.CheeseWedge
+import com.watabou.pixeldungeon.items.food.Food
+import com.watabou.pixeldungeon.items.potions.PotionOfHealing
+import com.watabou.pixeldungeon.items.scrolls.ScrollOfIdentify
+import com.watabou.pixeldungeon.items.scrolls.ScrollOfMagicMapping
+import com.watabou.pixeldungeon.items.weapon.melee.Knuckles
+import com.watabou.pixeldungeon.items.weapon.melee.ShortSword
+import com.watabou.pixeldungeon.items.weapon.missiles.Dart
+import com.watabou.pixeldungeon.levels.painters.Painter
+import com.watabou.utils.ColorMath
+import com.watabou.utils.Random
+import java.util.Arrays
+
+class VillageLevel : Level() {
+
+    init {
+        color1 = 0x48763c
+        color2 = 0x59994a
+    }
+
+    override fun tilesTex(): String = Assets.TILES_VILLAGE
+
+    override fun waterTex(): String = Assets.WATER_VILLAGE
+
+    override fun build(): Boolean {
+        Arrays.fill(map, Terrain.WALL)
+
+        // Central open area (grass and paths)
+        Painter.fill(this, 3, 3, 26, 26, Terrain.GRASS)
+
+        // Main paths (cobblestone)
+        // Horizontal path through center
+        Painter.fill(this, 3, 15, 26, 2, Terrain.EMPTY_DECO)
+        // Vertical path through center
+        Painter.fill(this, 15, 3, 2, 26, Terrain.EMPTY_DECO)
+
+        // === Weapon Shop (northwest) ===
+        Painter.fill(this, 4, 4, 9, 8, Terrain.WALL)
+        Painter.fill(this, 5, 5, 7, 6, Terrain.EMPTY_SP)
+        map[pos(8, 11)] = Terrain.DOOR
+        map[pos(6, 4)] = Terrain.WALL_DECO
+        map[pos(10, 4)] = Terrain.WALL_DECO
+
+        // === Potion Shop (northeast) ===
+        Painter.fill(this, 19, 4, 9, 8, Terrain.WALL)
+        Painter.fill(this, 20, 5, 7, 6, Terrain.EMPTY_SP)
+        map[pos(23, 11)] = Terrain.DOOR
+        map[pos(21, 4)] = Terrain.WALL_DECO
+        map[pos(25, 4)] = Terrain.WALL_DECO
+
+        // === Tavern (south-west) ===
+        Painter.fill(this, 4, 20, 9, 8, Terrain.WALL)
+        Painter.fill(this, 5, 21, 7, 6, Terrain.EMPTY_SP)
+        map[pos(8, 20)] = Terrain.DOOR
+        map[pos(6, 27)] = Terrain.WALL_DECO
+        map[pos(10, 27)] = Terrain.WALL_DECO
+
+        // === Central square decorations ===
+        map[pos(16, 16)] = Terrain.WELL
+        map[pos(14, 14)] = Terrain.SIGN
+        map[pos(10, 18)] = Terrain.EMBERS
+
+        // === Small pond (southeast) ===
+        Painter.fill(this, 21, 22, 5, 4, Terrain.WATER)
+
+        // === High grass / hedges on edges ===
+        Painter.fill(this, 3, 3, 2, 2, Terrain.HIGH_GRASS)
+        Painter.fill(this, 27, 3, 2, 2, Terrain.HIGH_GRASS)
+        Painter.fill(this, 27, 27, 2, 2, Terrain.HIGH_GRASS)
+        Painter.fill(this, 3, 27, 2, 2, Terrain.HIGH_GRASS)
+
+        // Scatter some high grass
+        for (i in 0 until LENGTH) {
+            if (map[i] == Terrain.GRASS && Random.Int(12) == 0) {
+                map[i] = Terrain.HIGH_GRASS
+            }
+        }
+
+        // === Entrance (north edge) - gate to the outside world ===
+        entrance = pos(16, 2)
+        map[entrance] = Terrain.ENTRANCE
+        map[pos(16, 3)] = Terrain.EMPTY_DECO
+
+        // === Exit (south center) - stairs down to dungeon ===
+        exit = pos(16, 29)
+        map[exit] = Terrain.EXIT
+        map[pos(16, 28)] = Terrain.EMPTY_DECO
+
+        feeling = Feeling.NONE
+
+        return true
+    }
+
+    override fun decorate() {
+        for (i in 0 until LENGTH) {
+            if (map[i] == Terrain.GRASS && Random.Int(20) == 0) {
+                map[i] = Terrain.EMPTY_DECO
+            }
+        }
+    }
+
+    override fun createMobs() {
+        // 3 Shopkeepers
+        placeShopkeeper(pos(8, 7))   // Weapon shop
+        placeShopkeeper(pos(23, 7))  // Potion shop
+        placeShopkeeper(pos(8, 24))  // Tavern
+
+        // Village Elder in the central square
+        val elder = VillageElder()
+        elder.pos = pos(15, 14)
+        mobs.add(elder)
+        Actor.occupyCell(elder)
+
+        // 1-2 rats on the outskirts
+        val rat1 = Rat()
+        rat1.pos = pos(26, 28)
+        mobs.add(rat1)
+        Actor.occupyCell(rat1)
+
+        if (Random.Int(2) == 0) {
+            val rat2 = Rat()
+            rat2.pos = pos(4, 16)
+            mobs.add(rat2)
+            Actor.occupyCell(rat2)
+        }
+    }
+
+    private fun placeShopkeeper(cell: Int) {
+        val shopkeeper = Shopkeeper()
+        shopkeeper.pos = cell
+        mobs.add(shopkeeper)
+        Actor.occupyCell(shopkeeper)
+    }
+
+    override fun createItems() {
+        // === Starter gold near the entrance ===
+        drop(Gold(75), pos(15, 3))
+
+        // === Healing well (WaterOfHealth on the well tile) ===
+        val wellCell = pos(16, 16)
+        val water = WaterOfHealth()
+        water.seed(wellCell, 1)
+        blobs[WaterOfHealth::class.java] = water
+
+        // === Weapon Shop inventory ===
+        placeForSale(ShortSword().identify(), pos(6, 6))
+        placeForSale(Knuckles().identify(), pos(7, 6))
+        placeForSale(ClothArmor().identify(), pos(9, 6))
+        placeForSale(LeatherArmor().identify(), pos(10, 6))
+        placeForSale(Dart(3), pos(6, 8))
+
+        // === Potion Shop inventory ===
+        placeForSale(PotionOfHealing(), pos(21, 6))
+        placeForSale(Generator.random(Generator.Category.POTION) ?: PotionOfHealing(), pos(22, 6))
+        placeForSale(Generator.random(Generator.Category.POTION) ?: PotionOfHealing(), pos(24, 6))
+        placeForSale(ScrollOfIdentify(), pos(21, 8))
+        placeForSale(ScrollOfMagicMapping(), pos(22, 8))
+        placeForSale(SeedPouch(), pos(24, 8))
+
+        // === Tavern inventory ===
+        placeForSale(Food(), pos(6, 22))
+        placeForSale(Food(), pos(7, 22))
+        placeForSale(CheeseWedge(), pos(9, 22))
+        placeForSale(Torch(), pos(6, 25))
+        placeForSale(Weightstone(), pos(7, 25))
+
+        // Record village in journal
+        Journal.add(Journal.Feature.VILLAGE)
+    }
+
+    private fun placeForSale(item: Item, cell: Int) {
+        drop(item, cell).type = Heap.Type.FOR_SALE
+    }
+
+    override fun addItemToSpawn(item: Item?) {
+        // No-op: prevent PotionOfStrength/ScrollOfUpgrade from being added
+    }
+
+    override fun respawner(): Actor? = null
+
+    override fun nMobs(): Int = 0
+
+    override fun randomRespawnCell(): Int = -1
+
+    override fun tileName(tile: Int): String {
+        return when (tile) {
+            Terrain.WATER -> "Pond"
+            Terrain.HIGH_GRASS -> "Hedge"
+            Terrain.WALL_DECO -> "Window"
+            Terrain.EMPTY_DECO -> "Cobblestone path"
+            Terrain.EMPTY_SP -> "Wooden floor"
+            Terrain.GRASS -> "Village green"
+            Terrain.EMBERS -> "Campfire"
+            Terrain.WELL -> "Healing well"
+            Terrain.EMPTY_WELL -> "Dried up well"
+            Terrain.SIGN -> "Signpost"
+            Terrain.ENTRANCE -> "Village gate"
+            Terrain.EXIT -> "Dungeon entrance"
+            Terrain.DOOR -> "Wooden door"
+            Terrain.OPEN_DOOR -> "Open door"
+            Terrain.WALL -> "Building wall"
+            else -> super.tileName(tile)
+        }
+    }
+
+    override fun tileDesc(tile: Int): String {
+        return when (tile) {
+            Terrain.ENTRANCE -> "A sturdy gate marks the edge of the village. Beyond lies the open world."
+            Terrain.EXIT -> "Stone steps descend into darkness. The dungeon awaits below."
+            Terrain.WELL -> "A stone well filled with healing waters. Drink deep to restore your strength."
+            Terrain.EMPTY_WELL -> "The well has run dry."
+            Terrain.SIGN -> "A weathered signpost reads: 'Prepare well, adventurer. The dungeon shows no mercy.'"
+            Terrain.EMBERS -> "A crackling campfire warms the village square."
+            Terrain.EMPTY_SP -> "Sturdy wooden planks form the floor of this building."
+            Terrain.WALL_DECO -> "A small window lets light into the building."
+            else -> super.tileDesc(tile)
+        }
+    }
+
+    override fun addVisuals(scene: Scene) {
+        for (i in 0 until LENGTH) {
+            when (map[i]) {
+                Terrain.EMBERS -> scene.add(Campfire(i))
+                Terrain.WATER -> if (Random.Int(3) == 0) scene.add(PondSparkle(i))
+            }
+        }
+    }
+
+    private fun pos(x: Int, y: Int): Int = x + y * WIDTH
+
+    // Campfire particle emitter — flame particles rising from embers
+    private class Campfire(private val pos: Int) : Emitter() {
+        init {
+            val p = DungeonTilemap.tileCenterToWorld(pos)
+            pos(p.x - 2, p.y - 2, 4f, 4f)
+            pour(FlameParticle.FACTORY, 0.1f)
+        }
+
+        override fun update() {
+            visible = Dungeon.visible[pos]
+            if (visible) {
+                super.update()
+            }
+        }
+    }
+
+    // Gentle water sparkle on pond tiles
+    private class PondSparkle(private val pos: Int) : Emitter() {
+        init {
+            val p = DungeonTilemap.tileCenterToWorld(pos)
+            pos(p.x, p.y, 0f, 0f)
+            pour(sparkleFactory, 0.6f)
+        }
+
+        override fun update() {
+            visible = Dungeon.visible[pos]
+            if (visible) {
+                super.update()
+            }
+        }
+
+        companion object {
+            private val sparkleFactory: Factory = object : Factory() {
+                override fun emit(emitter: Emitter, index: Int, x: Float, y: Float) {
+                    val p = emitter.recycle(Sparkle::class.java) as Sparkle
+                    p.reset(x, y)
+                }
+            }
+        }
+    }
+
+    class Sparkle : PixelParticle() {
+        init {
+            color(ColorMath.random(0x60a4c8, 0x80c8e8))
+            lifespan = 1.0f
+            acc.set(0f, -10f)
+        }
+
+        fun reset(x: Float, y: Float) {
+            revive()
+            this.x = x + Random.Float(-4f, 4f)
+            this.y = y + Random.Float(-4f, 4f)
+            left = lifespan
+            size(2f)
+            speed.set(0f)
+        }
+
+        override fun update() {
+            super.update()
+            val p = left / lifespan
+            am = (if (p < 0.5f) p else 1 - p) * 0.4f
+        }
+    }
+}

@@ -75,7 +75,7 @@ class StatusPane : Component() {
         level = BitmapText(PixelScene.font1x)
         level.hardlight(0xFFEBA4.toInt()) // 0xFFEBA4 is unsigned, toInt?
         add(level)
-        depth = BitmapText(Dungeon.depth.toString(), PixelScene.font1x)
+        depth = BitmapText(if (Dungeon.depth == 0) "V" else Dungeon.depth.toString(), PixelScene.font1x)
         depth.hardlight(0xCACFC2.toInt())
         depth.measure()
         add(depth)

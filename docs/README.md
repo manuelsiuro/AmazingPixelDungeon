@@ -17,6 +17,10 @@ Welcome to the comprehensive documentation for **Amazing Pixel Dungeon**, an And
 - [Level Generation](systems/level-generation.md) - Procedural dungeon generation pipeline, room shapes, and decorations
 - [LLM System](systems/llm-system.md) - On-device AI text generation for enhanced game content
 
+### Design Documents
+- [Village Level Plan](design/village-level-plan.md) - Outdoor village hub at depth 0
+- [Item Expansion Plan](design/item-expansion-plan.md) - New weapons, potions, scrolls, and more
+
 ### Tools
 - [Sprite Generation](tools/sprite-generation.md) - AI-powered pixel art sprite generation tool
 

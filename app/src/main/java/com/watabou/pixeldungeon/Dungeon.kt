@@ -25,13 +25,10 @@ import com.watabou.pixeldungeon.utils.BArray
 import com.watabou.pixeldungeon.utils.Utils
 import com.watabou.pixeldungeon.windows.WndResurrect
 import com.watabou.utils.Bundle
-import com.watabou.utils.Bundlable
 import com.watabou.utils.PathFinder
 import com.watabou.utils.Random
 import com.watabou.utils.SparseArray
 import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.Date
@@ -83,6 +80,14 @@ object Dungeon {
         hero?.live()
         Badges.reset()
         StartScene.curClass?.initHero(hero ?: return)
+
+        // Create the village at depth 0
+        val village = VillageLevel()
+        village.create()
+        // Make entire village visible (no fog of war)
+        Arrays.fill(village.visited, true)
+        level = village
+        switchLevel(village, village.entrance)
     }
     fun isChallenged(mask: Int): Boolean {
         return (challenges and mask) != 0
@@ -138,27 +143,7 @@ object Dungeon {
         Statistics.qualifiedForNoKilling = !bossLevel()
         return level
     }
-    // Helper for newLevel logic to avoid the messy when above in initial thought
-    private fun createLevelForDepth(d: Int): Level {
-        return when (d) {
-            1, 2, 3, 4 -> SewerLevel()
-            5 -> SewerBossLevel()
-            6, 7, 8, 9 -> PrisonLevel()
-            10 -> PrisonBossLevel()
-            11, 12, 13, 14 -> CavesLevel()
-            15 -> CavesBossLevel()
-            16, 17, 18, 19 -> CityLevel()
-            20 -> CityBossLevel()
-            21 -> LastShopLevel()
-            22, 23, 24 -> HallsLevel()
-            25 -> HallsBossLevel()
-            26 -> LastLevel()
-            else -> {
-                Statistics.deepestFloor--
-                DeadEndLevel()
-            }
-        }
-    }
+
     fun resetLevel() {
         Actor.clear()
         Arrays.fill(visible, false)
@@ -435,7 +420,7 @@ object Dungeon {
         val instance = Game.instance ?: return
         instance.deleteFile(gameFile(cl))
         if (deleteLevels) {
-            var depth = 1
+            var depth = 0
             while (instance.deleteFile(Utils.format(depthFile(cl), depth))) {
                 depth++
             }

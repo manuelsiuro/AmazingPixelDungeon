@@ -14,7 +14,8 @@ object Journal {
         GHOST("Sad ghost"),
         WANDMAKER("Old wandmaker"),
         TROLL("Troll blacksmith"),
-        IMP("Ambitious imp")
+        IMP("Ambitious imp"),
+        VILLAGE("Village")
     }
     class Record : Comparable<Record>, Bundlable {
         var feature: Feature? = null

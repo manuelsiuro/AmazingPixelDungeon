@@ -58,11 +58,12 @@ class InterlevelScene : PixelScene() {
                         else -> {
                         }
                     }
-                    if (Dungeon.depth % 5 == 0) {
+                    if (Dungeon.depth % 5 == 0 && Dungeon.depth > 0) {
                         Sample.play(Assets.SND_BOSS)
                     }
                     // Pre-warm LLM cache for the new floor
                     val regionName = when {
+                        Dungeon.depth == 0 -> "Village"
                         Dungeon.depth <= 5 -> "Sewers"
                         Dungeon.depth <= 10 -> "Prison"
                         Dungeon.depth <= 15 -> "Caves"
@@ -101,7 +102,7 @@ class InterlevelScene : PixelScene() {
             }
             Phase.FADE_OUT -> {
                 message!!.alpha(p)
-                if (mode == Mode.CONTINUE || mode == Mode.DESCEND && Dungeon.depth == 1) {
+                if (mode == Mode.CONTINUE || mode == Mode.DESCEND && Dungeon.depth <= 1) {
                     Music.volume(p)
                 }
                 timeLeft -= Game.elapsed
@@ -131,6 +132,8 @@ class InterlevelScene : PixelScene() {
                 noStory = false
             }
             GameLog.wipe()
+            // Village already created by Dungeon.init()
+            return
         } else {
             Dungeon.saveLevel()
         }
