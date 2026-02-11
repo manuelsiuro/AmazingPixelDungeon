@@ -11,7 +11,6 @@ object Preferences {
     const val KEY_ZOOM = "zoom"
     const val KEY_LAST_CLASS = "last_class"
     const val KEY_CHALLENGES = "challenges"
-    const val KEY_DONATED = "donated"
     const val KEY_INTRO = "intro"
     const val KEY_BRIGHTNESS = "brightness"
     const val KEY_LLM_ENABLED = "llm_enabled"

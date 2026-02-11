@@ -8,7 +8,6 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.os.Vibrator
-import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -51,10 +50,7 @@ open class Game(c: Class<out Scene>) : Activity(), GLSurfaceView.Renderer, View.
         instance = this
         TextureCache.context = this
         BitmapCache.context = this
-        val m = DisplayMetrics()
-        @Suppress("DEPRECATION")
-        windowManager.defaultDisplay.getMetrics(m)
-        density = m.density
+        density = resources.displayMetrics.density
         try {
             version = packageManager.getPackageInfo(packageName, 0).versionName
         } catch (e: PackageManager.NameNotFoundException) {

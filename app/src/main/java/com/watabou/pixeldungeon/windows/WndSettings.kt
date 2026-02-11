@@ -57,7 +57,6 @@ class WndSettings(inGame: Boolean) : Window() {
             }
             btnImmersive.setRect(0f, btnScaleUp.bottom() + GAP, WIDTH.toFloat(), BTN_HEIGHT.toFloat())
             btnImmersive.checked(PixelDungeon.immersed())
-            btnImmersive.enable(android.os.Build.VERSION.SDK_INT >= 19)
             add(btnImmersive)
         }
         val btnMusic = object : CheckBox(TXT_MUSIC) {
@@ -68,7 +67,7 @@ class WndSettings(inGame: Boolean) : Window() {
         }
         btnMusic.setRect(
             0f,
-            (if (btnImmersive != null) btnImmersive.bottom() else BTN_HEIGHT.toFloat()) + GAP,
+            (btnImmersive?.bottom() ?: BTN_HEIGHT.toFloat()) + GAP,
             WIDTH.toFloat(),
             BTN_HEIGHT.toFloat()
         )
@@ -115,7 +114,7 @@ class WndSettings(inGame: Boolean) : Window() {
         } else {
             val btnOrientation = object : RedButton(orientationText()) {
                 override fun onClick() {
-                    PixelDungeon.landscape(!PixelDungeon.landscape())
+                    PixelDungeon.landscape()
                 }
             }
             btnOrientation.setRect(0f, btnSound.bottom() + GAP, WIDTH.toFloat(), BTN_HEIGHT.toFloat())

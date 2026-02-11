@@ -1,12 +1,9 @@
 package com.watabou.pixeldungeon
-import android.annotation.SuppressLint
-import android.annotation.TargetApi
-import android.content.pm.ActivityInfo
-import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
-import android.view.View
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.watabou.noosa.Game
 import com.watabou.noosa.audio.Music
 import com.watabou.noosa.audio.Sample
@@ -19,13 +16,11 @@ class PixelDungeon : Game(TitleScene::class.java) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         updateImmersiveMode()
-        val metrics = DisplayMetrics()
-        @Suppress("DEPRECATION")
-        instance!!.windowManager.defaultDisplay.getMetrics(metrics)
+        /*val metrics = resources.displayMetrics
         val landscape = metrics.widthPixels > metrics.heightPixels
         if (Preferences.getBoolean(Preferences.KEY_LANDSCAPE, false) != landscape) {
             landscape(!landscape)
-        }
+        }*/
         Music.enable(music())
         Sample.enable(soundFx())
         Sample.load(
@@ -107,47 +102,35 @@ class PixelDungeon : Game(TitleScene::class.java) {
             PixelScene.noFade = true
             switchScene(c)
         }
-        /*
-         * ---> Prefernces
-         */
-        fun landscape(value: Boolean) {
-            Game.instance!!.requestedOrientation = if (value)
-                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            else
-                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            Preferences.put(Preferences.KEY_LANDSCAPE, value)
-        }
+
         fun landscape(): Boolean {
-            return Game.width > Game.height
+            return width > height
         }
         // *** IMMERSIVE MODE ****
         private var immersiveModeChanged = false
-        @SuppressLint("NewApi")
         fun immerse(value: Boolean) {
             Preferences.put(Preferences.KEY_IMMERSIVE, value)
-            instance!!.runOnUiThread {
+            instance?.runOnUiThread {
                 updateImmersiveMode()
                 immersiveModeChanged = true
             }
         }
-        @Suppress("DEPRECATION")
-        @TargetApi(Build.VERSION_CODES.KITKAT)
+
         fun updateImmersiveMode() {
-            if (Build.VERSION.SDK_INT >= 19) {
-                try {
-                    // Sometime NullPointerException happens here
-                    instance!!.window.decorView.systemUiVisibility = if (immersed())
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                                View.SYSTEM_UI_FLAG_FULLSCREEN or
-                                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    else
-                        0
-                } catch (e: Exception) {
-                    reportException(e)
+            try {
+                val window = instance?.window ?: return
+                val controller = WindowCompat.getInsetsController(window, window.decorView)
+                if (immersed()) {
+                    WindowCompat.setDecorFitsSystemWindows(window, false)
+                    controller.hide(WindowInsetsCompat.Type.systemBars())
+                    controller.systemBarsBehavior =
+                        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                } else {
+                    WindowCompat.setDecorFitsSystemWindows(window, true)
+                    controller.show(WindowInsetsCompat.Type.systemBars())
                 }
+            } catch (e: Exception) {
+                reportException(e)
             }
         }
         fun immersed(): Boolean {
@@ -189,12 +172,6 @@ class PixelDungeon : Game(TitleScene::class.java) {
         }
         fun brightness(): Boolean {
             return Preferences.getBoolean(Preferences.KEY_BRIGHTNESS, false)
-        }
-        fun donated(value: String) {
-            Preferences.put(Preferences.KEY_DONATED, value)
-        }
-        fun donated(): String {
-            return Preferences.getString(Preferences.KEY_DONATED, "")
         }
         fun lastClass(value: Int) {
             Preferences.put(Preferences.KEY_LAST_CLASS, value)
