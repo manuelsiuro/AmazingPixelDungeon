@@ -9,15 +9,24 @@ import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.DungeonTilemap
 import com.watabou.pixeldungeon.Journal
 import com.watabou.pixeldungeon.actors.Actor
+import com.watabou.pixeldungeon.actors.blobs.Alchemy
+import com.watabou.pixeldungeon.actors.blobs.Foliage
 import com.watabou.pixeldungeon.actors.blobs.WaterOfHealth
 import com.watabou.pixeldungeon.actors.mobs.Rat
 import com.watabou.pixeldungeon.actors.mobs.npcs.Shopkeeper
 import com.watabou.pixeldungeon.actors.mobs.npcs.VillageElder
 import com.watabou.pixeldungeon.effects.particles.FlameParticle
+import com.watabou.pixeldungeon.effects.particles.LeafParticle
+import com.watabou.pixeldungeon.effects.particles.SmokeParticle
+import com.watabou.pixeldungeon.effects.particles.WindParticle
+import com.watabou.pixeldungeon.items.Ankh
 import com.watabou.pixeldungeon.items.Generator
 import com.watabou.pixeldungeon.items.Gold
 import com.watabou.pixeldungeon.items.Heap
+import com.watabou.pixeldungeon.items.HolyWater
+import com.watabou.pixeldungeon.items.Honeypot
 import com.watabou.pixeldungeon.items.Item
+import com.watabou.pixeldungeon.items.SmokeBomb
 import com.watabou.pixeldungeon.items.Torch
 import com.watabou.pixeldungeon.items.Weightstone
 import com.watabou.pixeldungeon.items.armor.ClothArmor
@@ -25,6 +34,7 @@ import com.watabou.pixeldungeon.items.armor.LeatherArmor
 import com.watabou.pixeldungeon.items.bags.SeedPouch
 import com.watabou.pixeldungeon.items.food.CheeseWedge
 import com.watabou.pixeldungeon.items.food.Food
+import com.watabou.pixeldungeon.items.food.FrostBerry
 import com.watabou.pixeldungeon.items.potions.PotionOfHealing
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfIdentify
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfMagicMapping
@@ -32,6 +42,8 @@ import com.watabou.pixeldungeon.items.weapon.melee.Knuckles
 import com.watabou.pixeldungeon.items.weapon.melee.ShortSword
 import com.watabou.pixeldungeon.items.weapon.missiles.Dart
 import com.watabou.pixeldungeon.levels.painters.Painter
+import com.watabou.pixeldungeon.plants.Brightcap
+import com.watabou.pixeldungeon.plants.Sungrass
 import com.watabou.utils.ColorMath
 import com.watabou.utils.Random
 import java.util.Arrays
@@ -85,8 +97,27 @@ class VillageLevel : Level() {
         map[pos(14, 14)] = Terrain.SIGN
         map[pos(10, 18)] = Terrain.EMBERS
 
+        // === Village Garden (east of center, north of pond) ===
+        Painter.fill(this, 20, 17, 7, 4, Terrain.HIGH_GRASS)
+        Painter.fill(this, 21, 18, 5, 2, Terrain.GRASS)
+        map[pos(20, 18)] = Terrain.STATUE  // garden entrance statue left
+        map[pos(26, 18)] = Terrain.STATUE  // garden entrance statue right
+
+        // === Herbalist's Corner (west of center) ===
+        Painter.fill(this, 5, 13, 5, 2, Terrain.EMPTY_SP)
+        map[pos(5, 13)] = Terrain.BOOKSHELF   // herbalist shelf left
+        map[pos(9, 14)] = Terrain.BOOKSHELF   // herbalist shelf right
+        map[pos(7, 13)] = Terrain.ALCHEMY     // alchemy pot
+
+        // === Hidden Stash (behind weapon shop north wall) ===
+        Painter.fill(this, 7, 3, 3, 1, Terrain.EMPTY_SP)  // alcove
+        map[pos(8, 4)] = Terrain.SECRET_DOOR               // secret door in north wall
+
         // === Small pond (southeast) ===
         Painter.fill(this, 21, 22, 5, 4, Terrain.WATER)
+
+        // === Pond-side statue ===
+        map[pos(20, 22)] = Terrain.STATUE
 
         // === High grass / hedges on edges ===
         Painter.fill(this, 3, 3, 2, 2, Terrain.HIGH_GRASS)
@@ -159,7 +190,7 @@ class VillageLevel : Level() {
 
     override fun createItems() {
         // === Starter gold near the entrance ===
-        drop(Gold(75), pos(15, 3))
+        drop(Gold(500), pos(15, 3))
 
         // === Healing well (WaterOfHealth on the well tile) ===
         val wellCell = pos(16, 16)
@@ -188,6 +219,37 @@ class VillageLevel : Level() {
         placeForSale(CheeseWedge(), pos(9, 22))
         placeForSale(Torch(), pos(6, 25))
         placeForSale(Weightstone(), pos(7, 25))
+
+        // === Village Garden — Foliage blob + plants ===
+        val foliage = Foliage()
+        for (gy in 17..20) {
+            for (gx in 20..26) {
+                foliage.seed(pos(gx, gy), 1)
+            }
+        }
+        blobs[Foliage::class.java] = foliage
+        plant(Sungrass.Seed(), pos(23, 19))
+        plant(Brightcap.Seed(), pos(21, 19))
+
+        // === Herbalist's Alchemy pot ===
+        val alchemy = Alchemy()
+        alchemy.seed(pos(7, 13), 1)
+        blobs[Alchemy::class.java] = alchemy
+
+        // === Hidden Stash (chest behind weapon shop) ===
+        val stashItem: Item = when (Random.Int(4)) {
+            0 -> Honeypot()
+            1 -> Ankh()
+            2 -> HolyWater()
+            else -> SmokeBomb().apply { quantity = 2 }
+        }
+        drop(stashItem, pos(8, 3)).type = Heap.Type.CHEST
+
+        // === Pond-side provisions ===
+        drop(FrostBerry(), pos(20, 23))
+        if (Random.Int(3) == 0) {
+            drop(Sungrass.Seed(), pos(26, 22))
+        }
 
         // Record village in journal
         Journal.add(Journal.Feature.VILLAGE)
@@ -224,6 +286,9 @@ class VillageLevel : Level() {
             Terrain.DOOR -> "Wooden door"
             Terrain.OPEN_DOOR -> "Open door"
             Terrain.WALL -> "Building wall"
+            Terrain.STATUE -> "Garden statue"
+            Terrain.BOOKSHELF -> "Herbalist's shelf"
+            Terrain.ALCHEMY -> "Alchemy pot"
             else -> super.tileName(tile)
         }
     }
@@ -238,6 +303,9 @@ class VillageLevel : Level() {
             Terrain.EMBERS -> "A crackling campfire warms the village square."
             Terrain.EMPTY_SP -> "Sturdy wooden planks form the floor of this building."
             Terrain.WALL_DECO -> "A small window lets light into the building."
+            Terrain.STATUE -> "A moss-covered stone figure watches over the village garden."
+            Terrain.BOOKSHELF -> "Shelves lined with dried herbs and botanical references."
+            Terrain.ALCHEMY -> "A sturdy cauldron for brewing potions from seeds."
             else -> super.tileDesc(tile)
         }
     }
@@ -245,8 +313,13 @@ class VillageLevel : Level() {
     override fun addVisuals(scene: Scene) {
         for (i in 0 until LENGTH) {
             when (map[i]) {
-                Terrain.EMBERS -> scene.add(Campfire(i))
+                Terrain.EMBERS -> {
+                    scene.add(Campfire(i))
+                    scene.add(CampfireSmoke(i))
+                }
                 Terrain.WATER -> if (Random.Int(3) == 0) scene.add(PondSparkle(i))
+                Terrain.GRASS -> if (Random.Int(8) == 0) scene.add(WindParticle.Wind(i))
+                Terrain.HIGH_GRASS -> if (Random.Int(6) == 0) scene.add(VillageLeaf(i))
             }
         }
     }
@@ -259,6 +332,38 @@ class VillageLevel : Level() {
             val p = DungeonTilemap.tileCenterToWorld(pos)
             pos(p.x - 2, p.y - 2, 4f, 4f)
             pour(FlameParticle.FACTORY, 0.1f)
+        }
+
+        override fun update() {
+            visible = Dungeon.visible[pos]
+            if (visible) {
+                super.update()
+            }
+        }
+    }
+
+    // Leaf particles drifting from hedges
+    private class VillageLeaf(private val pos: Int) : Emitter() {
+        init {
+            val p = DungeonTilemap.tileCenterToWorld(pos)
+            pos(p.x - 4, p.y - 4, 8f, 8f)
+            pour(LeafParticle.LEVEL_SPECIFIC, 0.8f)
+        }
+
+        override fun update() {
+            visible = Dungeon.visible[pos]
+            if (visible) {
+                super.update()
+            }
+        }
+    }
+
+    // Smoke wisps rising above the campfire
+    private class CampfireSmoke(private val pos: Int) : Emitter() {
+        init {
+            val p = DungeonTilemap.tileCenterToWorld(pos)
+            pos(p.x - 2, p.y - 6, 4f, 4f)
+            pour(SmokeParticle.FACTORY, 0.4f)
         }
 
         override fun update() {

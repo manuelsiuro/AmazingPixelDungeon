@@ -99,6 +99,34 @@ object Terrain {
 
 ---
 
+## Village (Floor 0)
+
+### VillageLevel
+**Path**: `levels/VillageLevel.kt`
+
+Outdoor safe hub where the player starts. Hand-crafted layout (not procedurally generated). The player can return by ascending from depth 1.
+
+| Property | Value |
+|----------|-------|
+| Tileset | `tiles_village.png` |
+| Water | Pond (SE corner) |
+| Feeling | Always NONE |
+| Respawner | None (safe zone) |
+
+**Layout**: Three shops (weapon NW, potion NE, tavern SW), central square with healing well, signpost, and campfire, village garden (E), herbalist's alchemy pot (W), hidden stash behind weapon shop, pond with provisions (SE).
+
+**NPCs**: 3 Shopkeepers, VillageElder, 1-2 Rats (outskirts).
+
+**Atmospheric effects**: Wind particles on grass, leaf particles on hedges, smoke above campfire, pond sparkles, Foliage light shafts in garden.
+
+**Discoverable content**:
+- Village Garden — Foliage blob (golden light, Shadows buff), Sungrass + Brightcap plants
+- Herbalist's Corner — functional Alchemy pot for brewing potions from seeds
+- Hidden Stash — SECRET_DOOR behind weapon shop leads to chest (Honeypot/Ankh/HolyWater/SmokeBomb)
+- Pond-side — free FrostBerry, chance of bonus Sungrass seed
+
+---
+
 ## Region 1: Sewers (Floors 1-5)
 
 ### SewerLevel
@@ -494,6 +522,7 @@ fun assignFeeling() {
 ## Level Progression
 
 ```
+Floor 0:     VillageLevel (safe hub)
 Floor 1-4:   SewerLevel
 Floor 5:     SewerBossLevel (Goo)
 Floor 6-9:   PrisonLevel
