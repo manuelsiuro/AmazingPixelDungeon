@@ -20,6 +20,8 @@ object LlmTextEnhancer {
     private const val MAX_PLANT_LENGTH = 300
     private const val MAX_CELL_LENGTH = 200
 
+
+
     fun enhanceNpcDialog(
         npcName: String,
         questState: String,
@@ -888,6 +890,9 @@ object LlmTextEnhancer {
             result = result.substring(1, result.length - 1).trim()
         }
 
+        // Balance underscore emphasis markers so Highlighter can parse them
+        result = sanitizeUnderscores(result)
+
         // Truncate to max length, breaking at last period if possible
         if (result.length > maxLength) {
             result = result.substring(0, maxLength)
@@ -895,8 +900,29 @@ object LlmTextEnhancer {
             if (lastPeriod > maxLength / 2) {
                 result = result.substring(0, lastPeriod + 1)
             }
+            // Re-balance underscores after truncation may have split a pair
+            result = sanitizeUnderscores(result)
         }
         return result
+    }
+
+    private fun sanitizeUnderscores(text: String): String {
+        // Count underscores used as emphasis markers (_word_).
+        // If there's an odd number, remove the last unpaired one.
+        val indices = mutableListOf<Int>()
+        for (i in text.indices) {
+            if (text[i] == '_') indices.add(i)
+        }
+        if (indices.size < 2) {
+            // 0 or 1 underscore — nothing to pair; strip any lone one
+            return if (indices.size == 1) {
+                text.removeRange(indices[0], indices[0] + 1)
+            } else text
+        }
+        // Odd count — remove the last underscore to make pairs balanced
+        return if (indices.size % 2 != 0) {
+            text.removeRange(indices.last(), indices.last() + 1)
+        } else text
     }
 
     private fun stripPromptEcho(text: String): String {

@@ -6,6 +6,7 @@ import com.watabou.pixeldungeon.sprites.CharSprite
 import com.watabou.pixeldungeon.utils.GLog
 import com.watabou.pixeldungeon.utils.Utils
 import com.watabou.utils.Signal
+import com.watabou.utils.Highlighter
 import java.util.ArrayList
 import java.util.regex.Pattern
 class GameLog : Component(), Signal.Listener<String> {
@@ -44,6 +45,9 @@ class GameLog : Component(), Signal.Listener<String> {
             txt = txt.substring(GLog.HIGHLIGHT.length)
             color = CharSprite.NEUTRAL
         }
+        // Strip underscore emphasis markers — GameLog uses plain BitmapTextMultiline
+        txt = Highlighter(txt).text
+
         txt = Utils.capitalize(txt) + if (PUNCTUATION.matcher(txt).matches()) "" else "."
         val le = lastEntry
         if (le != null && color == lastColor && le.nLines < MAX_LINES) {

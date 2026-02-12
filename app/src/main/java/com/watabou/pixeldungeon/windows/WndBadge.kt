@@ -6,13 +6,15 @@ import com.watabou.pixeldungeon.effects.BadgeBanner
 import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.scenes.PixelScene
 import com.watabou.pixeldungeon.ui.Window
+import com.watabou.utils.Highlighter
 class WndBadge(badge: Badges.Badge) : Window() {
     init {
         val icon = BadgeBanner.image(badge.image)
         icon.scale.set(2f)
         add(icon)
         val heroClass = Dungeon.hero?.heroClass?.title() ?: "adventurer"
-        val badgeDesc = LlmTextEnhancer.enhanceBadgeText(badge.name, heroClass, badge.description ?: "")
+        val rawDesc = LlmTextEnhancer.enhanceBadgeText(badge.name, heroClass, badge.description ?: "")
+        val badgeDesc = Highlighter(rawDesc).text
         val info = PixelScene.createMultiline(badgeDesc, 8f)
         info.maxWidth = (WIDTH - MARGIN * 2).toInt()
         info.measure()

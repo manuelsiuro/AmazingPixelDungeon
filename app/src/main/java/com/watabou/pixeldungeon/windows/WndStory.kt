@@ -8,12 +8,13 @@ import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.scenes.PixelScene
 import com.watabou.pixeldungeon.ui.Window
+import com.watabou.utils.Highlighter
 import com.watabou.utils.SparseArray
 open class WndStory(text: String) : Window(0, 0, Chrome.get(Chrome.Type.SCROLL)!!) {
     private val tf: BitmapTextMultiline
     private var delay: Float = 0f
     init {
-        tf = PixelScene.createMultiline(text, 7f)
+        tf = PixelScene.createMultiline(Highlighter(text).text, 7f)
         tf.maxWidth = WIDTH - MARGIN * 2
         tf.measure()
         tf.ra = bgR
