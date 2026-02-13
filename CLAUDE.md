@@ -43,6 +43,7 @@ app/src/main/java/com/watabou/
 ├── noosa/           # Core 2D rendering engine
 ├── pixeldungeon/    # Main game code
 │   ├── actors/      # Hero, mobs, buffs
+│   ├── encyclopedia/ # In-game encyclopedia/guide system
 │   ├── items/       # All item types
 │   ├── levels/      # Dungeon generation
 │   ├── scenes/      # Game scenes (menus, gameplay)
@@ -184,6 +185,7 @@ When extending `ItemSlot`, implement these methods:
 6. **Component init order**: `Component()` constructor calls `createChildren()` BEFORE subclass property initializers run. Never access constructor parameters or `var x = null` properties in `createChildren()` — they'll be null/0. Create widgets in `createChildren()`, configure them in `init {}`. Use `lateinit var` instead of `var x: Type? = null` for fields set in `createChildren()`. See `docs/systems/ui-system.md` for details.
 7. **Gizmo `camera` vs `camera()`**: `camera` (property) is a direct field, null unless explicitly set. `camera()` (method) traverses the parent hierarchy. `Group.add()` does NOT set `camera`. Always use `camera()` when you need the effective camera. See `docs/systems/rendering-system.md` for details.
 8. **NPC/item placement collisions**: NPC spawns must check `level.heaps[pos] == null` (no item heap). Item drops via `randomDropCell()` must check `Actor.findChar(pos) == null` (no mob/NPC). See `docs/systems/level-generation.md` for the full pattern.
+9. **Encyclopedia updates required**: When adding new items, monsters, buffs, or game mechanics, you **MUST** also register them in `encyclopedia/EncyclopediaRegistry.kt`. The encyclopedia is the in-game guide accessible from the title screen. Forgetting to update it means players won't know about new content. Use `registerItem()` for standard items, `registerWithIcon()` for items with randomized appearances (potions, scrolls, wands, rings), `registerMob()` for monsters, and `registerBuff()` for buffs. For items that use randomized handlers (like potions/scrolls), use `trueName()` not `name()` and provide explicit sprite sheet constants.
 
 ## Key Entry Points
 
@@ -194,6 +196,7 @@ When extending `ItemSlot`, implement these methods:
 | `Dungeon.kt` | Game state singleton |
 | `GameScene.kt` | Main gameplay scene |
 | `Hero.kt` | Player character |
+| `encyclopedia/EncyclopediaRegistry.kt` | In-game guide content registry |
 
 ## Skills
 

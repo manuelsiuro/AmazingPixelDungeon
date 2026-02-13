@@ -316,6 +316,9 @@ abstract class Mob : Char() {
     open fun description(): String {
         return "Real description is coming soon!"
     }
+    fun expValue(): Int = EXP
+    fun defenseSkillValue(): Int = defenseSkill
+    fun maxHp(): Int = HT
     open fun notice() {
         sprite?.showAlert()
     }

@@ -10,6 +10,8 @@ import com.watabou.pixeldungeon.Assets
 import com.watabou.pixeldungeon.PixelDungeon
 import com.watabou.pixeldungeon.effects.BannerSprites
 import com.watabou.pixeldungeon.effects.Fireball
+import com.watabou.pixeldungeon.sprites.ItemSprite
+import com.watabou.pixeldungeon.sprites.ItemSpriteSheet
 import com.watabou.pixeldungeon.ui.Archs
 import com.watabou.pixeldungeon.ui.ExitButton
 import com.watabou.pixeldungeon.ui.PrefsButton
@@ -75,17 +77,39 @@ class TitleScene : PixelScene() {
             }
         }
         add(btnHighscores)
+        val btnGuide = object : DashboardItem(TXT_GUIDE, -1) {
+            override fun createChildren() {
+                super.createChildren()
+                remove(image)
+                val sprite = ItemSprite(ItemSpriteSheet.MASTERY, null)
+                sprite.scale.set(2f)
+                image = sprite
+                add(image)
+            }
+            override fun onClick() {
+                PixelDungeon.switchNoFade(EncyclopediaScene::class.java)
+            }
+        }
+        add(btnGuide)
         if (PixelDungeon.landscape()) {
             val y = (h + height) / 2 - DashboardItem.SIZE
-            btnHighscores.setPos(w / 2 - btnHighscores.width(), y)
-            btnBadges.setPos(w / 2f, y)
-            btnPlay.setPos(btnHighscores.left() - btnPlay.width(), y)
-            btnAbout.setPos(btnBadges.right(), y)
+            val totalWidth = DashboardItem.SIZE * 5
+            val startX = (w - totalWidth) / 2
+            btnPlay.setPos(startX, y)
+            btnHighscores.setPos(startX + DashboardItem.SIZE, y)
+            btnGuide.setPos(startX + DashboardItem.SIZE * 2, y)
+            btnBadges.setPos(startX + DashboardItem.SIZE * 3, y)
+            btnAbout.setPos(startX + DashboardItem.SIZE * 4, y)
         } else {
-            btnBadges.setPos(w / 2 - btnBadges.width(), (h + height) / 2 - DashboardItem.SIZE)
-            btnAbout.setPos(w / 2f, (h + height) / 2 - DashboardItem.SIZE)
-            btnPlay.setPos(w / 2 - btnPlay.width(), btnAbout.top() - DashboardItem.SIZE)
-            btnHighscores.setPos(w / 2f, btnPlay.top())
+            val bottomY = (h + height) / 2 - DashboardItem.SIZE
+            btnBadges.setPos(w / 2 - btnBadges.width(), bottomY)
+            btnAbout.setPos(w / 2f, bottomY)
+            val topY = bottomY - DashboardItem.SIZE
+            val totalWidth = DashboardItem.SIZE * 3
+            val startX = (w - totalWidth) / 2
+            btnPlay.setPos(startX, topY)
+            btnHighscores.setPos(startX + DashboardItem.SIZE, topY)
+            btnGuide.setPos(startX + DashboardItem.SIZE * 2, topY)
         }
         val version = BitmapText("v " + Game.version, font1x)
         version.measure()
@@ -106,11 +130,13 @@ class TitleScene : PixelScene() {
         fb.setPos(x, y)
         add(fb)
     }
-    private open class DashboardItem(text: String, index: Int) : Button() {
-        private lateinit var image: Image
+    private open class DashboardItem(text: String, private val index: Int) : Button() {
+        protected lateinit var image: Image
         private lateinit var label: BitmapText
         init {
-            image.frame(image.texture!!.uvRect(index * IMAGE_SIZE, 0, (index + 1) * IMAGE_SIZE, IMAGE_SIZE))
+            if (index >= 0) {
+                image.frame(image.texture!!.uvRect(index * IMAGE_SIZE, 0, (index + 1) * IMAGE_SIZE, IMAGE_SIZE))
+            }
             label.text(text)
             label.measure()
             setSize(SIZE, SIZE)
@@ -146,5 +172,6 @@ class TitleScene : PixelScene() {
         private const val TXT_HIGHSCORES = "Rankings"
         private const val TXT_BADGES = "Badges"
         private const val TXT_ABOUT = "About"
+        private const val TXT_GUIDE = "Guide"
     }
 }

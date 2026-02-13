@@ -16,6 +16,7 @@ Welcome to the comprehensive documentation for **Amazing Pixel Dungeon**, an And
 - [Actor System](systems/actor-system.md) - Turn-based scheduling and buff system
 - [Level Generation](systems/level-generation.md) - Procedural dungeon generation pipeline, room shapes, and decorations
 - [LLM System](systems/llm-system.md) - On-device AI text generation for enhanced game content
+- [Encyclopedia System](systems/encyclopedia-system.md) - In-game guide with items, monsters, buffs, and mechanics
 
 ### Design Documents
 - [Village Level Plan](design/village-level-plan.md) - Outdoor village hub at depth 0
@@ -103,6 +104,7 @@ app/src/main/java/com/watabou/
 1. Read the [Architecture Overview](architecture/overview.md) first
 2. Understand the [Actor System](systems/actor-system.md) for gameplay changes
 3. Review the relevant entity catalog before adding new content
+4. **Update the Encyclopedia** (`encyclopedia/EncyclopediaRegistry.kt`) when adding new items, monsters, buffs, or mechanics — this is the in-game guide players rely on
 
 ---
 
