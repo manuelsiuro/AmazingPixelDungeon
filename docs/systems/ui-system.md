@@ -702,6 +702,11 @@ open class Window(
 | `WndJournal` | Quest log |
 | `WndCatalogus` | Item catalog |
 | `WndResurrect` | Ankh revival prompt |
+| `WndCrafting` | Generic crafting recipe list (by station type) |
+| `WndFurnace` | Furnace smelting recipes |
+| `WndEnchanting` | Enchanting weapons + recipes button |
+| `WndAnvil` | Anvil repair and enchanted book application |
+| `WndStorageChest` | Storage/dimensional chest item transfer |
 
 ### WndBag.kt
 **Path**: `windows/WndBag.kt`
@@ -779,6 +784,20 @@ list.setRect(0f, titleHeight, WIDTH.toFloat(), height - titleHeight)
 ```
 
 **Important**: ScrollPane's `layout()` uses `camera()` (the method) to find the parent Window's camera via hierarchy traversal. See [Camera Property vs Method](rendering-system.md#camera-property-vs-method-kotlin-conversion-pitfall) for details on why this distinction matters. If `camera` (the property) were used instead, it would be null — causing layout to exit early and the content camera to remain at 1x1 pixels, making all content invisible.
+
+**Click dispatch**: ScrollPane's `TouchController` intercepts all touch events in the scroll region. On a non-drag click it calls `ScrollPane.onClick(x, y)` with content-space coordinates, but the **default implementation is empty**. Buttons inside the ScrollPane content never receive touch events directly. To handle clicks, override `onClick` on an anonymous subclass and manually hit-test children:
+
+```kotlin
+val list = object : ScrollPane(content) {
+    override fun onClick(x: Float, y: Float) {
+        for (slot in slots) {
+            if (slot.handleClick(x, y)) break  // public method using inside(x, y)
+        }
+    }
+}
+```
+
+See `WndCrafting`, `WndFurnace`, `WndStorageChest`, and `WndCatalogus` for examples of this pattern.
 
 ## Toast Notifications
 

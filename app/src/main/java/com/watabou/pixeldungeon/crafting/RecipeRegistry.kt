@@ -1,5 +1,8 @@
 package com.watabou.pixeldungeon.crafting
 
+import com.watabou.pixeldungeon.items.crafting.StorageChestItem
+import com.watabou.pixeldungeon.items.crafting.DimensionalChestItem
+import com.watabou.pixeldungeon.items.crafting.EyeOfEnder
 import com.watabou.pixeldungeon.items.armor.crafted.ChainVest
 import com.watabou.pixeldungeon.items.armor.crafted.DiamondMail
 import com.watabou.pixeldungeon.items.armor.crafted.IronPlate
@@ -210,6 +213,26 @@ object RecipeRegistry {
             outputQuantity = 1,
             station = StationType.CRAFTING_TABLE
         ))
+
+        // Phase 4: Storage chests
+        register(Recipe(
+            id = "storage_chest",
+            inputs = listOf(RecipeInput(WoodPlank::class.java, 8)),
+            outputClass = StorageChestItem::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "dimensional_chest",
+            inputs = listOf(
+                RecipeInput(StorageChestItem::class.java, 1),
+                RecipeInput(EyeOfEnder::class.java, 1)
+            ),
+            outputClass = DimensionalChestItem::class.java,
+            outputQuantity = 1,
+            station = StationType.ENCHANTING_TABLE
+        ))
     }
 
     fun register(recipe: Recipe) {
@@ -224,7 +247,8 @@ object RecipeRegistry {
             it.station == StationType.CRAFTING_TABLE || it.station == StationType.NONE
         }
         StationType.NONE -> recipes.filter { it.station == StationType.NONE }
-        StationType.ENCHANTING_TABLE, StationType.ANVIL -> emptyList()
+        StationType.ENCHANTING_TABLE -> recipes.filter { it.station == StationType.ENCHANTING_TABLE }
+        StationType.ANVIL -> recipes.filter { it.station == StationType.ANVIL }
     }
 
     fun byId(id: String): Recipe? = recipes.find { it.id == id }

@@ -316,6 +316,17 @@ All crafting materials extend `MaterialItem` (stackable base class).
 | Blank Tome | `BlankTome.kt` | Crafted / found | Absorbs enchantment → Enchanted Book |
 | Enchanted Book | `EnchantedBook.kt` | Enchanting a Blank Tome | Anvil: apply enchantment to weapon |
 
+### Storage Items
+
+| Item | File | Recipe | Station |
+|------|------|--------|---------|
+| Storage Chest | `StorageChestItem.kt` | 8 Wood Planks | Crafting Table |
+| Eye of Ender | `EyeOfEnder.kt` | (drop / found) | — |
+| Dimensional Chest | `DimensionalChestItem.kt` | 1 Storage Chest + 1 Eye of Ender | Enchanting Table |
+
+- **Storage Chest**: Place on an adjacent tile to create a stationary chest NPC. Items stored persist per-chest.
+- **Dimensional Chest**: Place on an adjacent tile. All dimensional chests share inventory across depths via `DimensionalStorage`.
+
 ### Crafted Consumables
 
 | Item | File | Recipe |

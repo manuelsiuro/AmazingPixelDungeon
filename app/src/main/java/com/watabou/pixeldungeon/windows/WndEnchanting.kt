@@ -148,6 +148,18 @@ class WndEnchanting(private val hero: Hero, private val selectedItem: Item? = nu
             }
         }
 
+        // Recipes button — access crafting recipes for this station
+        pos += GAP
+        val recipesBtn = object : RedButton(TXT_RECIPES) {
+            override fun onClick() {
+                hide()
+                GameScene.show(WndCrafting(hero, com.watabou.pixeldungeon.crafting.StationType.ENCHANTING_TABLE))
+            }
+        }
+        recipesBtn.setRect(0f, pos, WIDTH.toFloat(), 18f)
+        add(recipesBtn)
+        pos += recipesBtn.height()
+
         resize(WIDTH, pos.toInt())
     }
 
@@ -273,5 +285,6 @@ class WndEnchanting(private val hero: Hero, private val selectedItem: Item? = nu
         private const val TXT_SELECT_SCROLL = "Select a scroll to grind"
         private const val TXT_DISENCHANT = "Disenchant"
         private const val TXT_GRIND = "Grind Scroll"
+        private const val TXT_RECIPES = "Recipes"
     }
 }

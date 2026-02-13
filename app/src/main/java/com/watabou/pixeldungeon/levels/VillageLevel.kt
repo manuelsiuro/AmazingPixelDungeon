@@ -43,6 +43,7 @@ import com.watabou.pixeldungeon.items.crafting.Leather
 import com.watabou.pixeldungeon.items.crafting.Stick
 import com.watabou.pixeldungeon.items.crafting.ArcaneDust
 import com.watabou.pixeldungeon.items.crafting.BlankTome
+import com.watabou.pixeldungeon.items.crafting.EyeOfEnder
 import com.watabou.pixeldungeon.items.crafting.WoodPlank
 import com.watabou.pixeldungeon.items.food.MysteryMeat
 import com.watabou.pixeldungeon.items.quest.DarkGold
@@ -293,6 +294,9 @@ class VillageLevel : Level() {
         drop(ScrollOfIdentify(), pos(24, 26))
         // Second ShortSword for anvil repair testing
         drop(ShortSword().identify(), pos(26, 25))
+        // Storage chest test: extra wood planks + eye of ender for dimensional chest
+        drop(WoodPlank().apply { quantity = 16 }, pos(22, 23))
+        drop(EyeOfEnder().apply { quantity = 2 }, pos(20, 24))
 
         // Record village in journal
         Journal.add(Journal.Feature.VILLAGE)

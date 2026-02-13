@@ -1272,5 +1272,47 @@
     "category": "armor",
     "name": "diamond mail",
     "prompt_hints": "sparkling studded premium"
+  },
+  {
+    "id": "ARCANE_DUST",
+    "index": 182,
+    "category": "material",
+    "name": "arcane dust",
+    "prompt_hints": "purple sparkling magical dust"
+  },
+  {
+    "id": "BLANK_TOME",
+    "index": 183,
+    "category": "material",
+    "name": "blank tome",
+    "prompt_hints": "plain leather book pages"
+  },
+  {
+    "id": "ENCHANTED_BOOK",
+    "index": 184,
+    "category": "material",
+    "name": "enchanted book",
+    "prompt_hints": "magical book glowing rune"
+  },
+  {
+    "id": "STORAGE_CHEST",
+    "index": 185,
+    "category": "block",
+    "name": "storage chest",
+    "prompt_hints": "wooden treasure chest, iron bands, lock, closed"
+  },
+  {
+    "id": "DIMENSIONAL_CHEST",
+    "index": 186,
+    "category": "block",
+    "name": "dimensional chest",
+    "prompt_hints": "ender chest, dark obsidian, purple glow, magical"
+  },
+  {
+    "id": "EYE_OF_ENDER",
+    "index": 187,
+    "category": "material",
+    "name": "eye of ender",
+    "prompt_hints": "glowing green eye, pearl, floating, magical"
   }
 ]

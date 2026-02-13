@@ -224,4 +224,9 @@ object ItemSpriteSheet {
     const val ARCANE_DUST = 182
     const val BLANK_TOME = 183
     const val ENCHANTED_BOOK = 184
+
+    // Storage chests
+    const val STORAGE_CHEST = 185
+    const val DIMENSIONAL_CHEST = 186
+    const val EYE_OF_ENDER = 187
 }

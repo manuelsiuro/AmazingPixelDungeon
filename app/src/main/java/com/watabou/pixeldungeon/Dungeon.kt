@@ -8,6 +8,7 @@ import com.watabou.pixeldungeon.actors.buffs.Rage
 import com.watabou.pixeldungeon.actors.hero.Hero
 import com.watabou.pixeldungeon.actors.hero.HeroClass
 import com.watabou.pixeldungeon.actors.mobs.npcs.Blacksmith
+import com.watabou.pixeldungeon.actors.mobs.npcs.DimensionalStorage
 import com.watabou.pixeldungeon.actors.mobs.npcs.Ghost
 import com.watabou.pixeldungeon.actors.mobs.npcs.Imp
 import com.watabou.pixeldungeon.actors.mobs.npcs.Wandmaker
@@ -73,6 +74,7 @@ object Dungeon {
         Blacksmith.Quest.reset()
         Imp.Quest.reset()
         com.watabou.pixeldungeon.quests.AiQuestBook.reset()
+        DimensionalStorage.reset()
         Room.shuffleTypes()
         QuickSlot.primaryValue = null
         QuickSlot.secondaryValue = null
@@ -231,6 +233,7 @@ object Dungeon {
     private const val CHAPTERS = "chapters"
     private const val QUESTS = "quests"
     private const val BADGES = "badges"
+    private const val DIMENSIONAL_STORAGE = "dimensionalStorage"
     fun gameFile(cl: HeroClass): String {
         return when (cl) {
             HeroClass.WARRIOR -> WR_GAME_FILE
@@ -285,6 +288,10 @@ object Dungeon {
             Imp.Quest.storeInBundle(quests)
             com.watabou.pixeldungeon.quests.AiQuestBook.storeInBundle(quests)
             bundle.put(QUESTS, quests)
+            val dimStorage = Bundle()
+            DimensionalStorage.storeInBundle(dimStorage)
+            bundle.put(DIMENSIONAL_STORAGE, dimStorage)
+
             Room.storeRoomsInBundle(bundle)
             Statistics.storeInBundle(bundle)
             Journal.storeInBundle(bundle)
@@ -377,6 +384,12 @@ object Dungeon {
                 com.watabou.pixeldungeon.quests.AiQuestBook.reset()
             }
             Room.restoreRoomsFromBundle(bundle)
+        }
+        val dimStorage = bundle.getBundle(DIMENSIONAL_STORAGE)
+        if (!dimStorage.isNull()) {
+            DimensionalStorage.restoreFromBundle(dimStorage)
+        } else {
+            DimensionalStorage.reset()
         }
         val badges = bundle.getBundle(BADGES)
         if (!badges.isNull()) {

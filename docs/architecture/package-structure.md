@@ -190,6 +190,9 @@ mobs/
     ├── Wandmaker.kt
     ├── Blacksmith.kt
     ├── Imp.kt
+    ├── StorageChestNpc.kt    # Placeable per-chest storage
+    ├── DimensionalChestNpc.kt # Shared cross-depth storage
+    ├── DimensionalStorage.kt  # Shared inventory singleton
     └── [more NPCs]
 ```
 
@@ -224,7 +227,7 @@ items/
 ├── armor/              # 11 armor types + 12 glyphs
 │   └── crafted/        # 4 crafted armor types
 ├── bags/               # 6 container types (incl. MaterialBag)
-├── crafting/           # 13 crafting material types
+├── crafting/           # Crafting materials + storage/dimensional chest items
 ├── food/               # 6 food items
 ├── keys/               # 4 key types
 ├── potions/            # 13 potion types
