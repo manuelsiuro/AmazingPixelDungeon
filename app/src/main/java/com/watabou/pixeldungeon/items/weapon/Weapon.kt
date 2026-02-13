@@ -80,6 +80,9 @@ abstract class Weapon : KindOfWeapon() {
                 damage += Random.IntRange(0, exStr)
             }
         }
+        if (enchantment is Sharpness) {
+            damage += Random.IntRange(1, 2)
+        }
         return damage
     }
     open fun upgrade(enchant: Boolean): Item {

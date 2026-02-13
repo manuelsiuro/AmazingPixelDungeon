@@ -761,6 +761,8 @@ abstract class Level : Bundlable {
             Terrain.ALCHEMY -> "Alchemy pot"
             Terrain.CRAFTING_TABLE -> "Crafting table"
             Terrain.FURNACE -> "Furnace"
+            Terrain.ENCHANTING_TABLE -> "Enchanting table"
+            Terrain.ANVIL -> "Anvil"
             else -> "???"
         }
     }
@@ -783,6 +785,8 @@ abstract class Level : Bundlable {
             Terrain.EMPTY_WELL -> "The well has run dry."
             Terrain.CRAFTING_TABLE -> "A sturdy workbench for crafting items from raw materials."
             Terrain.FURNACE -> "A furnace for smelting ore into metal ingots."
+            Terrain.ENCHANTING_TABLE -> "An ancient table pulsing with arcane energy. Place a weapon here to imbue it with magical enchantments."
+            Terrain.ANVIL -> "A heavy anvil used to repair equipment and apply enchanted books to weapons."
             else -> {
                 if (tile >= Terrain.WATER_TILES) {
                     return tileDesc(Terrain.WATER)

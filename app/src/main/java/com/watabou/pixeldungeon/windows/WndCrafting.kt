@@ -77,6 +77,8 @@ class WndCrafting(
             StationType.CRAFTING_TABLE -> "Crafting Table"
             StationType.FURNACE -> "Furnace"
             StationType.NONE -> "Crafting Kit"
+            StationType.ENCHANTING_TABLE -> "Enchanting Table"
+            StationType.ANVIL -> "Anvil"
         }
     }
 

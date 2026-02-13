@@ -219,4 +219,9 @@ object ItemSpriteSheet {
     const val CHAIN_VEST = 179
     const val CRAFTED_IRON_PLATE = 180
     const val DIAMOND_MAIL = 181
+
+    // Enchanting materials
+    const val ARCANE_DUST = 182
+    const val BLANK_TOME = 183
+    const val ENCHANTED_BOOK = 184
 }

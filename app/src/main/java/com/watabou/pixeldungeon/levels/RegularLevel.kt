@@ -100,6 +100,10 @@ abstract class RegularLevel : Level() {
         if (Dungeon.bossLevel(Dungeon.depth + 1)) {
             specials.remove(Type.WEAK_FLOOR)
         }
+        if (Dungeon.depth < 4) {
+            specials.remove(Type.ENCHANTING)
+            specials.remove(Type.ANVIL_ROOM)
+        }
         assignRoomType()
         paint()
         paintWater()

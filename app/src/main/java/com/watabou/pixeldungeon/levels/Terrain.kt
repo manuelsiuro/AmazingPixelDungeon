@@ -31,6 +31,8 @@ object Terrain {
     const val CHASM_WATER = 46
     const val CRAFTING_TABLE = 64
     const val FURNACE = 65
+    const val ENCHANTING_TABLE = 66
+    const val ANVIL = 67
     const val SECRET_DOOR = 16
     const val TOXIC_TRAP = 17
     const val SECRET_TOXIC_TRAP = 18
@@ -112,6 +114,8 @@ object Terrain {
         flags[INACTIVE_TRAP] = flags[EMPTY]
         flags[CRAFTING_TABLE] = SOLID
         flags[FURNACE] = SOLID
+        flags[ENCHANTING_TABLE] = SOLID
+        flags[ANVIL] = SOLID
         for (i in WATER_TILES until WATER_TILES + 16) {
             flags[i] = flags[WATER]
         }

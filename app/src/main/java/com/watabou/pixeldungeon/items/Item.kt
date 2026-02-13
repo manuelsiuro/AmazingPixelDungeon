@@ -253,6 +253,9 @@ open class Item : Bundlable {
     fun durability(): Int {
         return durability
     }
+    fun setDurability(value: Int) {
+        durability = Math.min(value, maxDurability())
+    }
     open fun maxDurability(lvl: Int): Int {
         return 1
     }

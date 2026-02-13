@@ -224,6 +224,7 @@ object RecipeRegistry {
             it.station == StationType.CRAFTING_TABLE || it.station == StationType.NONE
         }
         StationType.NONE -> recipes.filter { it.station == StationType.NONE }
+        StationType.ENCHANTING_TABLE, StationType.ANVIL -> emptyList()
     }
 
     fun byId(id: String): Recipe? = recipes.find { it.id == id }

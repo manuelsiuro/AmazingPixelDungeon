@@ -3,6 +3,8 @@ import com.watabou.noosa.Game
 import com.watabou.pixeldungeon.items.Gold
 import com.watabou.pixeldungeon.items.Item
 import com.watabou.pixeldungeon.items.rings.Ring
+import com.watabou.pixeldungeon.items.weapon.Weapon
+import com.watabou.pixeldungeon.items.weapon.enchantments.Soulbound
 import com.watabou.utils.Bundle
 import com.watabou.utils.Random
 import java.io.IOException
@@ -14,11 +16,18 @@ object Bones {
     private var item: Item? = null
     fun leave() {
         item = null
-        when (Random.Int(4)) {
-            0 -> item = Dungeon.hero!!.belongings.weapon
-            1 -> item = Dungeon.hero!!.belongings.armor
-            2 -> item = Dungeon.hero!!.belongings.ring1
-            3 -> item = Dungeon.hero!!.belongings.ring2
+        // Soulbound weapon takes priority over random equipment
+        val weapon = Dungeon.hero!!.belongings.weapon
+        if (weapon is Weapon && weapon.enchantment is Soulbound) {
+            item = weapon
+        }
+        if (item == null) {
+            when (Random.Int(4)) {
+                0 -> item = Dungeon.hero!!.belongings.weapon
+                1 -> item = Dungeon.hero!!.belongings.armor
+                2 -> item = Dungeon.hero!!.belongings.ring1
+                3 -> item = Dungeon.hero!!.belongings.ring2
+            }
         }
         if (item == null) {
             if (Dungeon.gold > 0) {

@@ -37,7 +37,9 @@ class Room : Rect(), Graph.Node, Bundlable {
         WEAK_FLOOR(WeakFloorPainter::class.java),
         PIT(PitPainter::class.java),
         WORKSHOP(WorkshopPainter::class.java),
-        ALTAR(AltarPainter::class.java);
+        ALTAR(AltarPainter::class.java),
+        ENCHANTING(EnchantingTablePainter::class.java),
+        ANVIL_ROOM(AnvilPainter::class.java);
         private var paint: Method? = null
         init {
             if (painter != null) {
@@ -139,7 +141,8 @@ class Room : Rect(), Graph.Node, Bundlable {
         val SPECIALS = ArrayList(
             Arrays.asList(
                 Type.ARMORY, Type.WEAK_FLOOR, Type.MAGIC_WELL, Type.CRYPT, Type.POOL, Type.GARDEN, Type.LIBRARY,
-                Type.TREASURY, Type.TRAPS, Type.STORAGE, Type.STATUE, Type.LABORATORY, Type.VAULT, Type.WORKSHOP, Type.ALTAR
+                Type.TREASURY, Type.TRAPS, Type.STORAGE, Type.STATUE, Type.LABORATORY, Type.VAULT, Type.WORKSHOP, Type.ALTAR,
+                Type.ENCHANTING, Type.ANVIL_ROOM
             )
         )
         fun shuffleTypes() {

@@ -39,8 +39,11 @@ import com.watabou.pixeldungeon.items.scrolls.ScrollOfMagicMapping
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfRecharging
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfUpgrade
 import com.watabou.pixeldungeon.items.wands.Wand
+import com.watabou.pixeldungeon.items.weapon.Weapon
+import com.watabou.pixeldungeon.items.weapon.enchantments.Reach
 import com.watabou.pixeldungeon.items.weapon.melee.MeleeWeapon
 import com.watabou.pixeldungeon.items.weapon.missiles.MissileWeapon
+import com.watabou.pixeldungeon.mechanics.Ballistica
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.Terrain
 import com.watabou.pixeldungeon.levels.features.AlchemyPot
@@ -355,6 +358,12 @@ class Hero : Char() {
                 Terrain.FURNACE -> GameScene.show(
                     com.watabou.pixeldungeon.windows.WndFurnace(this)
                 )
+                Terrain.ENCHANTING_TABLE -> GameScene.show(
+                    com.watabou.pixeldungeon.windows.WndEnchanting(this)
+                )
+                Terrain.ANVIL -> GameScene.show(
+                    com.watabou.pixeldungeon.windows.WndAnvil(this)
+                )
             }
             return false
         } else if (getCloser(dst)) {
@@ -512,10 +521,20 @@ class Hero : Char() {
             return false
         }
     }
+    private fun canReach(enemy: Char): Boolean {
+        val weapon = belongings.weapon
+        if (weapon is Weapon && weapon.enchantment is Reach) {
+            val dist = Level.distance(pos, enemy.pos)
+            if (dist <= 2) {
+                return Ballistica.cast(pos, enemy.pos, false, true) == enemy.pos
+            }
+        }
+        return false
+    }
     private fun actAttack(action: HeroAction.Attack): Boolean {
         enemy = action.target
         val currentEnemy = enemy ?: return false
-        if (Level.adjacent(pos, currentEnemy.pos) && currentEnemy.isAlive && !isCharmedBy(currentEnemy)) {
+        if ((Level.adjacent(pos, currentEnemy.pos) || canReach(currentEnemy)) && currentEnemy.isAlive && !isCharmedBy(currentEnemy)) {
             spend(attackDelay())
             sprite?.attack(currentEnemy.pos)
             return false
@@ -660,7 +679,7 @@ class Hero : Char() {
         val currentLevel = Dungeon.level ?: return false
         if (currentLevel.map[cell] == Terrain.ALCHEMY && cell != pos) {
             curAction = HeroAction.Cook(cell)
-        } else if (currentLevel.map[cell] == Terrain.CRAFTING_TABLE || currentLevel.map[cell] == Terrain.FURNACE) {
+        } else if (currentLevel.map[cell] == Terrain.CRAFTING_TABLE || currentLevel.map[cell] == Terrain.FURNACE || currentLevel.map[cell] == Terrain.ENCHANTING_TABLE || currentLevel.map[cell] == Terrain.ANVIL) {
             curAction = HeroAction.UseStation(cell)
         } else {
             ch = Actor.findChar(cell)
