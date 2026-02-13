@@ -21,6 +21,7 @@ import com.watabou.pixeldungeon.items.crafting.*
 import com.watabou.pixeldungeon.items.weapon.*
 import com.watabou.pixeldungeon.items.weapon.melee.*
 import com.watabou.pixeldungeon.items.weapon.missiles.*
+import com.watabou.pixeldungeon.farming.*
 import com.watabou.pixeldungeon.plants.*
 import com.watabou.utils.Random
 import java.util.HashMap
@@ -186,9 +187,13 @@ object Generator {
             Thornvine.Seed::class.java,
             Mistbloom.Seed::class.java,
             Brightcap.Seed::class.java,
-            Venomroot.Seed::class.java
+            Venomroot.Seed::class.java,
+            WheatSeed::class.java,
+            CarrotSeed::class.java,
+            PotatoSeed::class.java,
+            MelonSeed::class.java
         )
-        Category.SEED.probs = floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 0f, 1f, 1f, 1f, 1f)
+        Category.SEED.probs = floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 0f, 1f, 1f, 1f, 1f, 2f, 1.5f, 1f, 0.5f)
         Category.MISC.classes = arrayOf(
             Bomb::class.java,
             Honeypot::class.java,

@@ -32,8 +32,10 @@ import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.RegularLevel
 import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.levels.features.Chasm
+import com.watabou.pixeldungeon.farming.CropData
 import com.watabou.pixeldungeon.plants.Plant
 import com.watabou.pixeldungeon.sprites.CharSprite
+import com.watabou.pixeldungeon.sprites.CropSprite
 import com.watabou.pixeldungeon.sprites.DiscardedItemSprite
 import com.watabou.pixeldungeon.sprites.HeroSprite
 import com.watabou.pixeldungeon.sprites.ItemSprite
@@ -65,6 +67,8 @@ class GameScene : PixelScene() {
     private var terrain: Group? = null
     private var ripples: Group? = null
     private var plants: Group? = null
+    private var crops: Group? = null
+    private var cropSprites = com.watabou.utils.SparseArray<CropSprite>()
     private var heaps: Group? = null
     private var mobs: Group? = null
     private var emitters: Group? = null
@@ -105,6 +109,12 @@ class GameScene : PixelScene() {
         var size = level.plants.size()
         for (i in 0 until size) {
             addPlantSprite(level.plants.valueAt(i))
+        }
+        crops = Group()
+        crops?.let { add(it) }
+        size = level.crops.size()
+        for (i in 0 until size) {
+            addCropSprite(level.crops.valueAt(i))
         }
         heaps = Group()
         heaps?.let { add(it) }
@@ -325,6 +335,22 @@ class GameScene : PixelScene() {
         plant.sprite = sprite
         sprite.reset(plant)
     }
+    private fun addCropSprite(crop: CropData) {
+        val sprite = crops?.recycle(CropSprite::class.java) as? CropSprite ?: return
+        sprite.reset(crop)
+        cropSprites.put(crop.pos, sprite)
+    }
+    private fun updateCropSprite(pos: Int) {
+        val sprite = cropSprites.get(pos) ?: return
+        val level = Dungeon.level ?: return
+        val crop = level.crops.get(pos) ?: return
+        sprite.updateStage(crop)
+    }
+    private fun removeCropSprite(pos: Int) {
+        val sprite = cropSprites.get(pos) ?: return
+        sprite.kill()
+        cropSprites.remove(pos)
+    }
     private fun addBlobSprite(gas: Blob) {
         if (gas.emitter == null) {
             gases?.add(BlobEmitter(gas))
@@ -372,6 +398,15 @@ class GameScene : PixelScene() {
         var cellSelector: CellSelector? = null
         fun add(plant: Plant) {
             scene?.addPlantSprite(plant)
+        }
+        fun addCrop(crop: CropData) {
+            scene?.addCropSprite(crop)
+        }
+        fun removeCrop(pos: Int) {
+            scene?.removeCropSprite(pos)
+        }
+        fun updateCrop(pos: Int) {
+            scene?.updateCropSprite(pos)
         }
         fun add(gas: Blob) {
             Actor.add(gas)

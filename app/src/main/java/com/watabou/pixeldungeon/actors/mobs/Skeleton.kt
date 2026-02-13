@@ -6,6 +6,7 @@ import com.watabou.pixeldungeon.ResultDescriptions
 import com.watabou.pixeldungeon.actors.Char
 import com.watabou.pixeldungeon.items.Generator
 import com.watabou.pixeldungeon.items.Item
+import com.watabou.pixeldungeon.items.crafting.Bone
 import com.watabou.pixeldungeon.items.weapon.enchantments.Death
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.sprites.SkeletonSprite
@@ -59,6 +60,11 @@ class Skeleton : Mob() {
             }
             Dungeon.level?.drop(loot, pos)?.sprite?.drop()
         }
+        // Always drop 1-2 bones
+        val boneCount = Random.IntRange(1, 2)
+        val bone = Bone()
+        bone.quantity = boneCount
+        Dungeon.level?.drop(bone, pos)?.sprite?.drop()
     }
     override fun attackSkill(target: Char?): Int {
         return 12

@@ -14,7 +14,8 @@ The game contains **180+ items** across multiple categories:
 - Food (6 types)
 - Keys (4 types)
 - Quest Items (7 types)
-- Crafting Materials (7 raw + 4 processed + 2 consumables)
+- Crafting Materials (7 raw + 4 processed + 2 consumables + 5 farming)
+- Farming (4 crop seeds, 4 produce, 3 cooked foods, planter box)
 - Miscellaneous items
 
 ## Item Base Class
@@ -278,6 +279,27 @@ All rings have cumulative effects when wearing multiple:
 | Chargrilled Meat | `ChargrilledMeat.kt` | Partial | Safe to eat |
 | Frozen Carpaccio | `FrozenCarpaccio.kt` | Partial | Random buff |
 | Overpriced Ration | `OverpricedRation.kt` | Full | Shop only |
+| Cheese Wedge | `CheeseWedge.kt` | Partial | Village tavern |
+
+### Farm Produce
+
+**Path**: `items/food/farming/`
+
+| Produce | File | Source | Special |
+|---------|------|--------|---------|
+| Wheat | `Wheat.kt` | Wheat crop | Raw ingredient |
+| Carrot | `Carrot.kt` | Carrot crop | Edible raw |
+| Potato | `Potato.kt` | Potato crop | Raw ingredient |
+| Melon Slice | `MelonSlice.kt` | Melon crop | Edible raw |
+| Bread | `Bread.kt` | Wheat (furnace) | Cooked food |
+| Baked Potato | `BakedPotato.kt` | Potato (furnace) | Cooked food |
+| Rabbit Stew | `RabbitStew.kt` | Crafted recipe | Full meal |
+
+### Planter Box
+
+**Path**: `items/food/farming/PlanterBox.kt`
+
+Portable farming container. Plant a crop seed inside and it grows as you explore. Actions: PLANT SEED, HARVEST (when mature), CHECK (growth status). Uses the operate animation pattern (`hero.sprite?.operate()`).
 
 ---
 
@@ -315,6 +337,16 @@ All crafting materials extend `MaterialItem` (stackable base class).
 | Arcane Dust | `ArcaneDust.kt` | Grinding scrolls, disenchanting | Enchanting Table costs |
 | Blank Tome | `BlankTome.kt` | Crafted / found | Absorbs enchantment → Enchanted Book |
 | Enchanted Book | `EnchantedBook.kt` | Enchanting a Blank Tome | Anvil: apply enchantment to weapon |
+
+### Farming Tools & Materials
+
+| Item | File | Use |
+|------|------|-----|
+| Hoe | `Hoe.kt` | Till grass/empty ground into farmland (80 durability) |
+| Water Bucket | `WaterBucket.kt` | Hydrate farmland (faster growth) or create water tile |
+| Bone | `Bone.kt` | Raw material, dropped by Skeletons |
+| Bonemeal | `Bonemeal.kt` | Instant-matures a growing crop |
+| Wooden Bowl | `WoodenBowl.kt` | Crafting ingredient |
 
 ### Storage Items
 

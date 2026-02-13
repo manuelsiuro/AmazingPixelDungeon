@@ -2,6 +2,7 @@ package com.watabou.pixeldungeon.windows
 import com.watabou.noosa.Image
 import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.DungeonTilemap
+import com.watabou.pixeldungeon.farming.CropManager
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.Terrain
 import com.watabou.pixeldungeon.llm.LlmTextEnhancer
@@ -49,6 +50,18 @@ class WndInfoCell(cell: Int) : Window() {
                     }
                     desc.append(blob.tileDesc())
                 }
+            }
+            val crop = level.crops.get(cell)
+            if (crop != null) {
+                crop.updateStage(CropManager.currentTime())
+                if (desc.isNotEmpty()) desc.append(newLine)
+                val stageName = when (crop.stage) {
+                    0 -> "just sprouting"
+                    1 -> "growing"
+                    2 -> "nearly mature"
+                    else -> "ready to harvest!"
+                }
+                desc.append("A ${crop.cropType.cropName.lowercase()} crop is planted here, $stageName")
             }
             info.text(if (desc.isNotEmpty()) desc.toString() else TXT_NOTHING, WIDTH)
             info.setPos(titlebar.left(), titlebar.bottom() + GAP)

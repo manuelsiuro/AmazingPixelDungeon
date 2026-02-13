@@ -96,6 +96,10 @@ object Terrain {
     const val ALCHEMY = 29
     const val CRAFTING_TABLE = 64  // SOLID — interact from adjacent
     const val FURNACE = 65         // SOLID — interact from adjacent
+    const val ENCHANTING_TABLE = 66 // SOLID — interact from adjacent
+    const val ANVIL = 67            // SOLID — interact from adjacent
+    const val FARMLAND = 68         // PASSABLE — tilled earth for planting crops
+    const val HYDRATED_FARMLAND = 69 // PASSABLE — moist farmland, 1.5x crop growth
 }
 ```
 
@@ -115,17 +119,18 @@ Outdoor safe hub where the player starts. Hand-crafted layout (not procedurally 
 | Feeling | Always NONE |
 | Respawner | None (safe zone) |
 
-**Layout**: Three shops (weapon NW, potion NE, tavern SW), central square with healing well, signpost, and campfire, village garden (E), herbalist's alchemy pot (W), hidden stash behind weapon shop, workshop with crafting table and furnace (SE).
+**Layout**: Three shops (weapon NW, potion NE, tavern SW), central square with healing well, signpost, and campfire, village garden (E) with farmland, herbalist's alchemy pot (W), hidden stash behind weapon shop, workshop with crafting table, furnace, enchanting table, and anvil (SE).
 
 **NPCs**: 3 Shopkeepers, VillageElder, 1-2 Rats (outskirts).
 
 **Atmospheric effects**: Wind particles on grass, leaf particles on hedges, smoke above campfire, pond sparkles, Foliage light shafts in garden.
 
 **Discoverable content**:
-- Village Garden — Foliage blob (golden light, Shadows buff), Sungrass + Brightcap plants
+- Village Garden — Foliage blob (golden light, Shadows buff), Sungrass + Brightcap plants, farmland patch with pre-tilled FARMLAND + HYDRATED_FARMLAND tiles
 - Herbalist's Corner — functional Alchemy pot for brewing potions from seeds
 - Hidden Stash — SECRET_DOOR behind weapon shop leads to chest (Honeypot/Ankh/HolyWater/SmokeBomb)
-- Workshop — Crafting Table (all non-furnace recipes) and Furnace (smelting ores, cooking meat, firing stone). Both are SOLID tiles; player interacts from an adjacent cell via `HeroAction.UseStation`. MaterialBag available for purchase.
+- Workshop — Crafting Table, Furnace, Enchanting Table, and Anvil. All are SOLID tiles; player interacts from an adjacent cell via `HeroAction.UseStation`. MaterialBag available for purchase.
+- Farming Demo — Hoe, crop seeds (wheat, carrot, potato, melon), PlanterBox, and Bone materials near the garden
 
 ---
 
@@ -488,6 +493,7 @@ abstract class Trap {
 | Sign | `Sign.kt` | Readable lore |
 | Alchemy Pot | `AlchemyPot.kt` | Brew potions |
 | Harvestable Wall | `HarvestableWall.kt` | Mine ore/stone from walls |
+| Farmland | `Farmland.kt` | Crop planting and growth |
 
 ---
 

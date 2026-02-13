@@ -65,6 +65,7 @@ object Assets {
     const val AI_NPC = "ai_npc.png"
     const val ITEMS = "items.png"
     const val PLANTS = "plants.png"
+    const val CROPS = "crops.png"
     const val TILES_SEWERS = "tiles0.png"
     const val TILES_PRISON = "tiles1.png"
     const val TILES_CAVES = "tiles2.png"

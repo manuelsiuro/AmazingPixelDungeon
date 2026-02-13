@@ -91,6 +91,7 @@ class BuffIndicator(private val ch: Char) : Component() {
         const val VERTIGO = 29
         const val RAGE = 30
         const val SACRIFICE = 31
+        const val WELL_FED = 32
         const val SIZE = 7
         private var heroInstance: BuffIndicator? = null
         fun refreshHero() {

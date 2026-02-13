@@ -570,8 +570,68 @@ fun dropSeed(): Boolean {
 
 ---
 
+---
+
+## Farming Crops
+
+**Path**: `farming/`
+
+A separate crop system for growing food. Unlike dungeon plants (which activate on trample), crops grow over turns on farmland terrain and are harvested for produce.
+
+### Crop Types
+
+| Crop | File | Growth (turns) | Hydrated | Yield | Produce |
+|------|------|---------------|----------|-------|---------|
+| Wheat | `WheatSeed.kt` | 40 | ~27 | 1-2 | Wheat → Bread (furnace) |
+| Carrot | `CarrotSeed.kt` | 30 | ~20 | 1-3 | Carrot (edible raw) |
+| Potato | `PotatoSeed.kt` | 30 | ~20 | 1-3 | Potato → Baked Potato (furnace) |
+| Melon | `MelonSeed.kt` | 60 | ~40 | 3-5 | Melon Slice (edible raw) |
+
+### Growth Stages
+
+Crops progress through 4 visual stages, each with its own sprite frame:
+
+| Stage | Name | Trigger (% of growth time) |
+|-------|------|---------------------------|
+| 0 | Seedling | 0-25% |
+| 1 | Sprout | 25-55% |
+| 2 | Vegetative | 55-100% |
+| 3 | Mature | 100% (ready to harvest) |
+
+### Farming Mechanics
+
+**Terrain**:
+- `Terrain.FARMLAND` (68) — tilled earth, created by using a Hoe on grass/empty ground
+- `Terrain.HYDRATED_FARMLAND` (69) — moist farmland near water, crops grow 1.5x faster
+- Use Water Bucket on farmland to hydrate it directly
+- Empty farmland decays back to grass after 200 turns
+
+**Planting**: Use a crop seed → select adjacent farmland cell → seed is consumed, crop sprite appears
+
+**Growth**: `CropData.updateStage(currentTime)` calculates elapsed time × hydration multiplier. `CropSprite` polls crop data every 0.5s to update its visual frame.
+
+**Harvesting**: When stage ≥ 3, use Hoe or interact to harvest. Yields produce + 1-2 seeds back.
+
+**Bonemeal**: Instantly matures a crop (sets `plantedAt` far in the past). Calls `GameScene.updateCrop()` to refresh the sprite immediately.
+
+**Planter Box**: Portable farming — plant a seed inside, it grows as you explore. No farmland terrain needed.
+
+### Key Classes
+
+| Class | File | Purpose |
+|-------|------|---------|
+| `CropType` | `farming/CropType.kt` | Enum: growth time, yield range |
+| `CropData` | `farming/CropData.kt` | Per-cell crop state (pos, type, plantedAt, stage, hydrated) |
+| `CropManager` | `farming/CropManager.kt` | Plant/harvest/update logic, time tracking |
+| `CropSeed` | `farming/CropSeed.kt` | Abstract seed item with PLANT action |
+| `CropSprite` | `sprites/CropSprite.kt` | Visual sprite with stage-based frames |
+| `Farmland` | `levels/features/Farmland.kt` | Farmland terrain interaction |
+| `PlanterBox` | `items/food/farming/PlanterBox.kt` | Portable crop container |
+
+---
+
 ## See Also
 
-- [Items](items.md) - Seeds and potions
+- [Items](items.md) - Seeds, potions, and farming tools
 - [Buffs](buffs.md) - Plant-applied effects
-- [Levels](levels.md) - Garden rooms
+- [Levels](levels.md) - Garden rooms, farmland terrain

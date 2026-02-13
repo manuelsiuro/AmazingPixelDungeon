@@ -1,4 +1,5 @@
 package com.watabou.pixeldungeon.items.bags
+import com.watabou.pixeldungeon.farming.CropSeed
 import com.watabou.pixeldungeon.items.Item
 import com.watabou.pixeldungeon.plants.Plant
 import com.watabou.pixeldungeon.sprites.ItemSpriteSheet
@@ -9,7 +10,7 @@ class SeedPouch : Bag() {
         size = 8
     }
     override fun grab(item: Item): Boolean {
-        return item is Plant.Seed
+        return item is Plant.Seed || item is CropSeed
     }
     override fun price(): Int {
         return 50

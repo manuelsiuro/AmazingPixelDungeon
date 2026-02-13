@@ -214,8 +214,22 @@ Crafting system — recipes, stations, and smelting.
 | `EnchantmentTier.kt` | Enchantment cost tiers (dust, XP, level) |
 | `AnvilManager.kt` | Anvil logic: repair weapons, apply enchanted books |
 
+### com.watabou.pixeldungeon.farming
+Crop farming system — planting, growing, and harvesting food crops.
+
+| Class | Purpose |
+|-------|---------|
+| `CropType.kt` | Enum: crop growth time, yield range, name |
+| `CropData.kt` | Per-cell crop state (pos, type, plantedAt, stage, hydrated) |
+| `CropManager.kt` | Plant/harvest/update logic, hydration, farmland decay |
+| `CropSeed.kt` | Abstract crop seed item with PLANT action |
+| `WheatSeed.kt` | Wheat seed (40 turns, 1-2 yield) |
+| `CarrotSeed.kt` | Carrot seed (30 turns, 1-3 yield) |
+| `PotatoSeed.kt` | Potato seed (30 turns, 1-3 yield) |
+| `MelonSeed.kt` | Melon seed (60 turns, 3-5 yield) |
+
 ### com.watabou.pixeldungeon.items
-All game items (180+ types). See [Items Documentation](../entities/items.md).
+All game items (200+ types). See [Items Documentation](../entities/items.md).
 
 ```
 items/
@@ -226,9 +240,10 @@ items/
 ├── KindOfWeapon.kt     # Weapon interface
 ├── armor/              # 11 armor types + 12 glyphs
 │   └── crafted/        # 4 crafted armor types
-├── bags/               # 6 container types (incl. MaterialBag)
-├── crafting/           # Crafting materials + storage/dimensional chest items
+├── bags/               # 6 container types (incl. MaterialBag, SeedPouch)
+├── crafting/           # Crafting materials, farming tools (Hoe, Bonemeal, WaterBucket, Bone)
 ├── food/               # 6 food items
+│   └── farming/        # Farm produce (Wheat, Carrot, Potato, MelonSlice, Bread, BakedPotato, RabbitStew, PlanterBox)
 ├── keys/               # 4 key types
 ├── potions/            # 13 potion types
 ├── quest/              # 7 quest items
@@ -383,6 +398,7 @@ Character and item sprites.
 | `ItemSpriteSheet.kt` | Item sprite atlas |
 | `MissileSprite.kt` | Projectile sprites |
 | `PlantSprite.kt` | Plant visuals |
+| `CropSprite.kt` | Crop growth visuals (4 stages per crop type) |
 | `TrapSprite.kt` | Trap visuals |
 | `[mob-specific sprites]` | Individual enemies |
 

@@ -15,7 +15,7 @@ PALETTE_CACHE = os.path.join(OUTPUT_DIR, "palette_cache.json")
 # --- Sprite Sheet Constants ---
 SPRITE_SIZE = 16
 SHEET_COLS = 8
-SHEET_ROWS = 23  # 23 rows in items.png (184 slots) — extended for crafting sprites
+SHEET_ROWS = 26  # 26 rows in items.png (208 slots) — extended for farming sprites
 GENERATION_SIZE = 512  # SD 1.5 native resolution; downscaled to 16x16 in post-processing
 
 # --- Model Configurations ---

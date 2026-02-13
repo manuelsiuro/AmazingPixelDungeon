@@ -12,6 +12,7 @@ import com.watabou.pixeldungeon.items.Dewdrop
 import com.watabou.pixeldungeon.items.Generator
 import com.watabou.pixeldungeon.items.crafting.Fiber
 import com.watabou.pixeldungeon.items.crafting.Stick
+import com.watabou.pixeldungeon.farming.WheatSeed
 import com.watabou.pixeldungeon.items.rings.RingOfHerbalism
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.Terrain
@@ -44,6 +45,10 @@ object HighGrass {
         }
         if (Random.Int(20) < 3) { // 15% chance
             level.drop(Stick(), pos).sprite?.drop()
+        }
+        // Wheat seed drop (~7% chance)
+        if (Random.Int(100) < 7) {
+            level.drop(WheatSeed(), pos).sprite?.drop()
         }
 
         var leaves = 4

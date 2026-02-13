@@ -219,6 +219,12 @@ class Hero : Char() {
             hasteLevel += buff.level
         }
         super.spend(if (hasteLevel == 0) time else (time * 1.1.pow((-hasteLevel).toDouble())).toFloat())
+        // Advance planter box growth
+        for (item in belongings.backpack.items) {
+            if (item is com.watabou.pixeldungeon.items.food.farming.PlanterBox) {
+                item.onTurnSpent(time)
+            }
+        }
     }
     fun spendAndNext(time: Float) {
         busy()

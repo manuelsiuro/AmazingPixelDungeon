@@ -21,7 +21,7 @@ class Highlighter(text: String) {
         m.reset(text)
         val sb = StringBuffer()
         while (m.find()) {
-            m.appendReplacement(sb, m.group(1) ?: "")
+            m.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(m.group(1) ?: ""))
         }
         m.appendTail(sb)
         this.text = sb.toString()

@@ -9,6 +9,7 @@ import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.Statistics
 import com.watabou.pixeldungeon.actors.Actor
 import com.watabou.pixeldungeon.items.Generator
+import com.watabou.pixeldungeon.farming.CropManager
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.llm.LlmTextEnhancer
 import com.watabou.pixeldungeon.ui.GameLog
@@ -145,6 +146,7 @@ class InterlevelScene : PixelScene() {
             level = Dungeon.loadLevel(Dungeon.hero!!.heroClass)
         }
         Dungeon.switchLevel(level, level.entrance)
+        Dungeon.level?.let { CropManager.catchUpGrowth(it) }
     }
     @Throws(Exception::class)
     private fun fall() {
@@ -158,6 +160,7 @@ class InterlevelScene : PixelScene() {
             level = Dungeon.loadLevel(Dungeon.hero!!.heroClass)
         }
         Dungeon.switchLevel(level, if (fallIntoPit) level.pitCell() else level.randomRespawnCell())
+        Dungeon.level?.let { CropManager.catchUpGrowth(it) }
     }
     @Throws(Exception::class)
     private fun ascend() {
@@ -166,6 +169,7 @@ class InterlevelScene : PixelScene() {
         Dungeon.depth--
         val level = Dungeon.loadLevel(Dungeon.hero!!.heroClass)
         Dungeon.switchLevel(level, level.exit)
+        Dungeon.level?.let { CropManager.catchUpGrowth(it) }
     }
     @Throws(Exception::class)
     private fun returnTo() {
@@ -174,6 +178,7 @@ class InterlevelScene : PixelScene() {
         Dungeon.depth = returnDepth
         val level = Dungeon.loadLevel(Dungeon.hero!!.heroClass)
         Dungeon.switchLevel(level, if (Level.resizingNeeded) level.adjustPos(returnPos) else returnPos)
+        Dungeon.level?.let { CropManager.catchUpGrowth(it) }
     }
     @Throws(Exception::class)
     private fun restore() {
@@ -187,6 +192,7 @@ class InterlevelScene : PixelScene() {
             val level = Dungeon.loadLevel(StartScene.curClass!!)
             Dungeon.switchLevel(level, if (Level.resizingNeeded) level.adjustPos(Dungeon.hero!!.pos) else Dungeon.hero!!.pos)
         }
+        Dungeon.level?.let { CropManager.catchUpGrowth(it) }
     }
     @Throws(Exception::class)
     private fun resurrect() {

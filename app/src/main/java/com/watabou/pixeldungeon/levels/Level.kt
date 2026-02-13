@@ -43,6 +43,8 @@ import com.watabou.pixeldungeon.levels.features.HighGrass
 import com.watabou.pixeldungeon.levels.painters.Painter
 import com.watabou.pixeldungeon.levels.traps.*
 import com.watabou.pixeldungeon.mechanics.ShadowCaster
+import com.watabou.pixeldungeon.farming.CropData
+import com.watabou.pixeldungeon.levels.features.Farmland
 import com.watabou.pixeldungeon.plants.Plant
 import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.utils.GLog
@@ -72,6 +74,8 @@ abstract class Level : Bundlable {
     var heaps = SparseArray<Heap>()
     var blobs = HashMap<Class<out Blob>, Blob>()
     var plants = SparseArray<Plant>()
+    var crops = SparseArray<CropData>()
+    var farmlandTimers = android.util.SparseIntArray()
     protected var itemsToSpawn = ArrayList<Item>()
     var color1 = 0x004400
     var color2 = 0x88CC44
@@ -86,6 +90,8 @@ abstract class Level : Bundlable {
         heaps = SparseArray()
         blobs = HashMap()
         plants = SparseArray()
+        crops = SparseArray()
+        farmlandTimers = android.util.SparseIntArray()
         if (!Dungeon.bossLevel()) {
             addItemToSpawn(Generator.random(Generator.Category.FOOD))
             if (Dungeon.posNeeded()) {
@@ -136,6 +142,8 @@ abstract class Level : Bundlable {
         heaps = SparseArray()
         blobs = HashMap()
         plants = SparseArray()
+        crops = SparseArray()
+        farmlandTimers = android.util.SparseIntArray()
         map = bundle.getIntArray(MAP) ?: IntArray(0)
         visited = bundle.getBooleanArray(VISITED) ?: BooleanArray(0)
         mapped = bundle.getBooleanArray(MAPPED) ?: BooleanArray(0)
@@ -174,6 +182,25 @@ abstract class Level : Bundlable {
             }
             plants.put(plant.pos, plant)
         }
+        if (bundle.contains(CROPS)) {
+            collection = bundle.getCollection(CROPS)
+            for (c in collection) {
+                val crop = c as CropData
+                if (resizingNeeded) {
+                    crop.pos = adjustPos(crop.pos)
+                }
+                crops.put(crop.pos, crop)
+            }
+        }
+        if (bundle.contains(FARMLAND_TIMER_KEYS)) {
+            val ftKeys = bundle.getIntArray(FARMLAND_TIMER_KEYS)
+            val ftVals = bundle.getIntArray(FARMLAND_TIMER_VALS)
+            if (ftKeys != null && ftVals != null) {
+                for (i in ftKeys.indices) {
+                    farmlandTimers.put(ftKeys[i], ftVals[i])
+                }
+            }
+        }
         collection = bundle.getCollection(MOBS)
         for (m in collection) {
             val mob = m as? Mob
@@ -211,6 +238,17 @@ abstract class Level : Bundlable {
         bundle.put(EXIT, exit)
         bundle.put(HEAPS, heaps.values())
         bundle.put(PLANTS, plants.values())
+        bundle.put(CROPS, crops.values())
+        // Serialize farmlandTimers as parallel int arrays
+        val ftSize = farmlandTimers.size()
+        val ftKeys = IntArray(ftSize)
+        val ftVals = IntArray(ftSize)
+        for (i in 0 until ftSize) {
+            ftKeys[i] = farmlandTimers.keyAt(i)
+            ftVals[i] = farmlandTimers.valueAt(i)
+        }
+        bundle.put(FARMLAND_TIMER_KEYS, ftKeys)
+        bundle.put(FARMLAND_TIMER_VALS, ftVals)
         bundle.put(MOBS, mobs)
         bundle.put(BLOBS, blobs.values)
     }
@@ -586,6 +624,7 @@ abstract class Level : Bundlable {
                 SummoningTrap.trigger(cell, ch)
             }
             Terrain.HIGH_GRASS -> HighGrass.trample(this, cell, ch)
+            Terrain.FARMLAND, Terrain.HYDRATED_FARMLAND -> Farmland.harvest(this, cell, ch)
             Terrain.WELL -> WellWater.affectCell(cell)
             Terrain.ALCHEMY -> if (ch == null) {
                 Alchemy.transmute(cell)
@@ -625,6 +664,10 @@ abstract class Level : Bundlable {
             Terrain.SUMMONING_TRAP -> SummoningTrap.trigger(cell, mob)
             Terrain.DOOR -> {
                 Door.enter(cell)
+                trap = false
+            }
+            Terrain.FARMLAND, Terrain.HYDRATED_FARMLAND -> {
+                Farmland.mobTrample(this, cell, mob)
                 trap = false
             }
             else -> trap = false
@@ -763,6 +806,8 @@ abstract class Level : Bundlable {
             Terrain.FURNACE -> "Furnace"
             Terrain.ENCHANTING_TABLE -> "Enchanting table"
             Terrain.ANVIL -> "Anvil"
+            Terrain.FARMLAND -> "Farmland"
+            Terrain.HYDRATED_FARMLAND -> "Irrigated farmland"
             else -> "???"
         }
     }
@@ -787,6 +832,8 @@ abstract class Level : Bundlable {
             Terrain.FURNACE -> "A furnace for smelting ore into metal ingots."
             Terrain.ENCHANTING_TABLE -> "An ancient table pulsing with arcane energy. Place a weapon here to imbue it with magical enchantments."
             Terrain.ANVIL -> "A heavy anvil used to repair equipment and apply enchanted books to weapons."
+            Terrain.FARMLAND -> "Tilled soil, ready for planting. Plant crop seeds here."
+            Terrain.HYDRATED_FARMLAND -> "Irrigated tilled soil. Crops grow faster near water."
             else -> {
                 if (tile >= Terrain.WATER_TILES) {
                     return tileDesc(Terrain.WATER)
@@ -831,6 +878,9 @@ abstract class Level : Bundlable {
         private const val EXIT = "exit"
         private const val HEAPS = "heaps"
         private const val PLANTS = "plants"
+        private const val CROPS = "crops"
+        private const val FARMLAND_TIMER_KEYS = "farmlandTimerKeys"
+        private const val FARMLAND_TIMER_VALS = "farmlandTimerVals"
         private const val MOBS = "mobs"
         private const val BLOBS = "blobs"
         fun set(cell: Int, terrain: Int) {

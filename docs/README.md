@@ -44,7 +44,7 @@ Amazing Pixel Dungeon is a turn-based roguelike with procedurally generated dung
 
 - **4 Hero Classes**: Warrior, Mage, Rogue, Huntress (each with subclasses)
 - **26 Dungeon Floors**: 5 regions with unique themes and bosses
-- **180+ Items**: Weapons, armor, potions, scrolls, rings, wands, crafting materials
+- **200+ Items**: Weapons, armor, potions, scrolls, rings, wands, crafting materials, farming tools & crops
 - **45+ Enemies**: From rats to demonic horrors
 - **Turn-Based Combat**: Strategic action point system
 

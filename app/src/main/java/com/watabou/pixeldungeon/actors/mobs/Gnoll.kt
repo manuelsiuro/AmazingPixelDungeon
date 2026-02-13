@@ -4,6 +4,7 @@ import com.watabou.pixeldungeon.actors.Char
 import com.watabou.pixeldungeon.actors.mobs.npcs.Ghost
 import com.watabou.pixeldungeon.items.Gold
 import com.watabou.pixeldungeon.items.crafting.IronOre
+import com.watabou.pixeldungeon.farming.CarrotSeed
 import com.watabou.pixeldungeon.sprites.GnollSprite
 import com.watabou.utils.Random
 class Gnoll : Mob() {
@@ -35,6 +36,9 @@ class Gnoll : Mob() {
         super.dropLoot()
         if (Random.Float() < 0.15f) {
             Dungeon.level?.drop(IronOre(), pos)?.sprite?.drop()
+        }
+        if (Random.Float() < 0.08f) {
+            Dungeon.level?.drop(CarrotSeed(), pos)?.sprite?.drop()
         }
     }
     override fun description(): String {

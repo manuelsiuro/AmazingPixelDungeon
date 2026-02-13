@@ -3,6 +3,18 @@ package com.watabou.pixeldungeon.crafting
 import com.watabou.pixeldungeon.items.crafting.StorageChestItem
 import com.watabou.pixeldungeon.items.crafting.DimensionalChestItem
 import com.watabou.pixeldungeon.items.crafting.EyeOfEnder
+import com.watabou.pixeldungeon.items.crafting.Bone
+import com.watabou.pixeldungeon.items.crafting.Bonemeal
+import com.watabou.pixeldungeon.items.crafting.Hoe
+import com.watabou.pixeldungeon.items.crafting.WoodenBowl
+import com.watabou.pixeldungeon.items.crafting.WaterBucket
+import com.watabou.pixeldungeon.items.food.farming.Wheat
+import com.watabou.pixeldungeon.items.food.farming.Bread
+import com.watabou.pixeldungeon.items.food.farming.Potato
+import com.watabou.pixeldungeon.items.food.farming.BakedPotato
+import com.watabou.pixeldungeon.items.food.farming.Carrot
+import com.watabou.pixeldungeon.items.food.farming.RabbitStew
+import com.watabou.pixeldungeon.items.food.farming.PlanterBox
 import com.watabou.pixeldungeon.items.armor.crafted.ChainVest
 import com.watabou.pixeldungeon.items.armor.crafted.DiamondMail
 import com.watabou.pixeldungeon.items.armor.crafted.IronPlate
@@ -232,6 +244,81 @@ object RecipeRegistry {
             outputClass = DimensionalChestItem::class.java,
             outputQuantity = 1,
             station = StationType.ENCHANTING_TABLE
+        ))
+
+        // Phase 5: Farming recipes
+        register(Recipe(
+            id = "hoe",
+            inputs = listOf(
+                RecipeInput(Stick::class.java, 2),
+                RecipeInput(Cobblestone::class.java, 1)
+            ),
+            outputClass = Hoe::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "wooden_bowl",
+            inputs = listOf(RecipeInput(WoodPlank::class.java, 2)),
+            outputClass = WoodenBowl::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "planter_box",
+            inputs = listOf(
+                RecipeInput(WoodPlank::class.java, 4),
+                RecipeInput(Cobblestone::class.java, 1)
+            ),
+            outputClass = PlanterBox::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "water_bucket",
+            inputs = listOf(RecipeInput(IronIngot::class.java, 3)),
+            outputClass = WaterBucket::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "bonemeal",
+            inputs = listOf(RecipeInput(Bone::class.java, 3)),
+            outputClass = Bonemeal::class.java,
+            outputQuantity = 3
+        ))
+
+        register(Recipe(
+            id = "bread",
+            inputs = listOf(RecipeInput(Wheat::class.java, 3)),
+            outputClass = Bread::class.java,
+            outputQuantity = 1,
+            station = StationType.FURNACE
+        ))
+
+        register(Recipe(
+            id = "baked_potato",
+            inputs = listOf(RecipeInput(Potato::class.java, 1)),
+            outputClass = BakedPotato::class.java,
+            outputQuantity = 1,
+            station = StationType.FURNACE
+        ))
+
+        register(Recipe(
+            id = "rabbit_stew",
+            inputs = listOf(
+                RecipeInput(ChargrilledMeat::class.java, 1),
+                RecipeInput(Carrot::class.java, 1),
+                RecipeInput(BakedPotato::class.java, 1),
+                RecipeInput(WoodenBowl::class.java, 1)
+            ),
+            outputClass = RabbitStew::class.java,
+            outputQuantity = 1,
+            station = StationType.FURNACE
         ))
     }
 

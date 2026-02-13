@@ -44,8 +44,15 @@ import com.watabou.pixeldungeon.items.crafting.Stick
 import com.watabou.pixeldungeon.items.crafting.ArcaneDust
 import com.watabou.pixeldungeon.items.crafting.BlankTome
 import com.watabou.pixeldungeon.items.crafting.EyeOfEnder
+import com.watabou.pixeldungeon.items.crafting.Bone
+import com.watabou.pixeldungeon.items.crafting.Hoe
 import com.watabou.pixeldungeon.items.crafting.WoodPlank
 import com.watabou.pixeldungeon.items.food.MysteryMeat
+import com.watabou.pixeldungeon.items.food.farming.PlanterBox
+import com.watabou.pixeldungeon.farming.WheatSeed
+import com.watabou.pixeldungeon.farming.CarrotSeed
+import com.watabou.pixeldungeon.farming.PotatoSeed
+import com.watabou.pixeldungeon.farming.MelonSeed
 import com.watabou.pixeldungeon.items.quest.DarkGold
 import com.watabou.pixeldungeon.items.food.CheeseWedge
 import com.watabou.pixeldungeon.items.food.Food
@@ -116,6 +123,13 @@ class VillageLevel : Level() {
         Painter.fill(this, 21, 18, 5, 2, Terrain.GRASS)
         map[pos(20, 18)] = Terrain.STATUE  // garden entrance statue left
         map[pos(26, 18)] = Terrain.STATUE  // garden entrance statue right
+
+        // === Farmland area (south of garden, near seed drops) ===
+        Painter.fill(this, 20, 13, 6, 2, Terrain.FARMLAND)
+        // Tiles closer to the well (16,16) get hydrated
+        map[pos(20, 13)] = Terrain.HYDRATED_FARMLAND
+        map[pos(20, 14)] = Terrain.HYDRATED_FARMLAND
+        map[pos(21, 13)] = Terrain.HYDRATED_FARMLAND
 
         // === Herbalist's Corner (west of center) ===
         Painter.fill(this, 5, 13, 5, 2, Terrain.EMPTY_SP)
@@ -297,6 +311,14 @@ class VillageLevel : Level() {
         // Storage chest test: extra wood planks + eye of ender for dimensional chest
         drop(WoodPlank().apply { quantity = 16 }, pos(22, 23))
         drop(EyeOfEnder().apply { quantity = 2 }, pos(20, 24))
+        // Farming test items (near garden area at 20-26, 15-18)
+        drop(Hoe(), pos(20, 15))
+        drop(WheatSeed().apply { quantity = 5 }, pos(21, 15))
+        drop(CarrotSeed().apply { quantity = 5 }, pos(22, 15))
+        drop(PotatoSeed().apply { quantity = 5 }, pos(23, 15))
+        drop(MelonSeed().apply { quantity = 3 }, pos(24, 15))
+        drop(PlanterBox(), pos(25, 15))
+        drop(Bone().apply { quantity = 9 }, pos(26, 15))
 
         // Record village in journal
         Journal.add(Journal.Feature.VILLAGE)
@@ -338,6 +360,8 @@ class VillageLevel : Level() {
             Terrain.ALCHEMY -> "Alchemy pot"
             Terrain.CRAFTING_TABLE -> "Crafting table"
             Terrain.FURNACE -> "Furnace"
+            Terrain.FARMLAND -> "Farmland"
+            Terrain.HYDRATED_FARMLAND -> "Hydrated farmland"
             else -> super.tileName(tile)
         }
     }
@@ -357,6 +381,8 @@ class VillageLevel : Level() {
             Terrain.ALCHEMY -> "A sturdy cauldron for brewing potions from seeds."
             Terrain.CRAFTING_TABLE -> "A sturdy workbench for crafting weapons, armor, and tools."
             Terrain.FURNACE -> "A hot furnace for smelting ores into metal ingots."
+            Terrain.FARMLAND -> "Tilled earth ready for planting. Use a hoe on grass to create more."
+            Terrain.HYDRATED_FARMLAND -> "Moist, tilled earth near water. Crops grow faster here."
             else -> super.tileDesc(tile)
         }
     }

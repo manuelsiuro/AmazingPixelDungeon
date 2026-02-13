@@ -229,4 +229,29 @@ object ItemSpriteSheet {
     const val STORAGE_CHEST = 185
     const val DIMENSIONAL_CHEST = 186
     const val EYE_OF_ENDER = 187
+
+    // Farming - tools & materials
+    const val HOE = 188
+    const val BONE = 189
+    const val BONEMEAL = 190
+    const val WOODEN_BOWL = 191
+    const val WATER_BUCKET = 192
+    const val PLANTER_BOX = 193
+
+    // Farming - seeds
+    const val SEED_WHEAT = 194
+    const val SEED_CARROT = 195
+    const val SEED_POTATO = 196
+    const val SEED_MELON = 197
+
+    // Farming - produce
+    const val WHEAT = 198
+    const val CARROT = 199
+    const val POTATO = 200
+    const val MELON_SLICE = 201
+
+    // Farming - cooked food
+    const val BREAD = 202
+    const val BAKED_POTATO = 203
+    const val RABBIT_STEW = 204
 }
