@@ -308,6 +308,14 @@ All crafting materials extend `MaterialItem` (stackable base class).
 | Iron Ingot | `IronIngot.kt` | 1 Iron Ore → 1 Ingot (furnace) |
 | Gold Ingot | `GoldIngot.kt` | 1 Gold Ore → 1 Ingot (furnace), or 1 Dark Gold → 2 Ingots (furnace) |
 
+### Enchanting Materials
+
+| Material | File | Source | Used In |
+|----------|------|--------|---------|
+| Arcane Dust | `ArcaneDust.kt` | Grinding scrolls, disenchanting | Enchanting Table costs |
+| Blank Tome | `BlankTome.kt` | Crafted / found | Absorbs enchantment → Enchanted Book |
+| Enchanted Book | `EnchantedBook.kt` | Enchanting a Blank Tome | Anvil: apply enchantment to weapon |
+
 ### Crafted Consumables
 
 | Item | File | Recipe |

@@ -41,6 +41,8 @@ import com.watabou.pixeldungeon.items.crafting.IronIngot
 import com.watabou.pixeldungeon.items.crafting.IronOre
 import com.watabou.pixeldungeon.items.crafting.Leather
 import com.watabou.pixeldungeon.items.crafting.Stick
+import com.watabou.pixeldungeon.items.crafting.ArcaneDust
+import com.watabou.pixeldungeon.items.crafting.BlankTome
 import com.watabou.pixeldungeon.items.crafting.WoodPlank
 import com.watabou.pixeldungeon.items.food.MysteryMeat
 import com.watabou.pixeldungeon.items.quest.DarkGold
@@ -133,6 +135,8 @@ class VillageLevel : Level() {
         map[pos(21, 22)] = Terrain.CRAFTING_TABLE  // craft table
         map[pos(25, 22)] = Terrain.FURNACE         // furnace
         map[pos(23, 24)] = Terrain.EMBERS          // forge fire
+        map[pos(21, 25)] = Terrain.ENCHANTING_TABLE  // enchanting table
+        map[pos(25, 25)] = Terrain.ANVIL             // anvil
 
         // === High grass / hedges on edges ===
         Painter.fill(this, 3, 3, 2, 2, Terrain.HIGH_GRASS)
@@ -279,6 +283,16 @@ class VillageLevel : Level() {
         // Pre-smelted ingots for immediate crafting table testing
         drop(IronIngot().apply { quantity = 15 }, pos(20, 23))
         drop(WoodPlank().apply { quantity = 8 }, pos(21, 23))
+        // Enchanting table test items (near enchanting table at 21,25)
+        drop(ArcaneDust().apply { quantity = 50 }, pos(20, 25))
+        drop(BlankTome(), pos(22, 25))
+        drop(ArcaneDust().apply { quantity = 50 }, pos(20, 26))
+        // Test scrolls for grinding (not for sale — directly dropped)
+        drop(ScrollOfIdentify(), pos(22, 26))
+        drop(ScrollOfMagicMapping(), pos(23, 26))
+        drop(ScrollOfIdentify(), pos(24, 26))
+        // Second ShortSword for anvil repair testing
+        drop(ShortSword().identify(), pos(26, 25))
 
         // Record village in journal
         Journal.add(Journal.Feature.VILLAGE)

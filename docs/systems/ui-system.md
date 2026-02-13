@@ -716,7 +716,7 @@ class WndBag(
     title: String?
 ) : Window() {
 
-    enum class Mode { ALL, UNIDENTIFIED, UPGRADEABLE, QUICKSLOT, FOR_SALE, WEAPON, ARMOR, WAND, RING }
+    enum class Mode { ALL, UNIDENTIFIED, UPGRADEABLE, QUICKSLOT, FOR_SALE, WEAPON, ARMOR, ENCHANTABLE, WAND, SEED, SCROLL, BOOK }
 
     interface Listener {
         fun onSelect(item: Item?)

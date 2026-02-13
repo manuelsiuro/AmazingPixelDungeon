@@ -201,12 +201,15 @@ Crafting system — recipes, stations, and smelting.
 | `Recipe.kt` | Recipe data (inputs, output, station) |
 | `RecipeInput.kt` | Single recipe ingredient |
 | `RecipeRegistry.kt` | All recipes registered at startup |
-| `StationType.kt` | Enum: NONE, CRAFTING_TABLE, FURNACE |
+| `StationType.kt` | Enum: NONE, CRAFTING_TABLE, FURNACE, ENCHANTING_TABLE, ANVIL |
 | `CraftingManager.kt` | Crafting logic (check materials, craft) |
 | `SmeltingJob.kt` | Single furnace smelting job |
 | `SmeltingManager.kt` | Furnace smelting queue |
 | `MaterialTag.kt` | Material categorization |
 | `MaterialTier.kt` | Material tier levels |
+| `EnchantmentRegistry.kt` | Available enchantments, option generation, creation |
+| `EnchantmentTier.kt` | Enchantment cost tiers (dust, XP, level) |
+| `AnvilManager.kt` | Anvil logic: repair weapons, apply enchanted books |
 
 ### com.watabou.pixeldungeon.items
 All game items (180+ types). See [Items Documentation](../entities/items.md).

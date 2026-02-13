@@ -46,7 +46,9 @@ open class WndBag(
         ARMOR,
         ENCHANTABLE,
         WAND,
-        SEED
+        SEED,
+        SCROLL,
+        BOOK
     }
     private var nCols: Int = 0
     private var nRows: Int = 0
@@ -270,9 +272,11 @@ open class WndBag(
                         mode == Mode.UNIDENTIFED && !item.isIdentified ||
                         mode == Mode.WEAPON && (item is MeleeWeapon || item is Boomerang) ||
                         mode == Mode.ARMOR && item is Armor ||
-                        mode == Mode.ENCHANTABLE && (item is MeleeWeapon || item is Boomerang || item is Armor) ||
+                        mode == Mode.ENCHANTABLE && (item is MeleeWeapon || item is Boomerang || item is Armor || item is com.watabou.pixeldungeon.items.crafting.BlankTome) ||
                         mode == Mode.WAND && item is Wand ||
                         mode == Mode.SEED && item is Seed ||
+                        mode == Mode.SCROLL && item is com.watabou.pixeldungeon.items.scrolls.Scroll ||
+                        mode == Mode.BOOK && item is com.watabou.pixeldungeon.items.crafting.EnchantedBook ||
                         mode == Mode.ALL
                     )
                 }
