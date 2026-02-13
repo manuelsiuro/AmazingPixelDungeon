@@ -11,6 +11,7 @@ import com.watabou.pixeldungeon.effects.Speck
 import com.watabou.pixeldungeon.items.weapon.Weapon
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.Terrain
+import com.watabou.pixeldungeon.levels.features.HarvestableWall
 import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.sprites.ItemSprite
 import com.watabou.pixeldungeon.sprites.ItemSpriteSheet
@@ -40,29 +41,50 @@ class Pickaxe : Weapon() {
     }
     override fun execute(hero: Hero, action: String) {
         if (action == AC_MINE) {
-            if (Dungeon.depth < 11 || Dungeon.depth > 15) {
-                GLog.w(TXT_NO_VEIN)
-                return
+            val level = Dungeon.level ?: return
+
+            // Check for dark gold vein first (quest mining on depths 11-15)
+            if (Dungeon.depth in 11..15) {
+                for (i in Level.NEIGHBOURS8.indices) {
+                    val pos = hero.pos + Level.NEIGHBOURS8[i]
+                    if (level.map[pos] == Terrain.WALL_DECO) {
+                        hero.spend(TIME_TO_MINE)
+                        hero.busy()
+                        hero.sprite?.attack(pos, object : Callback {
+                            override fun call() {
+                                CellEmitter.center(pos).burst(Speck.factory(Speck.STAR), 7)
+                                Sample.play(Assets.SND_EVOKE)
+                                Level.set(pos, Terrain.WALL)
+                                GameScene.updateMap(pos)
+                                val gold = DarkGold()
+                                val currentHero = Dungeon.hero
+                                if (currentHero != null && gold.doPickUp(currentHero)) {
+                                    GLog.i(Hero.TXT_YOU_NOW_HAVE, gold.name())
+                                } else {
+                                    Dungeon.level?.drop(gold, hero.pos)?.sprite?.drop()
+                                }
+                                val hunger = hero.buff(Hunger::class.java)
+                                if (hunger != null && !hunger.isStarving) {
+                                    hunger.satisfy(-Hunger.STARVING / 10f)
+                                    BuffIndicator.refreshHero()
+                                }
+                                hero.onOperateComplete()
+                            }
+                        })
+                        return
+                    }
+                }
             }
+
+            // Check for harvestable walls (crafting material mining)
             for (i in Level.NEIGHBOURS8.indices) {
                 val pos = hero.pos + Level.NEIGHBOURS8[i]
-                val level = Dungeon.level ?: continue
-                if (level.map[pos] == Terrain.WALL_DECO) {
+                if (level.map[pos] == Terrain.WALL && level.harvestable[pos]) {
                     hero.spend(TIME_TO_MINE)
                     hero.busy()
                     hero.sprite?.attack(pos, object : Callback {
                         override fun call() {
-                            CellEmitter.center(pos).burst(Speck.factory(Speck.STAR), 7)
-                            Sample.play(Assets.SND_EVOKE)
-                            Level.set(pos, Terrain.WALL)
-                            GameScene.updateMap(pos)
-                            val gold = DarkGold()
-                            val currentHero = Dungeon.hero
-                            if (currentHero != null && gold.doPickUp(currentHero)) {
-                                GLog.i(Hero.TXT_YOU_NOW_HAVE, gold.name())
-                            } else {
-                                Dungeon.level?.drop(gold, hero.pos)?.sprite?.drop()
-                            }
+                            HarvestableWall.mine(level, pos, hero)
                             val hunger = hero.buff(Hunger::class.java)
                             if (hunger != null && !hunger.isStarving) {
                                 hunger.satisfy(-Hunger.STARVING / 10f)
@@ -74,6 +96,7 @@ class Pickaxe : Weapon() {
                     return
                 }
             }
+
             GLog.w(TXT_NO_VEIN)
         } else {
             super.execute(hero, action)
@@ -106,7 +129,7 @@ class Pickaxe : Weapon() {
     companion object {
         const val AC_MINE = "MINE"
         const val TIME_TO_MINE = 2f
-        private const val TXT_NO_VEIN = "There is no dark gold vein near you to mine"
+        private const val TXT_NO_VEIN = "There is nothing to mine nearby."
         private val BLOODY = ItemSprite.Glowing(0x550000)
         private const val BLOODSTAINED = "bloodStained"
     }

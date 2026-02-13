@@ -258,6 +258,7 @@ class Hero : Char() {
                 is HeroAction.Ascend -> return actAscend(action)
                 is HeroAction.Attack -> return actAttack(action)
                 is HeroAction.Cook -> return actCook(action)
+                is HeroAction.UseStation -> return actUseStation(action)
             }
         }
         return false
@@ -332,6 +333,29 @@ class Hero : Char() {
         if (Dungeon.visible[dst]) {
             ready()
             AlchemyPot.operate(this, dst)
+            return false
+        } else if (getCloser(dst)) {
+            return true
+        } else {
+            ready()
+            return false
+        }
+    }
+    private fun actUseStation(action: HeroAction.UseStation): Boolean {
+        val dst = action.dst
+        if (Dungeon.visible[dst]) {
+            ready()
+            val currentLevel = Dungeon.level ?: return false
+            when (currentLevel.map[dst]) {
+                Terrain.CRAFTING_TABLE -> GameScene.show(
+                    com.watabou.pixeldungeon.windows.WndCrafting(
+                        this, com.watabou.pixeldungeon.crafting.StationType.CRAFTING_TABLE
+                    )
+                )
+                Terrain.FURNACE -> GameScene.show(
+                    com.watabou.pixeldungeon.windows.WndFurnace(this)
+                )
+            }
             return false
         } else if (getCloser(dst)) {
             return true
@@ -636,6 +660,8 @@ class Hero : Char() {
         val currentLevel = Dungeon.level ?: return false
         if (currentLevel.map[cell] == Terrain.ALCHEMY && cell != pos) {
             curAction = HeroAction.Cook(cell)
+        } else if (currentLevel.map[cell] == Terrain.CRAFTING_TABLE || currentLevel.map[cell] == Terrain.FURNACE) {
+            curAction = HeroAction.UseStation(cell)
         } else {
             ch = Actor.findChar(cell)
             if (Level.fieldOfView[cell] && ch is Mob) {

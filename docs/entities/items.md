@@ -4,9 +4,9 @@ This document catalogs all items in Amazing Pixel Dungeon.
 
 ## Overview
 
-The game contains **149+ items** across multiple categories:
-- Weapons (33 types + 12 enchantments)
-- Armor (11 types + 12 glyphs)
+The game contains **180+ items** across multiple categories:
+- Weapons (33 types + 6 crafted + 12 enchantments)
+- Armor (11 types + 4 crafted + 12 glyphs)
 - Potions (13 types)
 - Scrolls (15 types)
 - Rings (13 types)
@@ -14,6 +14,7 @@ The game contains **149+ items** across multiple categories:
 - Food (6 types)
 - Keys (4 types)
 - Quest Items (7 types)
+- Crafting Materials (7 raw + 4 processed + 2 consumables)
 - Miscellaneous items
 
 ## Item Base Class
@@ -280,6 +281,70 @@ All rings have cumulative effects when wearing multiple:
 
 ---
 
+## Crafting Materials
+
+**Path**: `items/crafting/`
+
+All crafting materials extend `MaterialItem` (stackable base class).
+
+### Raw Materials
+
+| Material | File | Source | Used In |
+|----------|------|--------|---------|
+| Stick | `Stick.kt` | High grass, trees | Wood Planks, Torch, weapons |
+| Cobblestone | `Cobblestone.kt` | Harvestable walls | Blocks, Stone weapons |
+| Fiber | `Fiber.kt` | High grass | Torch, Bandage |
+| Leather | `Leather.kt` | Mob drops (bats, gnolls, golems) | Armor crafting |
+| Iron Ore | `IronOre.kt` | Harvestable walls | Iron Ingot (furnace) |
+| Gold Ore | `GoldOre.kt` | Harvestable walls | Gold Ingot (furnace) |
+| Diamond Shard | `DiamondShard.kt` | Rare drops | Diamond equipment |
+
+### Processed Materials
+
+| Material | File | Recipe |
+|----------|------|--------|
+| Wood Plank | `WoodPlank.kt` | 3 Sticks → 2 Planks |
+| Cobblestone Block | `CobblestoneBlock.kt` | 4 Cobblestone → 1 Block (table) or 2 Blocks (furnace) |
+| Iron Ingot | `IronIngot.kt` | 1 Iron Ore → 1 Ingot (furnace) |
+| Gold Ingot | `GoldIngot.kt` | 1 Gold Ore → 1 Ingot (furnace), or 1 Dark Gold → 2 Ingots (furnace) |
+
+### Crafted Consumables
+
+| Item | File | Recipe |
+|------|------|--------|
+| Crafted Torch | `CraftedTorch.kt` | 1 Stick + 1 Fiber |
+| Bandage | `Bandage.kt` | 3 Fiber |
+
+---
+
+## Crafted Weapons
+
+**Path**: `items/weapon/melee/crafted/`
+
+| Name | File | Materials | Station |
+|------|------|-----------|---------|
+| Wooden Club | `WoodenClub.kt` | 3 Wood Planks | Any |
+| Stone Dagger | `StoneDagger.kt` | 2 Cobblestone + 1 Stick | Crafting Table |
+| Stone Axe | `StoneAxe.kt` | 3 Cobblestone + 2 Sticks | Crafting Table |
+| Iron Sword | `IronSword.kt` | 2 Iron Ingots + 1 Wood Plank | Crafting Table |
+| Iron Mace | `IronMace.kt` | 3 Iron Ingots + 1 Stick | Crafting Table |
+| Diamond Blade | `DiamondBlade.kt` | 2 Diamond Shards + 1 Iron Ingot + 1 Wood Plank | Crafting Table |
+
+---
+
+## Crafted Armor
+
+**Path**: `items/armor/crafted/`
+
+| Name | File | Materials | Station |
+|------|------|-----------|---------|
+| Leather Tunic | `LeatherTunic.kt` | 3 Leather | Any |
+| Chain Vest | `ChainVest.kt` | 2 Iron Ingots + 1 Leather | Crafting Table |
+| Iron Plate | `IronPlate.kt` | 4 Iron Ingots + 1 Leather | Crafting Table |
+| Diamond Mail | `DiamondMail.kt` | 2 Diamond Shards + 2 Iron Ingots + 1 Leather | Crafting Table |
+
+---
+
 ## Containers
 
 **Path**: `items/bags/`
@@ -291,6 +356,7 @@ All rings have cumulative effects when wearing multiple:
 | Scroll Holder | `ScrollHolder.kt` | Scrolls only |
 | Wand Holster | `WandHolster.kt` | Wands only |
 | Keyring | `Keyring.kt` | Keys only |
+| Material Bag | `MaterialBag.kt` | Crafting materials only |
 
 ---
 

@@ -172,7 +172,7 @@ Player character classes.
 | `Hero.kt` | Main player character |
 | `HeroClass.kt` | Class enum (4 classes) |
 | `HeroSubClass.kt` | Subclass specializations |
-| `HeroAction.kt` | Action types |
+| `HeroAction.kt` | Action types (Move, Attack, Cook, UseStation, etc.) |
 | `Belongings.kt` | Inventory management |
 
 #### actors/mobs/
@@ -193,8 +193,23 @@ mobs/
     └── [more NPCs]
 ```
 
+### com.watabou.pixeldungeon.crafting
+Crafting system — recipes, stations, and smelting.
+
+| Class | Purpose |
+|-------|---------|
+| `Recipe.kt` | Recipe data (inputs, output, station) |
+| `RecipeInput.kt` | Single recipe ingredient |
+| `RecipeRegistry.kt` | All recipes registered at startup |
+| `StationType.kt` | Enum: NONE, CRAFTING_TABLE, FURNACE |
+| `CraftingManager.kt` | Crafting logic (check materials, craft) |
+| `SmeltingJob.kt` | Single furnace smelting job |
+| `SmeltingManager.kt` | Furnace smelting queue |
+| `MaterialTag.kt` | Material categorization |
+| `MaterialTier.kt` | Material tier levels |
+
 ### com.watabou.pixeldungeon.items
-All game items (149+ types). See [Items Documentation](../entities/items.md).
+All game items (180+ types). See [Items Documentation](../entities/items.md).
 
 ```
 items/
@@ -204,7 +219,9 @@ items/
 ├── EquipableItem.kt    # Wearable base
 ├── KindOfWeapon.kt     # Weapon interface
 ├── armor/              # 11 armor types + 12 glyphs
-├── bags/               # 5 container types
+│   └── crafted/        # 4 crafted armor types
+├── bags/               # 6 container types (incl. MaterialBag)
+├── crafting/           # 13 crafting material types
 ├── food/               # 6 food items
 ├── keys/               # 4 key types
 ├── potions/            # 13 potion types
@@ -213,6 +230,7 @@ items/
 ├── scrolls/            # 15 scroll types
 ├── wands/              # 14 wand types
 └── weapon/             # 33 weapon types + 12 enchantments
+    └── melee/crafted/  # 6 crafted weapon types
 ```
 
 ### com.watabou.pixeldungeon.levels
@@ -316,7 +334,9 @@ Modal dialogs (31 types).
 | `WndStory.kt` | Story text |
 | `WndResurrect.kt` | Ankh revival |
 | `WndChallenges.kt` | Challenge selection |
-| [16 more windows] | |
+| `WndCrafting.kt` | Crafting table interface |
+| `WndFurnace.kt` | Furnace smelting interface |
+| [14 more windows] | |
 
 ### com.watabou.pixeldungeon.effects
 Visual effects and particles.

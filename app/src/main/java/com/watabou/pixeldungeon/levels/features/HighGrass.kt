@@ -10,6 +10,8 @@ import com.watabou.pixeldungeon.effects.CellEmitter
 import com.watabou.pixeldungeon.effects.particles.LeafParticle
 import com.watabou.pixeldungeon.items.Dewdrop
 import com.watabou.pixeldungeon.items.Generator
+import com.watabou.pixeldungeon.items.crafting.Fiber
+import com.watabou.pixeldungeon.items.crafting.Stick
 import com.watabou.pixeldungeon.items.rings.RingOfHerbalism
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.Terrain
@@ -36,6 +38,14 @@ object HighGrass {
                 level.drop(Dewdrop(), pos).sprite?.drop()
             }
         }
+        // Crafting material drops
+        if (Random.Int(10) < 3) { // 30% chance
+            level.drop(Fiber(), pos).sprite?.drop()
+        }
+        if (Random.Int(20) < 3) { // 15% chance
+            level.drop(Stick(), pos).sprite?.drop()
+        }
+
         var leaves = 4
         // Warlock's barkskin
         if (ch is Hero && ch.subClass == HeroSubClass.WARDEN) {

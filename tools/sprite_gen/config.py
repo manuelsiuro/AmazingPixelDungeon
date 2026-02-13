@@ -15,7 +15,7 @@ PALETTE_CACHE = os.path.join(OUTPUT_DIR, "palette_cache.json")
 # --- Sprite Sheet Constants ---
 SPRITE_SIZE = 16
 SHEET_COLS = 8
-SHEET_ROWS = 20  # Current rows in items.png (160 slots)
+SHEET_ROWS = 23  # 23 rows in items.png (184 slots) — extended for crafting sprites
 GENERATION_SIZE = 512  # SD 1.5 native resolution; downscaled to 16x16 in post-processing
 
 # --- Model Configurations ---
@@ -96,6 +96,18 @@ CATEGORY_PROMPTS = {
     ),
     "misc": (
         "{trigger} {name}, rpg item icon, simple flat colors, "
+        "centered, single object, black background, pixel art, 16-bit, {prompt_hints}"
+    ),
+    "material": (
+        "{trigger} {name}, rpg crafting material, raw resource, "
+        "centered, single object, black background, pixel art, 16-bit, {prompt_hints}"
+    ),
+    "tool": (
+        "{trigger} {name}, rpg utility item, crafted tool, "
+        "centered, single object, black background, pixel art, 16-bit, {prompt_hints}"
+    ),
+    "block": (
+        "{trigger} {name}, rpg building block, placeable terrain, "
         "centered, single object, black background, pixel art, 16-bit, {prompt_hints}"
     ),
 }

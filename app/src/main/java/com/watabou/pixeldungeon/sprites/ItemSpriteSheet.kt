@@ -187,4 +187,36 @@ object ItemSpriteSheet {
     // New scrolls
     const val SCROLL_ALGIZ = 154
     const val SCROLL_THURISAZ = 155
+
+    // Crafting materials
+    const val COBBLESTONE = 156
+    const val FIBER = 157
+    const val STICK = 158
+    const val WOOD_PLANK = 159
+    const val IRON_ORE = 160
+    const val IRON_INGOT = 161
+    const val GOLD_ORE = 162
+    const val GOLD_INGOT = 163
+    const val LEATHER = 164
+    const val DIAMOND_SHARD = 165
+    const val COBBLESTONE_BLOCK = 166
+    const val WOOD_BARRICADE_ITEM = 167
+    const val CRAFTED_TORCH = 168
+    const val BANDAGE = 169
+    const val MATERIAL_BAG = 170
+    const val CRAFTING_KIT = 171
+
+    // Crafted weapons
+    const val WOODEN_CLUB = 172
+    const val STONE_DAGGER = 173
+    const val STONE_AXE = 174
+    const val CRAFTED_IRON_SWORD = 175
+    const val CRAFTED_IRON_MACE = 176
+    const val DIAMOND_BLADE = 177
+
+    // Crafted armor
+    const val LEATHER_TUNIC = 178
+    const val CHAIN_VEST = 179
+    const val CRAFTED_IRON_PLATE = 180
+    const val DIAMOND_MAIL = 181
 }

@@ -1,0 +1,101 @@
+package com.watabou.pixeldungeon.items.crafting
+
+import com.watabou.noosa.audio.Sample
+import com.watabou.pixeldungeon.Assets
+import com.watabou.pixeldungeon.Dungeon
+import com.watabou.pixeldungeon.actors.Actor
+import com.watabou.pixeldungeon.actors.hero.Hero
+import com.watabou.pixeldungeon.effects.CellEmitter
+import com.watabou.pixeldungeon.effects.Speck
+import com.watabou.pixeldungeon.levels.Level
+import com.watabou.pixeldungeon.levels.Terrain
+import com.watabou.pixeldungeon.scenes.CellSelector
+import com.watabou.pixeldungeon.scenes.GameScene
+import com.watabou.pixeldungeon.sprites.ItemSpriteSheet
+import com.watabou.pixeldungeon.utils.GLog
+
+class WoodBarricadeItem : MaterialItem() {
+    init {
+        name = "wood barricade"
+        image = ItemSpriteSheet.WOOD_BARRICADE_ITEM
+        defaultAction = AC_PLACE
+    }
+
+    override fun actions(hero: Hero): ArrayList<String> {
+        val actions = super.actions(hero)
+        actions.add(AC_PLACE)
+        return actions
+    }
+
+    override fun execute(hero: Hero, action: String) {
+        if (action == AC_PLACE) {
+            curUser = hero
+            curItem = this
+            GameScene.selectCell(placer)
+        } else {
+            super.execute(hero, action)
+        }
+    }
+
+    override fun price(): Int = 6
+
+    override fun info(): String =
+        "A wooden barricade that can be placed to block passages. Flamable and less durable than stone, but quick to build."
+
+    override fun desc(): String = info()
+
+    companion object {
+        const val AC_PLACE = "PLACE"
+        private const val BLOCK_HP = 12
+        private const val TIME_TO_PLACE = 0.5f
+
+        private val placer = object : CellSelector.Listener {
+            override fun onSelect(cell: Int?) {
+                if (cell == null) return
+                val hero = curUser ?: return
+                val item = curItem ?: return
+                val level = Dungeon.level ?: return
+
+                if (!Level.adjacent(hero.pos, cell)) {
+                    GLog.w("You can only place barricades on adjacent tiles.")
+                    return
+                }
+                val terrain = level.map[cell]
+                if (terrain != Terrain.EMPTY && terrain != Terrain.GRASS &&
+                    terrain != Terrain.EMBERS && terrain != Terrain.EMPTY_SP &&
+                    terrain != Terrain.EMPTY_DECO
+                ) {
+                    GLog.w("You can't place a barricade here.")
+                    return
+                }
+                if (cell == level.entrance || cell == level.exit) {
+                    GLog.w("You can't block the exit.")
+                    return
+                }
+                if (Actor.findChar(cell) != null) {
+                    GLog.w("Something is in the way.")
+                    return
+                }
+                if (Dungeon.bossLevel()) {
+                    GLog.w("The dungeon resists your construction.")
+                    return
+                }
+
+                Level.set(cell, Terrain.BARRICADE)
+                GameScene.updateMap(cell)
+                level.blockHP.put(cell, BLOCK_HP)
+
+                CellEmitter.get(cell).burst(Speck.factory(Speck.WOOL), 4)
+                Sample.play(Assets.SND_ROCKS)
+                Dungeon.observe()
+
+                item.detach(hero.belongings.backpack)
+                hero.spend(TIME_TO_PLACE)
+                hero.busy()
+                hero.sprite?.operate(cell)
+            }
+
+            override fun prompt(): String = "Choose a tile to place the barricade"
+        }
+    }
+}

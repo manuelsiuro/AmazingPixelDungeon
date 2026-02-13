@@ -49,4 +49,9 @@ open class HeroAction {
     class Attack(
         var target: Char
     ) : HeroAction()
+    class UseStation(dst: Int) : HeroAction() {
+        init {
+            this.dst = dst
+        }
+    }
 }

@@ -1090,5 +1090,187 @@
     "category": "scroll",
     "name": "thurisaz rune scroll",
     "prompt_hints": "thorn rune, pointed symbol"
+  },
+  {
+    "id": "COBBLESTONE",
+    "index": 156,
+    "category": "material",
+    "name": "cobblestone",
+    "prompt_hints": "rough gray stone chunks"
+  },
+  {
+    "id": "FIBER",
+    "index": 157,
+    "category": "material",
+    "name": "plant fiber",
+    "prompt_hints": "green-brown twisted strands"
+  },
+  {
+    "id": "STICK",
+    "index": 158,
+    "category": "material",
+    "name": "wooden stick",
+    "prompt_hints": "brown simple branch"
+  },
+  {
+    "id": "WOOD_PLANK",
+    "index": 159,
+    "category": "material",
+    "name": "wood plank",
+    "prompt_hints": "sawn light brown flat board"
+  },
+  {
+    "id": "IRON_ORE",
+    "index": 160,
+    "category": "material",
+    "name": "iron ore",
+    "prompt_hints": "dark gray metallic chunks"
+  },
+  {
+    "id": "IRON_INGOT",
+    "index": 161,
+    "category": "material",
+    "name": "iron ingot",
+    "prompt_hints": "gray metal bar smelted"
+  },
+  {
+    "id": "GOLD_ORE",
+    "index": 162,
+    "category": "material",
+    "name": "gold ore",
+    "prompt_hints": "yellow-brown metallic"
+  },
+  {
+    "id": "GOLD_INGOT",
+    "index": 163,
+    "category": "material",
+    "name": "gold ingot",
+    "prompt_hints": "golden bar shiny"
+  },
+  {
+    "id": "LEATHER",
+    "index": 164,
+    "category": "material",
+    "name": "leather hide",
+    "prompt_hints": "brown tanned animal hide"
+  },
+  {
+    "id": "DIAMOND_SHARD",
+    "index": 165,
+    "category": "material",
+    "name": "diamond shard",
+    "prompt_hints": "sparkling blue-white crystal"
+  },
+  {
+    "id": "COBBLESTONE_BLOCK",
+    "index": 166,
+    "category": "block",
+    "name": "cobblestone block",
+    "prompt_hints": "stacked gray wall block"
+  },
+  {
+    "id": "WOOD_BARRICADE_ITEM",
+    "index": 167,
+    "category": "block",
+    "name": "wood barricade",
+    "prompt_hints": "wooden planks defensive wall"
+  },
+  {
+    "id": "CRAFTED_TORCH",
+    "index": 168,
+    "category": "tool",
+    "name": "crafted torch",
+    "prompt_hints": "flame stick cloth wrap"
+  },
+  {
+    "id": "BANDAGE",
+    "index": 169,
+    "category": "tool",
+    "name": "bandage",
+    "prompt_hints": "white rolled cloth medical"
+  },
+  {
+    "id": "MATERIAL_BAG",
+    "index": 170,
+    "category": "bag",
+    "name": "material sack",
+    "prompt_hints": "brown leather bulging"
+  },
+  {
+    "id": "CRAFTING_KIT",
+    "index": 171,
+    "category": "tool",
+    "name": "crafting kit",
+    "prompt_hints": "toolbox hammer chisel"
+  },
+  {
+    "id": "WOODEN_CLUB",
+    "index": 172,
+    "category": "weapon_melee",
+    "name": "wooden club",
+    "prompt_hints": "crude rough primitive"
+  },
+  {
+    "id": "STONE_DAGGER",
+    "index": 173,
+    "category": "weapon_melee",
+    "name": "stone dagger",
+    "prompt_hints": "chipped gray primitive"
+  },
+  {
+    "id": "STONE_AXE",
+    "index": 174,
+    "category": "weapon_melee",
+    "name": "stone axe",
+    "prompt_hints": "stone head wooden handle"
+  },
+  {
+    "id": "CRAFTED_IRON_SWORD",
+    "index": 175,
+    "category": "weapon_melee",
+    "name": "iron sword",
+    "prompt_hints": "dark steel simple crossguard"
+  },
+  {
+    "id": "CRAFTED_IRON_MACE",
+    "index": 176,
+    "category": "weapon_melee",
+    "name": "iron mace",
+    "prompt_hints": "heavy dark metal head"
+  },
+  {
+    "id": "DIAMOND_BLADE",
+    "index": 177,
+    "category": "weapon_melee",
+    "name": "diamond blade",
+    "prompt_hints": "sparkling blue edge"
+  },
+  {
+    "id": "LEATHER_TUNIC",
+    "index": 178,
+    "category": "armor",
+    "name": "leather tunic",
+    "prompt_hints": "basic brown stitched"
+  },
+  {
+    "id": "CHAIN_VEST",
+    "index": 179,
+    "category": "armor",
+    "name": "chain vest",
+    "prompt_hints": "interlocking metal rings"
+  },
+  {
+    "id": "CRAFTED_IRON_PLATE",
+    "index": 180,
+    "category": "armor",
+    "name": "iron plate armor",
+    "prompt_hints": "dark metal heavy"
+  },
+  {
+    "id": "DIAMOND_MAIL",
+    "index": 181,
+    "category": "armor",
+    "name": "diamond mail",
+    "prompt_hints": "sparkling studded premium"
   }
 ]

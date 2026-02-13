@@ -48,6 +48,7 @@ class DungeonTilemap : Tilemap {
     companion object {
         const val SIZE = 16
         private var instance: DungeonTilemap? = null
+
         fun tileToWorld(pos: Int): PointF {
             return PointF((pos % Level.WIDTH).toFloat(), (pos / Level.WIDTH).toFloat()).scale(SIZE.toFloat())
         }

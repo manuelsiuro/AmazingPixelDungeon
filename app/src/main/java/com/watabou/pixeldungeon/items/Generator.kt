@@ -17,6 +17,7 @@ import com.watabou.pixeldungeon.items.potions.*
 import com.watabou.pixeldungeon.items.rings.*
 import com.watabou.pixeldungeon.items.scrolls.*
 import com.watabou.pixeldungeon.items.wands.*
+import com.watabou.pixeldungeon.items.crafting.*
 import com.watabou.pixeldungeon.items.weapon.*
 import com.watabou.pixeldungeon.items.weapon.melee.*
 import com.watabou.pixeldungeon.items.weapon.missiles.*
@@ -37,7 +38,8 @@ object Generator {
         SEED(5f, Plant.Seed::class.java),
         FOOD(0f, Food::class.java),
         GOLD(50f, Gold::class.java),
-        MISC(5f, Item::class.java);
+        MISC(5f, Item::class.java),
+        MATERIAL(0f, MaterialItem::class.java);
         var classes: Array<Class<*>>? = null
         var probs: FloatArray? = null
         companion object {
@@ -195,6 +197,19 @@ object Generator {
             ThrowingNet::class.java
         )
         Category.MISC.probs = floatArrayOf(2f, 1f, 1.5f, 1f, 1.5f)
+        Category.MATERIAL.classes = arrayOf(
+            Cobblestone::class.java,
+            Fiber::class.java,
+            Stick::class.java,
+            WoodPlank::class.java,
+            IronOre::class.java,
+            IronIngot::class.java,
+            GoldOre::class.java,
+            GoldIngot::class.java,
+            Leather::class.java,
+            DiamondShard::class.java
+        )
+        Category.MATERIAL.probs = floatArrayOf(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f)
     }
     fun reset() {
         for (cat in Category.values()) {

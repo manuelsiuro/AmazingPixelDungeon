@@ -16,9 +16,11 @@ import com.watabou.pixeldungeon.items.armor.LeatherArmor
 import com.watabou.pixeldungeon.items.armor.MailArmor
 import com.watabou.pixeldungeon.items.armor.PlateArmor
 import com.watabou.pixeldungeon.items.armor.ScaleArmor
+import com.watabou.pixeldungeon.items.bags.MaterialBag
 import com.watabou.pixeldungeon.items.bags.ScrollHolder
 import com.watabou.pixeldungeon.items.bags.SeedPouch
 import com.watabou.pixeldungeon.items.bags.WandHolster
+import com.watabou.pixeldungeon.items.crafting.CraftingKit
 import com.watabou.pixeldungeon.items.food.CheeseWedge
 import com.watabou.pixeldungeon.items.food.DragonPepper
 import com.watabou.pixeldungeon.items.food.FrostBerry
@@ -76,6 +78,7 @@ object ShopPainter : Painter() {
                 items.add((if (Random.Int(2) == 0) Quarterstaff() else Spear()).identify())
                 items.add(LeatherArmor().identify())
                 items.add(SeedPouch())
+                items.add(MaterialBag())
                 items.add(Weightstone())
                 items.add(ThrowingNet().apply { quantity = 2 })
                 Generator.random(Generator.Category.SEED)?.let { items.add(it) }
@@ -85,6 +88,7 @@ object ShopPainter : Painter() {
                 items.add((if (Random.Int(2) == 0) Sword() else Mace()).identify())
                 items.add(MailArmor().identify())
                 items.add(ScrollHolder())
+                items.add(CraftingKit())
                 items.add(Weightstone())
                 items.add(FrostBerry())
                 items.add(SmokeBomb().apply { quantity = 2 })

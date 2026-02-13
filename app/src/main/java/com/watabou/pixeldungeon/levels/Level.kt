@@ -19,6 +19,8 @@ import com.watabou.pixeldungeon.actors.hero.Hero
 import com.watabou.pixeldungeon.actors.hero.HeroClass
 import com.watabou.pixeldungeon.actors.mobs.Bestiary
 import com.watabou.pixeldungeon.actors.mobs.Mob
+import com.watabou.pixeldungeon.effects.CellEmitter
+import com.watabou.pixeldungeon.effects.Speck
 import com.watabou.pixeldungeon.effects.particles.FlowParticle
 import com.watabou.pixeldungeon.effects.particles.WindParticle
 import com.watabou.pixeldungeon.items.Generator
@@ -60,6 +62,8 @@ abstract class Level : Bundlable {
     var map = IntArray(0)
     var visited = BooleanArray(0)
     var mapped = BooleanArray(0)
+    var harvestable = BooleanArray(0)
+    var blockHP = android.util.SparseIntArray()
     var viewDistance = if (Dungeon.isChallenged(Challenges.DARKNESS)) 3 else 8
     var feeling = Feeling.NONE
     var entrance: Int = 0
@@ -76,6 +80,8 @@ abstract class Level : Bundlable {
         map = IntArray(LENGTH)
         visited = BooleanArray(LENGTH)
         mapped = BooleanArray(LENGTH)
+        harvestable = BooleanArray(LENGTH)
+        blockHP = android.util.SparseIntArray()
         mobs = HashSet()
         heaps = SparseArray()
         blobs = HashMap()
@@ -113,6 +119,7 @@ abstract class Level : Bundlable {
         decorate()
         buildFlagMaps()
         cleanWalls()
+        markHarvestable()
         createMobs()
         createItems()
     }
@@ -132,6 +139,21 @@ abstract class Level : Bundlable {
         map = bundle.getIntArray(MAP) ?: IntArray(0)
         visited = bundle.getBooleanArray(VISITED) ?: BooleanArray(0)
         mapped = bundle.getBooleanArray(MAPPED) ?: BooleanArray(0)
+        harvestable = if (bundle.contains(HARVESTABLE)) {
+            bundle.getBooleanArray(HARVESTABLE) ?: BooleanArray(0)
+        } else {
+            BooleanArray(0)
+        }
+        blockHP = android.util.SparseIntArray()
+        if (bundle.contains(BLOCK_HP_KEYS)) {
+            val keys = bundle.getIntArray(BLOCK_HP_KEYS)
+            val vals = bundle.getIntArray(BLOCK_HP_VALS)
+            if (keys != null && vals != null) {
+                for (i in keys.indices) {
+                    blockHP.put(keys[i], vals[i])
+                }
+            }
+        }
         entrance = bundle.getInt(ENTRANCE)
         exit = bundle.getInt(EXIT)
         weakFloorCreated = false
@@ -174,6 +196,17 @@ abstract class Level : Bundlable {
         bundle.put(MAP, map)
         bundle.put(VISITED, visited)
         bundle.put(MAPPED, mapped)
+        bundle.put(HARVESTABLE, harvestable)
+        // Serialize blockHP as parallel int arrays
+        val blockSize = blockHP.size()
+        val blockKeys = IntArray(blockSize)
+        val blockVals = IntArray(blockSize)
+        for (i in 0 until blockSize) {
+            blockKeys[i] = blockHP.keyAt(i)
+            blockVals[i] = blockHP.valueAt(i)
+        }
+        bundle.put(BLOCK_HP_KEYS, blockKeys)
+        bundle.put(BLOCK_HP_VALS, blockVals)
         bundle.put(ENTRANCE, entrance)
         bundle.put(EXIT, exit)
         bundle.put(HEAPS, heaps.values())
@@ -194,19 +227,27 @@ abstract class Level : Bundlable {
             val newVisited = BooleanArray(LENGTH)
             //Arrays.fill(newVisited, false) // Default is false
             val newMapped = BooleanArray(LENGTH)
-            //Arrays.fill(newMapped, false) // Default is false
+            val newHarvestable = BooleanArray(LENGTH)
             for (i in 0 until loadedMapSize) {
                 System.arraycopy(this.map, i * loadedMapSize, newMap, i * WIDTH, loadedMapSize)
                 System.arraycopy(this.visited, i * loadedMapSize, newVisited, i * WIDTH, loadedMapSize)
                 System.arraycopy(this.mapped, i * loadedMapSize, newMapped, i * WIDTH, loadedMapSize)
+                if (this.harvestable.size > i * loadedMapSize) {
+                    System.arraycopy(this.harvestable, i * loadedMapSize, newHarvestable, i * WIDTH, loadedMapSize)
+                }
             }
             this.map = newMap
             this.visited = newVisited
             this.mapped = newMapped
+            this.harvestable = newHarvestable
             entrance = adjustPos(entrance)
             exit = adjustPos(exit)
         } else {
             resizingNeeded = false
+        }
+        // Ensure harvestable array is correct size for old saves
+        if (harvestable.size < LENGTH) {
+            harvestable = BooleanArray(LENGTH)
         }
     }
     open fun adjustPos(pos: Int): Int {
@@ -222,6 +263,25 @@ abstract class Level : Bundlable {
     protected abstract fun decorate()
     protected abstract fun createMobs()
     protected abstract fun createItems()
+
+    protected open fun markHarvestable() {
+        // Default: no harvestable walls. Overridden in RegularLevel.
+    }
+
+    fun damageBlock(cell: Int, dmg: Int) {
+        val hp = blockHP.get(cell, 0)
+        if (hp <= 0) return
+        val remaining = hp - dmg
+        if (remaining <= 0) {
+            blockHP.delete(cell)
+            set(cell, Terrain.EMBERS)
+            GameScene.updateMap(cell)
+            CellEmitter.get(cell).burst(Speck.factory(Speck.ROCK), 4)
+            Sample.play(Assets.SND_ROCKS)
+        } else {
+            blockHP.put(cell, remaining)
+        }
+    }
     open fun addVisuals(scene: Scene) {
         for (i in 0 until LENGTH) {
             if (pit[i]) {
@@ -531,6 +591,7 @@ abstract class Level : Bundlable {
                 Alchemy.transmute(cell)
             }
             Terrain.DOOR -> Door.enter(cell)
+            // CRAFTING_TABLE and FURNACE are SOLID — interaction handled via HeroAction.UseStation
         }
         if (trap) {
             Sample.play(Assets.SND_TRAP)
@@ -698,6 +759,8 @@ abstract class Level : Bundlable {
             Terrain.INACTIVE_TRAP -> "Triggered trap"
             Terrain.BOOKSHELF -> "Bookshelf"
             Terrain.ALCHEMY -> "Alchemy pot"
+            Terrain.CRAFTING_TABLE -> "Crafting table"
+            Terrain.FURNACE -> "Furnace"
             else -> "???"
         }
     }
@@ -718,6 +781,8 @@ abstract class Level : Bundlable {
             Terrain.STATUE, Terrain.STATUE_SP -> "Someone wanted to adorn this place, but failed, obviously."
             Terrain.ALCHEMY -> "Drop some seeds here to cook a potion."
             Terrain.EMPTY_WELL -> "The well has run dry."
+            Terrain.CRAFTING_TABLE -> "A sturdy workbench for crafting items from raw materials."
+            Terrain.FURNACE -> "A furnace for smelting ore into metal ingots."
             else -> {
                 if (tile >= Terrain.WATER_TILES) {
                     return tileDesc(Terrain.WATER)
@@ -755,6 +820,9 @@ abstract class Level : Bundlable {
         private const val MAP = "map"
         private const val VISITED = "visited"
         private const val MAPPED = "mapped"
+        private const val HARVESTABLE = "harvestable"
+        private const val BLOCK_HP_KEYS = "blockHPKeys"
+        private const val BLOCK_HP_VALS = "blockHPVals"
         private const val ENTRANCE = "entrance"
         private const val EXIT = "exit"
         private const val HEAPS = "heaps"

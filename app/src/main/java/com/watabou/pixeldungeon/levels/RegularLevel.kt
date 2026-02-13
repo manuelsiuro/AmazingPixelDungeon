@@ -143,6 +143,8 @@ abstract class RegularLevel : Level() {
                         specials.remove(Type.WEAK_FLOOR)
                     } else if (Dungeon.depth % 5 == 2 && specials.contains(Type.LABORATORY)) {
                         r.type = Type.LABORATORY
+                    } else if (Dungeon.depth % 5 == 4 && specials.contains(Type.WORKSHOP)) {
+                        r.type = Type.WORKSHOP
                     } else {
                         val n = specials.size
                         r.type = specials[min(Random.Int(n), Random.Int(n))]
@@ -375,6 +377,25 @@ abstract class RegularLevel : Level() {
         }
         return true
     }
+    override fun markHarvestable() {
+        for (i in 0 until LENGTH) {
+            if (map[i] == Terrain.WALL) {
+                // Only mark walls adjacent to at least one passable tile
+                var isInterior = false
+                for (n in NEIGHBOURS4) {
+                    val adj = i + n
+                    if (adj in 0 until LENGTH && passable[adj]) {
+                        isInterior = true
+                        break
+                    }
+                }
+                if (isInterior && Random.Float() < 0.3f) {
+                    harvestable[i] = true
+                }
+            }
+        }
+    }
+
     override fun nMobs(): Int {
         return 2 + Dungeon.depth % 5 + Random.Int(3)
     }

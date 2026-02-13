@@ -31,10 +31,21 @@ import com.watabou.pixeldungeon.items.Torch
 import com.watabou.pixeldungeon.items.Weightstone
 import com.watabou.pixeldungeon.items.armor.ClothArmor
 import com.watabou.pixeldungeon.items.armor.LeatherArmor
+import com.watabou.pixeldungeon.items.bags.MaterialBag
 import com.watabou.pixeldungeon.items.bags.SeedPouch
+import com.watabou.pixeldungeon.items.crafting.Cobblestone
+import com.watabou.pixeldungeon.items.crafting.DiamondShard
+import com.watabou.pixeldungeon.items.crafting.Fiber
+import com.watabou.pixeldungeon.items.crafting.GoldOre
+import com.watabou.pixeldungeon.items.crafting.IronIngot
+import com.watabou.pixeldungeon.items.crafting.IronOre
+import com.watabou.pixeldungeon.items.crafting.Leather
+import com.watabou.pixeldungeon.items.crafting.Stick
+import com.watabou.pixeldungeon.items.crafting.WoodPlank
+import com.watabou.pixeldungeon.items.food.MysteryMeat
+import com.watabou.pixeldungeon.items.quest.DarkGold
 import com.watabou.pixeldungeon.items.food.CheeseWedge
 import com.watabou.pixeldungeon.items.food.Food
-import com.watabou.pixeldungeon.items.food.FrostBerry
 import com.watabou.pixeldungeon.items.potions.PotionOfHealing
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfIdentify
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfMagicMapping
@@ -113,11 +124,15 @@ class VillageLevel : Level() {
         Painter.fill(this, 7, 3, 3, 1, Terrain.EMPTY_SP)  // alcove
         map[pos(8, 4)] = Terrain.SECRET_DOOR               // secret door in north wall
 
-        // === Small pond (southeast) ===
-        Painter.fill(this, 21, 22, 5, 4, Terrain.WATER)
-
-        // === Pond-side statue ===
-        map[pos(20, 22)] = Terrain.STATUE
+        // === Workshop (southeast) ===
+        Painter.fill(this, 19, 20, 9, 8, Terrain.WALL)
+        Painter.fill(this, 20, 21, 7, 6, Terrain.EMPTY_SP)
+        map[pos(23, 20)] = Terrain.DOOR           // north door facing path
+        map[pos(21, 27)] = Terrain.WALL_DECO      // south window left
+        map[pos(25, 27)] = Terrain.WALL_DECO      // south window right
+        map[pos(21, 22)] = Terrain.CRAFTING_TABLE  // craft table
+        map[pos(25, 22)] = Terrain.FURNACE         // furnace
+        map[pos(23, 24)] = Terrain.EMBERS          // forge fire
 
         // === High grass / hedges on edges ===
         Painter.fill(this, 3, 3, 2, 2, Terrain.HIGH_GRASS)
@@ -245,11 +260,25 @@ class VillageLevel : Level() {
         }
         drop(stashItem, pos(8, 3)).type = Heap.Type.CHEST
 
-        // === Pond-side provisions ===
-        drop(FrostBerry(), pos(20, 23))
-        if (Random.Int(3) == 0) {
-            drop(Sungrass.Seed(), pos(26, 22))
-        }
+        // === Workshop inventory ===
+        placeForSale(MaterialBag(), pos(23, 22))
+
+        // === TEST MATERIALS — remove after testing ===
+        // Furnace inputs (near furnace at 25,22)
+        drop(IronOre().apply { quantity = 5 }, pos(24, 21))
+        drop(GoldOre().apply { quantity = 3 }, pos(25, 21))
+        drop(MysteryMeat().apply { quantity = 3 }, pos(26, 21))
+        drop(DarkGold().apply { quantity = 3 }, pos(26, 22))
+        // Extra cobblestone for fired blocks (furnace) + crafting table recipes
+        drop(Cobblestone().apply { quantity = 15 }, pos(24, 23))
+        // Crafting table inputs (near table at 21,22)
+        drop(Stick().apply { quantity = 15 }, pos(20, 21))
+        drop(Fiber().apply { quantity = 8 }, pos(21, 21))
+        drop(Leather().apply { quantity = 8 }, pos(22, 21))
+        drop(DiamondShard().apply { quantity = 5 }, pos(23, 21))
+        // Pre-smelted ingots for immediate crafting table testing
+        drop(IronIngot().apply { quantity = 15 }, pos(20, 23))
+        drop(WoodPlank().apply { quantity = 8 }, pos(21, 23))
 
         // Record village in journal
         Journal.add(Journal.Feature.VILLAGE)
@@ -289,6 +318,8 @@ class VillageLevel : Level() {
             Terrain.STATUE -> "Garden statue"
             Terrain.BOOKSHELF -> "Herbalist's shelf"
             Terrain.ALCHEMY -> "Alchemy pot"
+            Terrain.CRAFTING_TABLE -> "Crafting table"
+            Terrain.FURNACE -> "Furnace"
             else -> super.tileName(tile)
         }
     }
@@ -306,6 +337,8 @@ class VillageLevel : Level() {
             Terrain.STATUE -> "A moss-covered stone figure watches over the village garden."
             Terrain.BOOKSHELF -> "Shelves lined with dried herbs and botanical references."
             Terrain.ALCHEMY -> "A sturdy cauldron for brewing potions from seeds."
+            Terrain.CRAFTING_TABLE -> "A sturdy workbench for crafting weapons, armor, and tools."
+            Terrain.FURNACE -> "A hot furnace for smelting ores into metal ingots."
             else -> super.tileDesc(tile)
         }
     }

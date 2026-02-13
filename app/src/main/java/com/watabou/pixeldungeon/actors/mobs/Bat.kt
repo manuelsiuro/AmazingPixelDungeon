@@ -1,6 +1,8 @@
 package com.watabou.pixeldungeon.actors.mobs
+import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.actors.Char
 import com.watabou.pixeldungeon.effects.Speck
+import com.watabou.pixeldungeon.items.crafting.Leather
 import com.watabou.pixeldungeon.items.potions.PotionOfHealing
 import com.watabou.pixeldungeon.items.weapon.enchantments.Leech
 import com.watabou.pixeldungeon.sprites.BatSprite
@@ -40,6 +42,12 @@ class Bat : Mob() {
             sprite?.emitter()?.burst(Speck.factory(Speck.HEALING), 1)
         }
         return damage
+    }
+    override fun dropLoot() {
+        super.dropLoot()
+        if (Random.Float() < 0.3f) {
+            Dungeon.level?.drop(Leather(), pos)?.sprite?.drop()
+        }
     }
     override fun description(): String {
         return "These brisk and tenacious inhabitants of cave domes may defeat much larger opponents by replenishing their health with each successful attack."

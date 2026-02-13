@@ -1,10 +1,12 @@
 package com.watabou.pixeldungeon.actors.mobs
+import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.actors.Char
 import com.watabou.pixeldungeon.actors.buffs.Amok
 import com.watabou.pixeldungeon.items.Generator
 import com.watabou.pixeldungeon.actors.buffs.Sleep
 import com.watabou.pixeldungeon.actors.buffs.Terror
 import com.watabou.pixeldungeon.actors.mobs.npcs.Imp
+import com.watabou.pixeldungeon.items.crafting.GoldOre
 import com.watabou.pixeldungeon.items.scrolls.ScrollOfPsionicBlast
 import com.watabou.pixeldungeon.sprites.GolemSprite
 import com.watabou.utils.Random
@@ -40,6 +42,12 @@ class Golem : Mob() {
     override fun die(src: Any?) {
         Imp.Quest.process(this)
         super.die(src)
+    }
+    override fun dropLoot() {
+        super.dropLoot()
+        if (Random.Float() < 0.25f) {
+            Dungeon.level?.drop(GoldOre(), pos)?.sprite?.drop()
+        }
     }
     override fun description(): String {
         return "The Dwarves tried to combine their knowledge of mechanisms with their newfound power of elemental binding. They used spirits of earth as the \"soul\" for the mechanical bodies of golems, which were believed to be most controllable of all. Despite this, the tiniest mistake in the ritual could cause an outbreak."

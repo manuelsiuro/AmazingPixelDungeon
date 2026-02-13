@@ -17,6 +17,7 @@ import com.watabou.pixeldungeon.items.Generator
 import com.watabou.pixeldungeon.items.Gold
 import com.watabou.pixeldungeon.items.Item
 import com.watabou.pixeldungeon.levels.Level
+import com.watabou.pixeldungeon.levels.Terrain
 import com.watabou.pixeldungeon.sprites.CharSprite
 import com.watabou.pixeldungeon.utils.GLog
 import com.watabou.pixeldungeon.utils.Utils
@@ -321,6 +322,32 @@ abstract class Mob : Char() {
     open fun yell(str: String) {
         GLog.n("%s: \"%s\" ", name, str)
     }
+    protected fun findAdjacentBlock(): Int {
+        val level = Dungeon.level ?: return -1
+        for (n in Level.NEIGHBOURS8) {
+            val cell = pos + n
+            if (cell in 0 until Level.LENGTH &&
+                level.map[cell] == Terrain.BARRICADE &&
+                level.blockHP.get(cell, 0) > 0
+            ) {
+                return cell
+            }
+        }
+        return -1
+    }
+
+    protected fun attackBlock(cell: Int): Boolean {
+        val level = Dungeon.level ?: return false
+        val dmg = Random.IntRange(1, damageRoll())
+        val visible = Dungeon.visible[pos]
+        if (visible) {
+            sprite?.attack(cell)
+        }
+        level.damageBlock(cell, dmg)
+        spend(attackDelay())
+        return !visible
+    }
+
     interface AiState {
         fun act(enemyInFOV: Boolean, justAlerted: Boolean): Boolean
         fun status(): String
@@ -391,10 +418,16 @@ abstract class Mob : Char() {
                     spend(1 / speed())
                     moveSprite(oldPos, pos)
                 } else {
-                    spend(TICK)
-                    state = WANDERING
-                    target = Dungeon.level?.randomDestination() ?: -1
-                    true
+                    // Can't get closer - check for player-placed blocks to break through
+                    val blockCell = findAdjacentBlock()
+                    if (enemyInFOV && blockCell != -1) {
+                        attackBlock(blockCell)
+                    } else {
+                        spend(TICK)
+                        state = WANDERING
+                        target = Dungeon.level?.randomDestination() ?: -1
+                        true
+                    }
                 }
             }
         }
