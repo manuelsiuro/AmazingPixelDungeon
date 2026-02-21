@@ -155,6 +155,7 @@ open class CityLevel : RegularLevel() {
                     scene.add(Smoke(i))
                 }
             }
+            CavesLevel.addOreVisuals(level, scene)
         }
     }
 }

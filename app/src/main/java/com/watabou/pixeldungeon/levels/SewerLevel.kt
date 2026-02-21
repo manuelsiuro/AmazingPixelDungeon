@@ -180,6 +180,7 @@ open class SewerLevel : RegularLevel() {
                     scene.add(Sink(i))
                 }
             }
+            CavesLevel.addOreVisuals(level, scene)
         }
     }
 }

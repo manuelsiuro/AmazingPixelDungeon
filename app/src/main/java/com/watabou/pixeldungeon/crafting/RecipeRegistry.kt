@@ -15,6 +15,19 @@ import com.watabou.pixeldungeon.items.food.farming.BakedPotato
 import com.watabou.pixeldungeon.items.food.farming.Carrot
 import com.watabou.pixeldungeon.items.food.farming.RabbitStew
 import com.watabou.pixeldungeon.items.food.farming.PlanterBox
+import com.watabou.pixeldungeon.items.crafting.ArcaneDust
+import com.watabou.pixeldungeon.items.crafting.ArcaneOre
+import com.watabou.pixeldungeon.items.crafting.SpikeTrapItem
+import com.watabou.pixeldungeon.items.crafting.TorchHolderItem
+import com.watabou.pixeldungeon.items.crafting.SupportBeamItem
+import com.watabou.pixeldungeon.items.crafting.SafeRoomBlueprint
+import com.watabou.pixeldungeon.items.crafting.MiniForgeItem
+import com.watabou.pixeldungeon.items.crafting.ResourceCacheItem
+import com.watabou.pixeldungeon.items.crafting.WoodenPickaxe
+import com.watabou.pixeldungeon.items.crafting.StonePickaxe
+import com.watabou.pixeldungeon.items.crafting.IronPickaxe
+import com.watabou.pixeldungeon.items.crafting.DiamondPickaxe
+import com.watabou.pixeldungeon.items.crafting.WoodBarricadeItem
 import com.watabou.pixeldungeon.items.armor.crafted.ChainVest
 import com.watabou.pixeldungeon.items.armor.crafted.DiamondMail
 import com.watabou.pixeldungeon.items.armor.crafted.IronPlate
@@ -319,6 +332,138 @@ object RecipeRegistry {
             outputClass = RabbitStew::class.java,
             outputQuantity = 1,
             station = StationType.FURNACE
+        ))
+
+        // Phase 6: Mining pickaxes
+        register(Recipe(
+            id = "wooden_pickaxe",
+            inputs = listOf(
+                RecipeInput(WoodPlank::class.java, 3),
+                RecipeInput(Stick::class.java, 2)
+            ),
+            outputClass = WoodenPickaxe::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "stone_pickaxe",
+            inputs = listOf(
+                RecipeInput(Cobblestone::class.java, 3),
+                RecipeInput(Stick::class.java, 2)
+            ),
+            outputClass = StonePickaxe::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "iron_pickaxe",
+            inputs = listOf(
+                RecipeInput(IronIngot::class.java, 3),
+                RecipeInput(Stick::class.java, 2)
+            ),
+            outputClass = IronPickaxe::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "diamond_pickaxe",
+            inputs = listOf(
+                RecipeInput(DiamondShard::class.java, 3),
+                RecipeInput(Stick::class.java, 2)
+            ),
+            outputClass = DiamondPickaxe::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        // Phase 6: Building items
+        register(Recipe(
+            id = "spike_trap",
+            inputs = listOf(
+                RecipeInput(IronIngot::class.java, 2),
+                RecipeInput(Stick::class.java, 1)
+            ),
+            outputClass = SpikeTrapItem::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "torch_holder",
+            inputs = listOf(
+                RecipeInput(Stick::class.java, 2),
+                RecipeInput(IronIngot::class.java, 1),
+                RecipeInput(Fiber::class.java, 1)
+            ),
+            outputClass = TorchHolderItem::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "support_beam",
+            inputs = listOf(
+                RecipeInput(WoodPlank::class.java, 3),
+                RecipeInput(CobblestoneBlock::class.java, 1)
+            ),
+            outputClass = SupportBeamItem::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "safe_room",
+            inputs = listOf(
+                RecipeInput(CobblestoneBlock::class.java, 6),
+                RecipeInput(IronIngot::class.java, 2),
+                RecipeInput(WoodPlank::class.java, 2)
+            ),
+            outputClass = SafeRoomBlueprint::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "mini_forge",
+            inputs = listOf(
+                RecipeInput(CobblestoneBlock::class.java, 4),
+                RecipeInput(IronIngot::class.java, 2)
+            ),
+            outputClass = MiniForgeItem::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "resource_cache",
+            inputs = listOf(
+                RecipeInput(WoodPlank::class.java, 6),
+                RecipeInput(IronIngot::class.java, 1)
+            ),
+            outputClass = ResourceCacheItem::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        // Arcane ore smelting
+        register(Recipe(
+            id = "arcane_smelt",
+            inputs = listOf(RecipeInput(ArcaneOre::class.java, 1)),
+            outputClass = ArcaneDust::class.java,
+            outputQuantity = 2,
+            station = StationType.FURNACE
+        ))
+
+        // Wood barricade
+        register(Recipe(
+            id = "wood_barricade",
+            inputs = listOf(RecipeInput(WoodPlank::class.java, 4)),
+            outputClass = WoodBarricadeItem::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
         ))
     }
 

@@ -14,10 +14,10 @@ import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.sprites.ItemSpriteSheet
 import com.watabou.pixeldungeon.utils.GLog
 
-class CobblestoneBlock : MaterialItem() {
+class SpikeTrapItem : MaterialItem() {
     init {
-        name = "cobblestone block"
-        image = ItemSpriteSheet.COBBLESTONE_BLOCK
+        name = "spike trap"
+        image = ItemSpriteSheet.SPIKE_TRAP_ITEM
         defaultAction = AC_PLACE
     }
 
@@ -37,16 +37,17 @@ class CobblestoneBlock : MaterialItem() {
         }
     }
 
-    override fun price(): Int = 10
+    override fun price(): Int = 12
 
     override fun info(): String =
-        "A solid block of cobblestone, suitable for building walls and barricades. Use to place it on an adjacent empty tile."
+        "A concealed spike trap that damages enemies who walk over it. " +
+        "You know where it is, but they don't. Lasts for 3 triggers."
 
     override fun desc(): String = info()
 
     companion object {
         const val AC_PLACE = "PLACE"
-        private const val BLOCK_HP = 30
+        private const val TRAP_USES = 3
         private const val TIME_TO_PLACE = 1f
 
         private val placer = object : CellSelector.Listener {
@@ -62,13 +63,13 @@ class CobblestoneBlock : MaterialItem() {
                     return
                 }
 
-                Level.set(cell, Terrain.COBBLE_WALL)
+                Level.set(cell, Terrain.SPIKE_TRAP_PLAYER)
                 GameScene.updateMap(cell)
-                level.blockHP.put(cell, BLOCK_HP)
+                level.blockHP.put(cell, TRAP_USES)
                 level.buildCount++
 
-                CellEmitter.get(cell).burst(Speck.factory(Speck.ROCK), 4)
-                Sample.play(Assets.SND_ROCKS)
+                CellEmitter.get(cell).burst(Speck.factory(Speck.ROCK), 3)
+                Sample.play(Assets.SND_TRAP)
                 Dungeon.observe()
 
                 item.detach(hero.belongings.backpack)
@@ -77,7 +78,7 @@ class CobblestoneBlock : MaterialItem() {
                 hero.sprite?.operate(cell)
             }
 
-            override fun prompt(): String = "Choose a tile to place the block"
+            override fun prompt(): String = "Choose a tile to place the spike trap"
         }
     }
 }

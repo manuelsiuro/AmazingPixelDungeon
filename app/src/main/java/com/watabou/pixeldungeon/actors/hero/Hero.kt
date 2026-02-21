@@ -370,6 +370,9 @@ class Hero : Char() {
                 Terrain.ANVIL -> GameScene.show(
                     com.watabou.pixeldungeon.windows.WndAnvil(this)
                 )
+                Terrain.MINI_FORGE -> GameScene.show(
+                    com.watabou.pixeldungeon.windows.WndFurnace(this)
+                )
             }
             return false
         } else if (getCloser(dst)) {
@@ -685,7 +688,7 @@ class Hero : Char() {
         val currentLevel = Dungeon.level ?: return false
         if (currentLevel.map[cell] == Terrain.ALCHEMY && cell != pos) {
             curAction = HeroAction.Cook(cell)
-        } else if (currentLevel.map[cell] == Terrain.CRAFTING_TABLE || currentLevel.map[cell] == Terrain.FURNACE || currentLevel.map[cell] == Terrain.ENCHANTING_TABLE || currentLevel.map[cell] == Terrain.ANVIL) {
+        } else if (currentLevel.map[cell] == Terrain.CRAFTING_TABLE || currentLevel.map[cell] == Terrain.FURNACE || currentLevel.map[cell] == Terrain.ENCHANTING_TABLE || currentLevel.map[cell] == Terrain.ANVIL || currentLevel.map[cell] == Terrain.MINI_FORGE) {
             curAction = HeroAction.UseStation(cell)
         } else {
             ch = Actor.findChar(cell)

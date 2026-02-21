@@ -35,6 +35,32 @@ object Terrain {
     const val ANVIL = 67
     const val FARMLAND = 68
     const val HYDRATED_FARMLAND = 69
+
+    // Geological walls
+    const val DIRT_WALL = 70
+    const val STONE_WALL_NATURAL = 71
+    const val GRANITE_WALL = 72
+    const val OBSIDIAN_WALL = 73
+
+    // Ore walls
+    const val ORE_WALL_IRON = 74
+    const val ORE_WALL_GOLD = 75
+    const val ORE_WALL_DIAMOND = 76
+    const val ORE_WALL_ARCANE = 77
+
+    // Mining states
+    const val RUBBLE = 78
+    const val CRACKED_WALL = 79
+
+    // Building terrain
+    const val COBBLE_WALL = 80
+    const val SPIKE_TRAP_PLAYER = 81
+    const val TORCH_HOLDER = 82
+    const val SUPPORT_BEAM = 83
+    const val SAFE_ROOM_WALL = 84
+    const val SAFE_ROOM_DOOR = 85
+    const val SAFE_ROOM_DOOR_OPEN = 86
+    const val MINI_FORGE = 87
     const val SECRET_DOOR = 16
     const val TOXIC_TRAP = 17
     const val SECRET_TOXIC_TRAP = 18
@@ -120,6 +146,32 @@ object Terrain {
         flags[ANVIL] = SOLID
         flags[FARMLAND] = PASSABLE
         flags[HYDRATED_FARMLAND] = PASSABLE
+
+        // Geological walls
+        flags[DIRT_WALL] = LOS_BLOCKING or SOLID or UNSTITCHABLE
+        flags[STONE_WALL_NATURAL] = LOS_BLOCKING or SOLID or UNSTITCHABLE
+        flags[GRANITE_WALL] = LOS_BLOCKING or SOLID or UNSTITCHABLE
+        flags[OBSIDIAN_WALL] = LOS_BLOCKING or SOLID or UNSTITCHABLE
+
+        // Ore walls
+        flags[ORE_WALL_IRON] = LOS_BLOCKING or SOLID or UNSTITCHABLE
+        flags[ORE_WALL_GOLD] = LOS_BLOCKING or SOLID or UNSTITCHABLE
+        flags[ORE_WALL_DIAMOND] = LOS_BLOCKING or SOLID or UNSTITCHABLE
+        flags[ORE_WALL_ARCANE] = LOS_BLOCKING or SOLID or UNSTITCHABLE
+
+        // Mining states
+        flags[RUBBLE] = PASSABLE
+        flags[CRACKED_WALL] = LOS_BLOCKING or SOLID or UNSTITCHABLE
+
+        // Building terrain
+        flags[COBBLE_WALL] = SOLID or LOS_BLOCKING or UNSTITCHABLE
+        flags[SPIKE_TRAP_PLAYER] = PASSABLE
+        flags[TORCH_HOLDER] = SOLID
+        flags[SUPPORT_BEAM] = SOLID
+        flags[SAFE_ROOM_WALL] = SOLID or LOS_BLOCKING or UNSTITCHABLE
+        flags[SAFE_ROOM_DOOR] = PASSABLE or LOS_BLOCKING or SOLID or UNSTITCHABLE
+        flags[SAFE_ROOM_DOOR_OPEN] = PASSABLE or UNSTITCHABLE
+        flags[MINI_FORGE] = SOLID
         for (i in WATER_TILES until WATER_TILES + 16) {
             flags[i] = flags[WATER]
         }

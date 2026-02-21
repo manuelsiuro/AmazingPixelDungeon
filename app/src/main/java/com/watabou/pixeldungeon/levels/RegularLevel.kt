@@ -12,6 +12,7 @@ import com.watabou.pixeldungeon.levels.Room.Type
 import com.watabou.pixeldungeon.levels.painters.Painter
 import com.watabou.utils.Bundle
 import com.watabou.utils.Graph
+import com.watabou.pixeldungeon.levels.features.OreGenerator
 import com.watabou.utils.Random
 import com.watabou.utils.Rect
 import java.util.ArrayList
@@ -382,22 +383,48 @@ abstract class RegularLevel : Level() {
         return true
     }
     override fun markHarvestable() {
+        val depth = Dungeon.depth
+
         for (i in 0 until LENGTH) {
             if (map[i] == Terrain.WALL) {
-                // Only mark walls adjacent to at least one passable tile
-                var isInterior = false
+                // Only convert walls adjacent to at least one passable tile
+                var adjacentPassable = false
                 for (n in NEIGHBOURS4) {
                     val adj = i + n
                     if (adj in 0 until LENGTH && passable[adj]) {
-                        isInterior = true
+                        adjacentPassable = true
                         break
                     }
                 }
-                if (isInterior && Random.Float() < 0.3f) {
+                if (adjacentPassable) {
+                    map[i] = when {
+                        // Sewers (depth 1-5): 60% dirt, 40% stone
+                        depth <= 5 -> if (Random.Float() < 0.6f)
+                            Terrain.DIRT_WALL else Terrain.STONE_WALL_NATURAL
+
+                        // Prison (depth 6-10): 70% stone, 30% granite
+                        depth <= 10 -> if (Random.Float() < 0.7f)
+                            Terrain.STONE_WALL_NATURAL else Terrain.GRANITE_WALL
+
+                        // Caves (depth 11-15): 80% granite, 20% stone
+                        depth <= 15 -> if (Random.Float() < 0.8f)
+                            Terrain.GRANITE_WALL else Terrain.STONE_WALL_NATURAL
+
+                        // City (depth 16-20): 50% obsidian, 50% granite
+                        depth <= 20 -> if (Random.Float() < 0.5f)
+                            Terrain.OBSIDIAN_WALL else Terrain.GRANITE_WALL
+
+                        // Halls (depth 21-25): 100% obsidian
+                        else -> Terrain.OBSIDIAN_WALL
+                    }
                     harvestable[i] = true
                 }
+                // Structural walls (no adjacent passable tiles) stay as WALL
             }
         }
+
+        // Place ore veins
+        OreGenerator.generate(this, depth)
     }
 
     override fun nMobs(): Int {

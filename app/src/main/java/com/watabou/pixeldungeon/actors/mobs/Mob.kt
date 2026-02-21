@@ -330,7 +330,7 @@ abstract class Mob : Char() {
         for (n in Level.NEIGHBOURS8) {
             val cell = pos + n
             if (cell in 0 until Level.LENGTH &&
-                level.map[cell] == Terrain.BARRICADE &&
+                (level.map[cell] == Terrain.BARRICADE || level.map[cell] == Terrain.COBBLE_WALL) &&
                 level.blockHP.get(cell, 0) > 0
             ) {
                 return cell

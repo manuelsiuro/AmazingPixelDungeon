@@ -76,6 +76,10 @@ abstract class Level : Bundlable {
     var plants = SparseArray<Plant>()
     var crops = SparseArray<CropData>()
     var farmlandTimers = android.util.SparseIntArray()
+    var safeZones = HashSet<Int>()
+    var buildCount = 0
+    var torchHolders = HashSet<Int>()
+    var resourceCacheInventory = ArrayList<Item>()
     protected var itemsToSpawn = ArrayList<Item>()
     var color1 = 0x004400
     var color2 = 0x88CC44
@@ -92,6 +96,10 @@ abstract class Level : Bundlable {
         plants = SparseArray()
         crops = SparseArray()
         farmlandTimers = android.util.SparseIntArray()
+        safeZones = HashSet()
+        buildCount = 0
+        torchHolders = HashSet()
+        resourceCacheInventory = ArrayList()
         if (!Dungeon.bossLevel()) {
             addItemToSpawn(Generator.random(Generator.Category.FOOD))
             if (Dungeon.posNeeded()) {
@@ -216,6 +224,21 @@ abstract class Level : Bundlable {
             val blob = b as Blob
             blobs[blob.javaClass] = blob
         }
+        safeZones = HashSet()
+        if (bundle.contains(SAFE_ZONES)) {
+            bundle.getIntArray(SAFE_ZONES)?.forEach { safeZones.add(it) }
+        }
+        buildCount = if (bundle.contains(BUILD_COUNT)) bundle.getInt(BUILD_COUNT) else 0
+        torchHolders = HashSet()
+        if (bundle.contains(TORCH_HOLDERS)) {
+            bundle.getIntArray(TORCH_HOLDERS)?.forEach { torchHolders.add(it) }
+        }
+        resourceCacheInventory = ArrayList()
+        if (bundle.contains(RESOURCE_CACHE_INV)) {
+            for (item in bundle.getCollection(RESOURCE_CACHE_INV)) {
+                resourceCacheInventory.add(item as Item)
+            }
+        }
         buildFlagMaps()
         cleanWalls()
     }
@@ -251,6 +274,10 @@ abstract class Level : Bundlable {
         bundle.put(FARMLAND_TIMER_VALS, ftVals)
         bundle.put(MOBS, mobs)
         bundle.put(BLOBS, blobs.values)
+        bundle.put(SAFE_ZONES, safeZones.toIntArray())
+        bundle.put(BUILD_COUNT, buildCount)
+        bundle.put(TORCH_HOLDERS, torchHolders.toIntArray())
+        bundle.put(RESOURCE_CACHE_INV, resourceCacheInventory)
     }
     open fun tunnelTile(): Int {
         return if (feeling == Feeling.CHASM) Terrain.EMPTY_SP else Terrain.EMPTY
@@ -358,7 +385,7 @@ abstract class Level : Bundlable {
         var cell: Int
         do {
             cell = Random.Int(LENGTH)
-        } while (!passable[cell] || Dungeon.visible[cell] || Actor.findChar(cell) != null)
+        } while (!passable[cell] || Dungeon.visible[cell] || Actor.findChar(cell) != null || cell in safeZones)
         return cell
     }
     open fun randomDestination(): Int {
@@ -461,7 +488,7 @@ abstract class Level : Bundlable {
             var d = false
             for (j in NEIGHBOURS9.indices) {
                 val n = i + NEIGHBOURS9[j]
-                if (n >= 0 && n < LENGTH && map[n] != Terrain.WALL && map[n] != Terrain.WALL_DECO) {
+                if (n >= 0 && n < LENGTH && !isWallType(map[n])) {
                     d = true
                     break
                 }
@@ -630,6 +657,13 @@ abstract class Level : Bundlable {
                 Alchemy.transmute(cell)
             }
             Terrain.DOOR -> Door.enter(cell)
+            Terrain.SAFE_ROOM_DOOR -> {
+                if (ch === Dungeon.hero) {
+                    set(cell, Terrain.SAFE_ROOM_DOOR_OPEN)
+                    GameScene.updateMap(cell)
+                    Dungeon.observe()
+                }
+            }
             // CRAFTING_TABLE and FURNACE are SOLID — interaction handled via HeroAction.UseStation
         }
         if (trap) {
@@ -664,6 +698,25 @@ abstract class Level : Bundlable {
             Terrain.SUMMONING_TRAP -> SummoningTrap.trigger(cell, mob)
             Terrain.DOOR -> {
                 Door.enter(cell)
+                trap = false
+            }
+            Terrain.SPIKE_TRAP_PLAYER -> {
+                // Player-placed spike trap damages mobs
+                val spikeDmg = Random.IntRange(2, 2 + Dungeon.depth / 2)
+                mob.damage(spikeDmg, this)
+                if (Dungeon.visible[cell]) {
+                    GLog.w("The spikes pierce %s!", mob.name)
+                    Sample.play(Assets.SND_TRAP)
+                }
+                // Decrement uses via blockHP
+                val uses = blockHP.get(cell, 3)
+                if (uses <= 1) {
+                    blockHP.delete(cell)
+                    set(cell, Terrain.INACTIVE_TRAP)
+                    GameScene.updateMap(cell)
+                } else {
+                    blockHP.put(cell, uses - 1)
+                }
                 trap = false
             }
             Terrain.FARMLAND, Terrain.HYDRATED_FARMLAND -> {
@@ -808,6 +861,23 @@ abstract class Level : Bundlable {
             Terrain.ANVIL -> "Anvil"
             Terrain.FARMLAND -> "Farmland"
             Terrain.HYDRATED_FARMLAND -> "Irrigated farmland"
+            Terrain.DIRT_WALL -> "Dirt wall"
+            Terrain.STONE_WALL_NATURAL -> "Stone wall"
+            Terrain.GRANITE_WALL -> "Granite wall"
+            Terrain.OBSIDIAN_WALL -> "Obsidian wall"
+            Terrain.ORE_WALL_IRON -> "Iron ore vein"
+            Terrain.ORE_WALL_GOLD -> "Gold ore vein"
+            Terrain.ORE_WALL_DIAMOND -> "Diamond ore vein"
+            Terrain.ORE_WALL_ARCANE -> "Arcane ore vein"
+            Terrain.RUBBLE -> "Rubble"
+            Terrain.CRACKED_WALL -> "Cracked wall"
+            Terrain.COBBLE_WALL -> "Cobblestone wall"
+            Terrain.SPIKE_TRAP_PLAYER -> "Spike trap"
+            Terrain.TORCH_HOLDER -> "Torch holder"
+            Terrain.SUPPORT_BEAM -> "Support beam"
+            Terrain.SAFE_ROOM_WALL -> "Reinforced wall"
+            Terrain.SAFE_ROOM_DOOR, Terrain.SAFE_ROOM_DOOR_OPEN -> "Safe room door"
+            Terrain.MINI_FORGE -> "Mini-forge"
             else -> "???"
         }
     }
@@ -834,6 +904,23 @@ abstract class Level : Bundlable {
             Terrain.ANVIL -> "A heavy anvil used to repair equipment and apply enchanted books to weapons."
             Terrain.FARMLAND -> "Tilled soil, ready for planting. Plant crop seeds here."
             Terrain.HYDRATED_FARMLAND -> "Irrigated tilled soil. Crops grow faster near water."
+            Terrain.DIRT_WALL -> "A wall of packed earth. Easy to mine with any pickaxe."
+            Terrain.STONE_WALL_NATURAL -> "A wall of solid stone. Requires at least a stone pickaxe."
+            Terrain.GRANITE_WALL -> "A wall of dense granite. Requires at least an iron pickaxe."
+            Terrain.OBSIDIAN_WALL -> "A wall of volcanic obsidian. Only a diamond pickaxe can break it."
+            Terrain.ORE_WALL_IRON -> "Veins of iron ore glint within the rock."
+            Terrain.ORE_WALL_GOLD -> "Gleaming gold ore is embedded in the wall."
+            Terrain.ORE_WALL_DIAMOND -> "Brilliant diamond crystals sparkle in the wall."
+            Terrain.ORE_WALL_ARCANE -> "The wall pulses with arcane energy. Rare magical ore lies within."
+            Terrain.RUBBLE -> "Loose rocks and debris from a cave-in. Slows movement."
+            Terrain.CRACKED_WALL -> "This wall has been partially mined. A few more hits should break through."
+            Terrain.COBBLE_WALL -> "A sturdy wall of placed cobblestone. Fire-resistant."
+            Terrain.SPIKE_TRAP_PLAYER -> "Sharp spikes hidden beneath the floor. You know where they are."
+            Terrain.TORCH_HOLDER -> "A wall-mounted torch illuminating the area."
+            Terrain.SUPPORT_BEAM -> "A thick wooden beam supporting the ceiling. Prevents cave-ins nearby."
+            Terrain.SAFE_ROOM_WALL -> "A reinforced wall that cannot be destroyed."
+            Terrain.SAFE_ROOM_DOOR, Terrain.SAFE_ROOM_DOOR_OPEN -> "A heavy door that only you know how to open."
+            Terrain.MINI_FORGE -> "A compact portable furnace for smelting."
             else -> {
                 if (tile >= Terrain.WATER_TILES) {
                     return tileDesc(Terrain.WATER)
@@ -846,8 +933,8 @@ abstract class Level : Bundlable {
         }
     }
     companion object {
-        const val WIDTH = 32
-        const val HEIGHT = 32
+        const val WIDTH = 64
+        const val HEIGHT = 64
         const val LENGTH = WIDTH * HEIGHT
         val NEIGHBOURS4 = intArrayOf(-WIDTH, +1, +WIDTH, -1)
         val NEIGHBOURS8 = intArrayOf(+1, -1, +WIDTH, -WIDTH, +1 + WIDTH, +1 - WIDTH, -1 + WIDTH, -1 - WIDTH)
@@ -883,6 +970,21 @@ abstract class Level : Bundlable {
         private const val FARMLAND_TIMER_VALS = "farmlandTimerVals"
         private const val MOBS = "mobs"
         private const val BLOBS = "blobs"
+        private const val SAFE_ZONES = "safeZones"
+        private const val BUILD_COUNT = "buildCount"
+        private const val TORCH_HOLDERS = "torchHolders"
+        private const val RESOURCE_CACHE_INV = "resourceCacheInventory"
+        fun isWallType(terrain: Int): Boolean = when (terrain) {
+            Terrain.WALL, Terrain.WALL_DECO, Terrain.SECRET_DOOR,
+            Terrain.DIRT_WALL, Terrain.STONE_WALL_NATURAL,
+            Terrain.GRANITE_WALL, Terrain.OBSIDIAN_WALL,
+            Terrain.ORE_WALL_IRON, Terrain.ORE_WALL_GOLD,
+            Terrain.ORE_WALL_DIAMOND, Terrain.ORE_WALL_ARCANE,
+            Terrain.CRACKED_WALL, Terrain.COBBLE_WALL,
+            Terrain.SAFE_ROOM_WALL -> true
+            else -> false
+        }
+
         fun set(cell: Int, terrain: Int) {
             val level = Dungeon.level ?: return
             Painter.set(level, cell, terrain)

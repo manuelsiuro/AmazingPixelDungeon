@@ -14,10 +14,10 @@ import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.sprites.ItemSpriteSheet
 import com.watabou.pixeldungeon.utils.GLog
 
-class CobblestoneBlock : MaterialItem() {
+class SupportBeamItem : MaterialItem() {
     init {
-        name = "cobblestone block"
-        image = ItemSpriteSheet.COBBLESTONE_BLOCK
+        name = "support beam"
+        image = ItemSpriteSheet.SUPPORT_BEAM_ITEM
         defaultAction = AC_PLACE
     }
 
@@ -40,13 +40,13 @@ class CobblestoneBlock : MaterialItem() {
     override fun price(): Int = 10
 
     override fun info(): String =
-        "A solid block of cobblestone, suitable for building walls and barricades. Use to place it on an adjacent empty tile."
+        "A sturdy wooden support beam. Place it to create a solid pillar " +
+        "that blocks movement and line of sight."
 
     override fun desc(): String = info()
 
     companion object {
         const val AC_PLACE = "PLACE"
-        private const val BLOCK_HP = 30
         private const val TIME_TO_PLACE = 1f
 
         private val placer = object : CellSelector.Listener {
@@ -62,9 +62,8 @@ class CobblestoneBlock : MaterialItem() {
                     return
                 }
 
-                Level.set(cell, Terrain.COBBLE_WALL)
+                Level.set(cell, Terrain.SUPPORT_BEAM)
                 GameScene.updateMap(cell)
-                level.blockHP.put(cell, BLOCK_HP)
                 level.buildCount++
 
                 CellEmitter.get(cell).burst(Speck.factory(Speck.ROCK), 4)
@@ -77,7 +76,7 @@ class CobblestoneBlock : MaterialItem() {
                 hero.sprite?.operate(cell)
             }
 
-            override fun prompt(): String = "Choose a tile to place the block"
+            override fun prompt(): String = "Choose a tile to place the support beam"
         }
     }
 }

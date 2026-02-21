@@ -34,6 +34,7 @@ import com.watabou.pixeldungeon.items.armor.LeatherArmor
 import com.watabou.pixeldungeon.items.bags.MaterialBag
 import com.watabou.pixeldungeon.items.bags.SeedPouch
 import com.watabou.pixeldungeon.items.crafting.Cobblestone
+import com.watabou.pixeldungeon.items.crafting.CobblestoneBlock
 import com.watabou.pixeldungeon.items.crafting.DiamondShard
 import com.watabou.pixeldungeon.items.crafting.Fiber
 import com.watabou.pixeldungeon.items.crafting.GoldOre
@@ -42,11 +43,23 @@ import com.watabou.pixeldungeon.items.crafting.IronOre
 import com.watabou.pixeldungeon.items.crafting.Leather
 import com.watabou.pixeldungeon.items.crafting.Stick
 import com.watabou.pixeldungeon.items.crafting.ArcaneDust
+import com.watabou.pixeldungeon.items.crafting.ArcaneOre
 import com.watabou.pixeldungeon.items.crafting.BlankTome
 import com.watabou.pixeldungeon.items.crafting.EyeOfEnder
 import com.watabou.pixeldungeon.items.crafting.Bone
 import com.watabou.pixeldungeon.items.crafting.Hoe
 import com.watabou.pixeldungeon.items.crafting.WoodPlank
+import com.watabou.pixeldungeon.items.crafting.WoodBarricadeItem
+import com.watabou.pixeldungeon.items.crafting.WoodenPickaxe
+import com.watabou.pixeldungeon.items.crafting.StonePickaxe
+import com.watabou.pixeldungeon.items.crafting.IronPickaxe
+import com.watabou.pixeldungeon.items.crafting.DiamondPickaxe
+import com.watabou.pixeldungeon.items.crafting.SpikeTrapItem
+import com.watabou.pixeldungeon.items.crafting.TorchHolderItem
+import com.watabou.pixeldungeon.items.crafting.SupportBeamItem
+import com.watabou.pixeldungeon.items.crafting.SafeRoomBlueprint
+import com.watabou.pixeldungeon.items.crafting.MiniForgeItem
+import com.watabou.pixeldungeon.items.crafting.ResourceCacheItem
 import com.watabou.pixeldungeon.items.food.MysteryMeat
 import com.watabou.pixeldungeon.items.food.farming.PlanterBox
 import com.watabou.pixeldungeon.farming.WheatSeed
@@ -83,81 +96,147 @@ class VillageLevel : Level() {
     override fun build(): Boolean {
         Arrays.fill(map, Terrain.WALL)
 
-        // Central open area (grass and paths)
-        Painter.fill(this, 3, 3, 26, 26, Terrain.GRASS)
+        // === Large central open area (grass) ===
+        Painter.fill(this, 5, 5, 54, 54, Terrain.GRASS)
 
-        // Main paths (cobblestone)
+        // === Main paths (cobblestone) ===
         // Horizontal path through center
-        Painter.fill(this, 3, 15, 26, 2, Terrain.EMPTY_DECO)
+        Painter.fill(this, 5, 22, 54, 2, Terrain.EMPTY_DECO)
         // Vertical path through center
-        Painter.fill(this, 15, 3, 2, 26, Terrain.EMPTY_DECO)
+        Painter.fill(this, 32, 5, 2, 54, Terrain.EMPTY_DECO)
+        // Path to entrance
+        Painter.fill(this, 32, 2, 2, 3, Terrain.EMPTY_DECO)
+        // Path to exit
+        Painter.fill(this, 32, 59, 2, 3, Terrain.EMPTY_DECO)
+
+        // ============================================================
+        // VILLAGE SQUARE (center-north, shops + elder + well)
+        // ============================================================
 
         // === Weapon Shop (northwest) ===
-        Painter.fill(this, 4, 4, 9, 8, Terrain.WALL)
-        Painter.fill(this, 5, 5, 7, 6, Terrain.EMPTY_SP)
-        map[pos(8, 11)] = Terrain.DOOR
-        map[pos(6, 4)] = Terrain.WALL_DECO
-        map[pos(10, 4)] = Terrain.WALL_DECO
+        Painter.fill(this, 8, 6, 11, 10, Terrain.WALL)
+        Painter.fill(this, 9, 7, 9, 8, Terrain.EMPTY_SP)
+        map[pos(14, 15)] = Terrain.DOOR
+        map[pos(10, 6)] = Terrain.WALL_DECO
+        map[pos(16, 6)] = Terrain.WALL_DECO
 
         // === Potion Shop (northeast) ===
-        Painter.fill(this, 19, 4, 9, 8, Terrain.WALL)
-        Painter.fill(this, 20, 5, 7, 6, Terrain.EMPTY_SP)
-        map[pos(23, 11)] = Terrain.DOOR
-        map[pos(21, 4)] = Terrain.WALL_DECO
-        map[pos(25, 4)] = Terrain.WALL_DECO
+        Painter.fill(this, 38, 6, 11, 10, Terrain.WALL)
+        Painter.fill(this, 39, 7, 9, 8, Terrain.EMPTY_SP)
+        map[pos(43, 15)] = Terrain.DOOR
+        map[pos(40, 6)] = Terrain.WALL_DECO
+        map[pos(46, 6)] = Terrain.WALL_DECO
 
-        // === Tavern (south-west) ===
-        Painter.fill(this, 4, 20, 9, 8, Terrain.WALL)
-        Painter.fill(this, 5, 21, 7, 6, Terrain.EMPTY_SP)
-        map[pos(8, 20)] = Terrain.DOOR
-        map[pos(6, 27)] = Terrain.WALL_DECO
-        map[pos(10, 27)] = Terrain.WALL_DECO
+        // === Tavern (center-west) ===
+        Painter.fill(this, 8, 14, 11, 8, Terrain.WALL)
+        Painter.fill(this, 9, 15, 9, 6, Terrain.EMPTY_SP)
+        map[pos(14, 21)] = Terrain.DOOR
+        map[pos(10, 21)] = Terrain.WALL_DECO
+        map[pos(16, 21)] = Terrain.WALL_DECO
 
         // === Central square decorations ===
-        map[pos(16, 16)] = Terrain.WELL
-        map[pos(14, 14)] = Terrain.SIGN
-        map[pos(10, 18)] = Terrain.EMBERS
+        map[pos(33, 18)] = Terrain.WELL
+        map[pos(30, 18)] = Terrain.SIGN
+        map[pos(28, 20)] = Terrain.EMBERS
 
-        // === Village Garden (east of center, north of pond) ===
-        Painter.fill(this, 20, 17, 7, 4, Terrain.HIGH_GRASS)
-        Painter.fill(this, 21, 18, 5, 2, Terrain.GRASS)
-        map[pos(20, 18)] = Terrain.STATUE  // garden entrance statue left
-        map[pos(26, 18)] = Terrain.STATUE  // garden entrance statue right
-
-        // === Farmland area (south of garden, near seed drops) ===
-        Painter.fill(this, 20, 13, 6, 2, Terrain.FARMLAND)
-        // Tiles closer to the well (16,16) get hydrated
-        map[pos(20, 13)] = Terrain.HYDRATED_FARMLAND
-        map[pos(20, 14)] = Terrain.HYDRATED_FARMLAND
-        map[pos(21, 13)] = Terrain.HYDRATED_FARMLAND
+        // === Village Garden (east of center) ===
+        Painter.fill(this, 38, 17, 10, 5, Terrain.HIGH_GRASS)
+        Painter.fill(this, 39, 18, 8, 3, Terrain.GRASS)
+        map[pos(38, 19)] = Terrain.STATUE
+        map[pos(47, 19)] = Terrain.STATUE
 
         // === Herbalist's Corner (west of center) ===
-        Painter.fill(this, 5, 13, 5, 2, Terrain.EMPTY_SP)
-        map[pos(5, 13)] = Terrain.BOOKSHELF   // herbalist shelf left
-        map[pos(9, 14)] = Terrain.BOOKSHELF   // herbalist shelf right
-        map[pos(7, 13)] = Terrain.ALCHEMY     // alchemy pot
+        Painter.fill(this, 22, 17, 6, 3, Terrain.EMPTY_SP)
+        map[pos(22, 17)] = Terrain.BOOKSHELF
+        map[pos(27, 19)] = Terrain.BOOKSHELF
+        map[pos(24, 18)] = Terrain.ALCHEMY
 
         // === Hidden Stash (behind weapon shop north wall) ===
-        Painter.fill(this, 7, 3, 3, 1, Terrain.EMPTY_SP)  // alcove
-        map[pos(8, 4)] = Terrain.SECRET_DOOR               // secret door in north wall
+        Painter.fill(this, 13, 5, 3, 1, Terrain.EMPTY_SP)
+        map[pos(14, 6)] = Terrain.SECRET_DOOR
 
-        // === Workshop (southeast) ===
-        Painter.fill(this, 19, 20, 9, 8, Terrain.WALL)
-        Painter.fill(this, 20, 21, 7, 6, Terrain.EMPTY_SP)
-        map[pos(23, 20)] = Terrain.DOOR           // north door facing path
-        map[pos(21, 27)] = Terrain.WALL_DECO      // south window left
-        map[pos(25, 27)] = Terrain.WALL_DECO      // south window right
-        map[pos(21, 22)] = Terrain.CRAFTING_TABLE  // craft table
-        map[pos(25, 22)] = Terrain.FURNACE         // furnace
-        map[pos(23, 24)] = Terrain.EMBERS          // forge fire
-        map[pos(21, 25)] = Terrain.ENCHANTING_TABLE  // enchanting table
-        map[pos(25, 25)] = Terrain.ANVIL             // anvil
+        // ============================================================
+        // WORKSHOP ZONE (southwest, ~5-30, 25-45)
+        // ============================================================
 
-        // === High grass / hedges on edges ===
-        Painter.fill(this, 3, 3, 2, 2, Terrain.HIGH_GRASS)
-        Painter.fill(this, 27, 3, 2, 2, Terrain.HIGH_GRASS)
-        Painter.fill(this, 27, 27, 2, 2, Terrain.HIGH_GRASS)
-        Painter.fill(this, 3, 27, 2, 2, Terrain.HIGH_GRASS)
+        // === Workshop building ===
+        Painter.fill(this, 8, 26, 14, 12, Terrain.WALL)
+        Painter.fill(this, 9, 27, 12, 10, Terrain.EMPTY_SP)
+        map[pos(15, 26)] = Terrain.DOOR
+        map[pos(10, 37)] = Terrain.WALL_DECO
+        map[pos(18, 37)] = Terrain.WALL_DECO
+        map[pos(10, 28)] = Terrain.CRAFTING_TABLE
+        map[pos(18, 28)] = Terrain.FURNACE
+        map[pos(14, 30)] = Terrain.EMBERS    // forge fire
+        map[pos(10, 32)] = Terrain.ENCHANTING_TABLE
+        map[pos(18, 32)] = Terrain.ANVIL
+
+        // ============================================================
+        // FARMING ZONE (southwest, ~5-30, 46-58)
+        // ============================================================
+
+        // Farmland area
+        Painter.fill(this, 8, 48, 10, 4, Terrain.FARMLAND)
+        // Some hydrated near a water source
+        Painter.fill(this, 8, 48, 3, 2, Terrain.HYDRATED_FARMLAND)
+        // Small pond for hydration
+        Painter.fill(this, 6, 47, 2, 2, Terrain.WATER)
+
+        // ============================================================
+        // MINING ZONE (southeast, ~40-58, 25-50)
+        // ============================================================
+
+        // Sign for mining zone
+        map[pos(42, 25)] = Terrain.SIGN
+
+        // Dirt wall section (5x3)
+        Painter.fill(this, 42, 27, 5, 3, Terrain.DIRT_WALL)
+        map[pos(42, 26)] = Terrain.SIGN  // label
+
+        // Stone wall section (5x3)
+        Painter.fill(this, 42, 31, 5, 3, Terrain.STONE_WALL_NATURAL)
+        map[pos(42, 30)] = Terrain.SIGN
+
+        // Granite wall section (5x3)
+        Painter.fill(this, 42, 35, 5, 3, Terrain.GRANITE_WALL)
+        map[pos(42, 34)] = Terrain.SIGN
+
+        // Obsidian wall section (5x3)
+        Painter.fill(this, 42, 39, 5, 3, Terrain.OBSIDIAN_WALL)
+        map[pos(42, 38)] = Terrain.SIGN
+
+        // Ore wall samples (2 cells each)
+        Painter.fill(this, 49, 27, 2, 1, Terrain.ORE_WALL_IRON)
+        Painter.fill(this, 49, 29, 2, 1, Terrain.ORE_WALL_GOLD)
+        Painter.fill(this, 49, 31, 2, 1, Terrain.ORE_WALL_DIAMOND)
+        Painter.fill(this, 49, 33, 2, 1, Terrain.ORE_WALL_ARCANE)
+
+        // Clear paths around mining walls so they're accessible
+        Painter.fill(this, 41, 26, 1, 17, Terrain.EMPTY_DECO)  // left path
+        Painter.fill(this, 47, 26, 1, 17, Terrain.EMPTY_DECO)  // middle path
+        Painter.fill(this, 51, 26, 1, 9, Terrain.EMPTY_DECO)   // right ore path
+        Painter.fill(this, 48, 26, 1, 9, Terrain.EMPTY_DECO)   // ore access
+        // Horizontal paths between wall sections
+        Painter.fill(this, 41, 30, 7, 1, Terrain.EMPTY_DECO)
+        Painter.fill(this, 41, 34, 7, 1, Terrain.EMPTY_DECO)
+        Painter.fill(this, 41, 38, 7, 1, Terrain.EMPTY_DECO)
+        Painter.fill(this, 41, 42, 7, 1, Terrain.EMPTY_DECO)
+
+        // ============================================================
+        // BUILDING ZONE (southeast, ~40-58, 51-58)
+        // ============================================================
+
+        // Open 10x10 area for placing fortifications
+        Painter.fill(this, 42, 48, 12, 10, Terrain.EMPTY)
+        map[pos(42, 47)] = Terrain.SIGN  // label
+
+        // ============================================================
+        // HIGH GRASS / HEDGES on corners
+        // ============================================================
+        Painter.fill(this, 5, 5, 3, 3, Terrain.HIGH_GRASS)
+        Painter.fill(this, 56, 5, 3, 3, Terrain.HIGH_GRASS)
+        Painter.fill(this, 56, 56, 3, 3, Terrain.HIGH_GRASS)
+        Painter.fill(this, 5, 56, 3, 3, Terrain.HIGH_GRASS)
 
         // Scatter some high grass
         for (i in 0 until LENGTH) {
@@ -166,15 +245,15 @@ class VillageLevel : Level() {
             }
         }
 
-        // === Entrance (north edge) - gate to the outside world ===
-        entrance = pos(16, 2)
+        // === Entrance (north center) ===
+        entrance = pos(33, 2)
         map[entrance] = Terrain.ENTRANCE
-        map[pos(16, 3)] = Terrain.EMPTY_DECO
+        map[pos(33, 3)] = Terrain.EMPTY_DECO
 
-        // === Exit (south center) - stairs down to dungeon ===
-        exit = pos(16, 29)
+        // === Exit (south center) ===
+        exit = pos(33, 61)
         map[exit] = Terrain.EXIT
-        map[pos(16, 28)] = Terrain.EMPTY_DECO
+        map[pos(33, 60)] = Terrain.EMPTY_DECO
 
         feeling = Feeling.NONE
 
@@ -191,25 +270,25 @@ class VillageLevel : Level() {
 
     override fun createMobs() {
         // 3 Shopkeepers
-        placeShopkeeper(pos(8, 7))   // Weapon shop
-        placeShopkeeper(pos(23, 7))  // Potion shop
-        placeShopkeeper(pos(8, 24))  // Tavern
+        placeShopkeeper(pos(14, 10))   // Weapon shop
+        placeShopkeeper(pos(43, 10))   // Potion shop
+        placeShopkeeper(pos(14, 18))   // Tavern
 
         // Village Elder in the central square
         val elder = VillageElder()
-        elder.pos = pos(15, 14)
+        elder.pos = pos(31, 18)
         mobs.add(elder)
         Actor.occupyCell(elder)
 
         // 1-2 rats on the outskirts
         val rat1 = Rat()
-        rat1.pos = pos(26, 28)
+        rat1.pos = pos(55, 55)
         mobs.add(rat1)
         Actor.occupyCell(rat1)
 
         if (Random.Int(2) == 0) {
             val rat2 = Rat()
-            rat2.pos = pos(4, 16)
+            rat2.pos = pos(7, 40)
             mobs.add(rat2)
             Actor.occupyCell(rat2)
         }
@@ -224,101 +303,120 @@ class VillageLevel : Level() {
 
     override fun createItems() {
         // === Starter gold near the entrance ===
-        drop(Gold(500), pos(15, 3))
+        drop(Gold(500), pos(32, 4))
 
-        // === Healing well (WaterOfHealth on the well tile) ===
-        val wellCell = pos(16, 16)
+        // === Healing well ===
+        val wellCell = pos(33, 18)
         val water = WaterOfHealth()
         water.seed(wellCell, 1)
         blobs[WaterOfHealth::class.java] = water
 
         // === Weapon Shop inventory ===
-        placeForSale(ShortSword().identify(), pos(6, 6))
-        placeForSale(Knuckles().identify(), pos(7, 6))
-        placeForSale(ClothArmor().identify(), pos(9, 6))
-        placeForSale(LeatherArmor().identify(), pos(10, 6))
-        placeForSale(Dart(3), pos(6, 8))
+        placeForSale(ShortSword().identify(), pos(10, 8))
+        placeForSale(Knuckles().identify(), pos(12, 8))
+        placeForSale(ClothArmor().identify(), pos(14, 8))
+        placeForSale(LeatherArmor().identify(), pos(16, 8))
+        placeForSale(Dart(3), pos(10, 12))
 
         // === Potion Shop inventory ===
-        placeForSale(PotionOfHealing(), pos(21, 6))
-        placeForSale(Generator.random(Generator.Category.POTION) ?: PotionOfHealing(), pos(22, 6))
-        placeForSale(Generator.random(Generator.Category.POTION) ?: PotionOfHealing(), pos(24, 6))
-        placeForSale(ScrollOfIdentify(), pos(21, 8))
-        placeForSale(ScrollOfMagicMapping(), pos(22, 8))
-        placeForSale(SeedPouch(), pos(24, 8))
+        placeForSale(PotionOfHealing(), pos(40, 8))
+        placeForSale(Generator.random(Generator.Category.POTION) ?: PotionOfHealing(), pos(42, 8))
+        placeForSale(Generator.random(Generator.Category.POTION) ?: PotionOfHealing(), pos(44, 8))
+        placeForSale(ScrollOfIdentify(), pos(40, 12))
+        placeForSale(ScrollOfMagicMapping(), pos(42, 12))
+        placeForSale(SeedPouch(), pos(44, 12))
 
         // === Tavern inventory ===
-        placeForSale(Food(), pos(6, 22))
-        placeForSale(Food(), pos(7, 22))
-        placeForSale(CheeseWedge(), pos(9, 22))
-        placeForSale(Torch(), pos(6, 25))
-        placeForSale(Weightstone(), pos(7, 25))
+        placeForSale(Food(), pos(10, 16))
+        placeForSale(Food(), pos(12, 16))
+        placeForSale(CheeseWedge(), pos(14, 16))
+        placeForSale(Torch(), pos(10, 19))
+        placeForSale(Weightstone(), pos(12, 19))
 
         // === Village Garden — Foliage blob + plants ===
         val foliage = Foliage()
-        for (gy in 17..20) {
-            for (gx in 20..26) {
+        for (gy in 17..21) {
+            for (gx in 38..47) {
                 foliage.seed(pos(gx, gy), 1)
             }
         }
         blobs[Foliage::class.java] = foliage
-        plant(Sungrass.Seed(), pos(23, 19))
-        plant(Brightcap.Seed(), pos(21, 19))
+        plant(Sungrass.Seed(), pos(42, 19))
+        plant(Brightcap.Seed(), pos(44, 19))
 
         // === Herbalist's Alchemy pot ===
         val alchemy = Alchemy()
-        alchemy.seed(pos(7, 13), 1)
+        alchemy.seed(pos(24, 18), 1)
         blobs[Alchemy::class.java] = alchemy
 
-        // === Hidden Stash (chest behind weapon shop) ===
+        // === Hidden Stash ===
         val stashItem: Item = when (Random.Int(4)) {
             0 -> Honeypot()
             1 -> Ankh()
             2 -> HolyWater()
             else -> SmokeBomb().apply { quantity = 2 }
         }
-        drop(stashItem, pos(8, 3)).type = Heap.Type.CHEST
+        drop(stashItem, pos(14, 5)).type = Heap.Type.CHEST
 
         // === Workshop inventory ===
-        placeForSale(MaterialBag(), pos(23, 22))
+        placeForSale(MaterialBag(), pos(14, 28))
 
-        // === TEST MATERIALS — remove after testing ===
-        // Furnace inputs (near furnace at 25,22)
-        drop(IronOre().apply { quantity = 5 }, pos(24, 21))
-        drop(GoldOre().apply { quantity = 3 }, pos(25, 21))
-        drop(MysteryMeat().apply { quantity = 3 }, pos(26, 21))
-        drop(DarkGold().apply { quantity = 3 }, pos(26, 22))
-        // Extra cobblestone for fired blocks (furnace) + crafting table recipes
-        drop(Cobblestone().apply { quantity = 15 }, pos(24, 23))
-        // Crafting table inputs (near table at 21,22)
-        drop(Stick().apply { quantity = 15 }, pos(20, 21))
-        drop(Fiber().apply { quantity = 8 }, pos(21, 21))
-        drop(Leather().apply { quantity = 8 }, pos(22, 21))
-        drop(DiamondShard().apply { quantity = 5 }, pos(23, 21))
-        // Pre-smelted ingots for immediate crafting table testing
-        drop(IronIngot().apply { quantity = 15 }, pos(20, 23))
-        drop(WoodPlank().apply { quantity = 8 }, pos(21, 23))
-        // Enchanting table test items (near enchanting table at 21,25)
-        drop(ArcaneDust().apply { quantity = 50 }, pos(20, 25))
-        drop(BlankTome(), pos(22, 25))
-        drop(ArcaneDust().apply { quantity = 50 }, pos(20, 26))
-        // Test scrolls for grinding (not for sale — directly dropped)
-        drop(ScrollOfIdentify(), pos(22, 26))
-        drop(ScrollOfMagicMapping(), pos(23, 26))
-        drop(ScrollOfIdentify(), pos(24, 26))
-        // Second ShortSword for anvil repair testing
-        drop(ShortSword().identify(), pos(26, 25))
-        // Storage chest test: extra wood planks + eye of ender for dimensional chest
-        drop(WoodPlank().apply { quantity = 16 }, pos(22, 23))
-        drop(EyeOfEnder().apply { quantity = 2 }, pos(20, 24))
-        // Farming test items (near garden area at 20-26, 15-18)
-        drop(Hoe(), pos(20, 15))
-        drop(WheatSeed().apply { quantity = 5 }, pos(21, 15))
-        drop(CarrotSeed().apply { quantity = 5 }, pos(22, 15))
-        drop(PotatoSeed().apply { quantity = 5 }, pos(23, 15))
-        drop(MelonSeed().apply { quantity = 3 }, pos(24, 15))
-        drop(PlanterBox(), pos(25, 15))
-        drop(Bone().apply { quantity = 9 }, pos(26, 15))
+        // === TEST MATERIALS (Workshop) ===
+        // Furnace inputs (near furnace at 18,28)
+        drop(IronOre().apply { quantity = 5 }, pos(17, 27))
+        drop(GoldOre().apply { quantity = 3 }, pos(19, 27))
+        drop(MysteryMeat().apply { quantity = 3 }, pos(19, 29))
+        drop(DarkGold().apply { quantity = 3 }, pos(19, 30))
+        drop(Cobblestone().apply { quantity = 15 }, pos(17, 29))
+        // Crafting table inputs (near table at 10,28)
+        drop(Stick().apply { quantity = 15 }, pos(9, 27))
+        drop(Fiber().apply { quantity = 8 }, pos(11, 27))
+        drop(Leather().apply { quantity = 8 }, pos(12, 27))
+        drop(DiamondShard().apply { quantity = 5 }, pos(13, 27))
+        drop(IronIngot().apply { quantity = 15 }, pos(9, 29))
+        drop(WoodPlank().apply { quantity = 12 }, pos(11, 29))
+        // Enchanting + anvil test items
+        drop(ArcaneDust().apply { quantity = 50 }, pos(9, 32))
+        drop(BlankTome(), pos(12, 32))
+        drop(ArcaneDust().apply { quantity = 50 }, pos(9, 34))
+        drop(ScrollOfIdentify(), pos(12, 34))
+        drop(ScrollOfMagicMapping(), pos(13, 34))
+        drop(ShortSword().identify(), pos(19, 33))
+        // Storage chest materials
+        drop(WoodPlank().apply { quantity = 16 }, pos(13, 29))
+        drop(EyeOfEnder().apply { quantity = 2 }, pos(9, 31))
+
+        // === FARMING ZONE TEST ITEMS ===
+        drop(Hoe(), pos(8, 47))
+        drop(WheatSeed().apply { quantity = 5 }, pos(9, 47))
+        drop(CarrotSeed().apply { quantity = 5 }, pos(10, 47))
+        drop(PotatoSeed().apply { quantity = 5 }, pos(11, 47))
+        drop(MelonSeed().apply { quantity = 3 }, pos(12, 47))
+        drop(PlanterBox(), pos(13, 47))
+        drop(Bone().apply { quantity = 9 }, pos(14, 47))
+
+        // === MINING ZONE TEST ITEMS ===
+        // All 4 pickaxe tiers
+        drop(WoodenPickaxe(), pos(41, 27))
+        drop(StonePickaxe(), pos(41, 28))
+        drop(IronPickaxe(), pos(41, 29))
+        drop(DiamondPickaxe(), pos(41, 30))
+        // Extra crafting materials for mining
+        drop(WoodPlank().apply { quantity = 12 }, pos(48, 27))
+        drop(Stick().apply { quantity = 10 }, pos(48, 28))
+        drop(IronIngot().apply { quantity = 10 }, pos(48, 29))
+        drop(DiamondShard().apply { quantity = 6 }, pos(48, 30))
+        drop(ArcaneOre().apply { quantity = 3 }, pos(48, 31))
+
+        // === BUILDING ZONE TEST ITEMS ===
+        drop(CobblestoneBlock().apply { quantity = 10 }, pos(42, 49))
+        drop(WoodBarricadeItem().apply { quantity = 5 }, pos(43, 49))
+        drop(SpikeTrapItem().apply { quantity = 5 }, pos(44, 49))
+        drop(TorchHolderItem().apply { quantity = 3 }, pos(45, 49))
+        drop(SupportBeamItem().apply { quantity = 3 }, pos(46, 49))
+        drop(SafeRoomBlueprint(), pos(47, 49))
+        drop(MiniForgeItem(), pos(48, 49))
+        drop(ResourceCacheItem().apply { quantity = 2 }, pos(49, 49))
 
         // Record village in journal
         Journal.add(Journal.Feature.VILLAGE)
@@ -362,6 +460,14 @@ class VillageLevel : Level() {
             Terrain.FURNACE -> "Furnace"
             Terrain.FARMLAND -> "Farmland"
             Terrain.HYDRATED_FARMLAND -> "Hydrated farmland"
+            Terrain.DIRT_WALL -> "Dirt wall (test - mine with Wood Pickaxe)"
+            Terrain.STONE_WALL_NATURAL -> "Stone wall (test - mine with Stone Pickaxe)"
+            Terrain.GRANITE_WALL -> "Granite wall (test - mine with Iron Pickaxe)"
+            Terrain.OBSIDIAN_WALL -> "Obsidian wall (test - mine with Diamond Pickaxe)"
+            Terrain.ORE_WALL_IRON -> "Iron ore vein (test)"
+            Terrain.ORE_WALL_GOLD -> "Gold ore vein (test)"
+            Terrain.ORE_WALL_DIAMOND -> "Diamond ore vein (test)"
+            Terrain.ORE_WALL_ARCANE -> "Arcane ore vein (test)"
             else -> super.tileName(tile)
         }
     }
@@ -383,6 +489,10 @@ class VillageLevel : Level() {
             Terrain.FURNACE -> "A hot furnace for smelting ores into metal ingots."
             Terrain.FARMLAND -> "Tilled earth ready for planting. Use a hoe on grass to create more."
             Terrain.HYDRATED_FARMLAND -> "Moist, tilled earth near water. Crops grow faster here."
+            Terrain.DIRT_WALL -> "Packed earth. Mine with a Wooden Pickaxe or better."
+            Terrain.STONE_WALL_NATURAL -> "Solid stone. Mine with a Stone Pickaxe or better."
+            Terrain.GRANITE_WALL -> "Dense granite. Mine with an Iron Pickaxe or better."
+            Terrain.OBSIDIAN_WALL -> "Volcanic obsidian. Only a Diamond Pickaxe can break this."
             else -> super.tileDesc(tile)
         }
     }
@@ -403,7 +513,7 @@ class VillageLevel : Level() {
 
     private fun pos(x: Int, y: Int): Int = x + y * WIDTH
 
-    // Campfire particle emitter — flame particles rising from embers
+    // Campfire particle emitter
     private class Campfire(private val pos: Int) : Emitter() {
         init {
             val p = DungeonTilemap.tileCenterToWorld(pos)

@@ -157,6 +157,7 @@ open class HallsLevel : RegularLevel() {
                     scene.add(Stream(i))
                 }
             }
+            CavesLevel.addOreVisuals(level, scene)
         }
     }
 }

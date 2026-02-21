@@ -11,7 +11,10 @@ import com.watabou.pixeldungeon.effects.Speck
 import com.watabou.pixeldungeon.items.weapon.Weapon
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.Terrain
+import com.watabou.pixeldungeon.levels.PickaxeTier
+import com.watabou.pixeldungeon.levels.WallHardness
 import com.watabou.pixeldungeon.levels.features.HarvestableWall
+import com.watabou.pixeldungeon.levels.features.MiningManager
 import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.sprites.ItemSprite
 import com.watabou.pixeldungeon.sprites.ItemSpriteSheet
@@ -90,6 +93,27 @@ class Pickaxe : Weapon() {
                                 hunger.satisfy(-Hunger.STARVING / 10f)
                                 BuffIndicator.refreshHero()
                             }
+                            hero.onOperateComplete()
+                        }
+                    })
+                    return
+                }
+            }
+
+            // Check for mineable geological/ore walls (quest pickaxe = iron tier)
+            for (i in Level.NEIGHBOURS8.indices) {
+                val pos = hero.pos + Level.NEIGHBOURS8[i]
+                if (WallHardness.isMineableWall(level.map[pos])) {
+                    val hardness = WallHardness.forTerrain(level.map[pos])
+                    if (hardness != null && PickaxeTier.IRON.ordinal < hardness.minTier.ordinal) {
+                        GLog.w("Your pickaxe is not strong enough to mine this wall.")
+                        return
+                    }
+                    hero.spend(TIME_TO_MINE)
+                    hero.busy()
+                    hero.sprite?.attack(pos, object : Callback {
+                        override fun call() {
+                            MiningManager.mine(level, pos, hero, PickaxeTier.IRON)
                             hero.onOperateComplete()
                         }
                     })

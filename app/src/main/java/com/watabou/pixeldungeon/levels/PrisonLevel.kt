@@ -166,6 +166,7 @@ open class PrisonLevel : RegularLevel() {
                     scene.add(Torch(i))
                 }
             }
+            CavesLevel.addOreVisuals(level, scene)
         }
     }
 }

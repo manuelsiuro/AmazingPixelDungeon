@@ -4,20 +4,21 @@ import com.watabou.noosa.audio.Sample
 import com.watabou.pixeldungeon.Assets
 import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.actors.hero.Hero
+import com.watabou.pixeldungeon.actors.mobs.npcs.ResourceCacheNpc
 import com.watabou.pixeldungeon.building.PlacementValidator
 import com.watabou.pixeldungeon.effects.CellEmitter
 import com.watabou.pixeldungeon.effects.Speck
-import com.watabou.pixeldungeon.levels.Level
-import com.watabou.pixeldungeon.levels.Terrain
 import com.watabou.pixeldungeon.scenes.CellSelector
 import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.sprites.ItemSpriteSheet
 import com.watabou.pixeldungeon.utils.GLog
 
-class CobblestoneBlock : MaterialItem() {
+class ResourceCacheItem : MaterialItem() {
     init {
-        name = "cobblestone block"
-        image = ItemSpriteSheet.COBBLESTONE_BLOCK
+        name = "resource cache"
+        image = ItemSpriteSheet.RESOURCE_CACHE_ITEM
+        stackable = false
+        unique = true
         defaultAction = AC_PLACE
     }
 
@@ -37,16 +38,17 @@ class CobblestoneBlock : MaterialItem() {
         }
     }
 
-    override fun price(): Int = 10
+    override fun price(): Int = 15
 
     override fun info(): String =
-        "A solid block of cobblestone, suitable for building walls and barricades. Use to place it on an adjacent empty tile."
+        "A communal resource cache that can be placed on the ground. " +
+        "All resource caches on the same floor share the same inventory, " +
+        "making it easy to access your materials from multiple locations."
 
     override fun desc(): String = info()
 
     companion object {
         const val AC_PLACE = "PLACE"
-        private const val BLOCK_HP = 30
         private const val TIME_TO_PLACE = 1f
 
         private val placer = object : CellSelector.Listener {
@@ -62,12 +64,12 @@ class CobblestoneBlock : MaterialItem() {
                     return
                 }
 
-                Level.set(cell, Terrain.COBBLE_WALL)
-                GameScene.updateMap(cell)
-                level.blockHP.put(cell, BLOCK_HP)
+                val cache = ResourceCacheNpc()
+                cache.pos = cell
+                GameScene.add(cache)
                 level.buildCount++
 
-                CellEmitter.get(cell).burst(Speck.factory(Speck.ROCK), 4)
+                CellEmitter.get(cell).burst(Speck.factory(Speck.WOOL), 4)
                 Sample.play(Assets.SND_ROCKS)
                 Dungeon.observe()
 
@@ -77,7 +79,7 @@ class CobblestoneBlock : MaterialItem() {
                 hero.sprite?.operate(cell)
             }
 
-            override fun prompt(): String = "Choose a tile to place the block"
+            override fun prompt(): String = "Choose a tile to place the resource cache"
         }
     }
 }

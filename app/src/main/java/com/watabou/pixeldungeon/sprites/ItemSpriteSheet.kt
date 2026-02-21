@@ -254,4 +254,17 @@ object ItemSpriteSheet {
     const val BREAD = 202
     const val BAKED_POTATO = 203
     const val RABBIT_STEW = 204
+
+    // Mining & Building
+    const val WOODEN_PICKAXE = 205
+    const val STONE_PICKAXE = 206
+    const val IRON_PICKAXE = 207
+    const val DIAMOND_PICKAXE = 208
+    const val SPIKE_TRAP_ITEM = 209
+    const val TORCH_HOLDER_ITEM = 210
+    const val SUPPORT_BEAM_ITEM = 211
+    const val SAFE_ROOM_BLUEPRINT = 212
+    const val MINI_FORGE_ITEM = 213
+    const val RESOURCE_CACHE_ITEM = 214
+    const val ARCANE_ORE = 215
 }

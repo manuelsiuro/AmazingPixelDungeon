@@ -1314,5 +1314,201 @@
     "category": "material",
     "name": "eye of ender",
     "prompt_hints": "glowing green eye, pearl, floating, magical"
+  },
+  {
+    "id": "HOE",
+    "index": 188,
+    "category": "farming",
+    "name": "hoe",
+    "prompt_hints": "diagonal farming tool, brown handle, metal blade"
+  },
+  {
+    "id": "BONE",
+    "index": 189,
+    "category": "farming",
+    "name": "bone",
+    "prompt_hints": "white bone, horizontal, round knob ends"
+  },
+  {
+    "id": "BONEMEAL",
+    "index": 190,
+    "category": "farming",
+    "name": "bonemeal",
+    "prompt_hints": "white powder pile, bone dust, fertilizer"
+  },
+  {
+    "id": "WOODEN_BOWL",
+    "index": 191,
+    "category": "farming",
+    "name": "wooden bowl",
+    "prompt_hints": "round brown wooden bowl, simple"
+  },
+  {
+    "id": "WATER_BUCKET",
+    "index": 192,
+    "category": "farming",
+    "name": "water bucket",
+    "prompt_hints": "metal bucket with blue water, handle"
+  },
+  {
+    "id": "PLANTER_BOX",
+    "index": 193,
+    "category": "farming",
+    "name": "planter box",
+    "prompt_hints": "wooden box with soil, small green sprout"
+  },
+  {
+    "id": "SEED_WHEAT",
+    "index": 194,
+    "category": "farming",
+    "name": "wheat seeds",
+    "prompt_hints": "golden wheat grain seeds, small, scattered"
+  },
+  {
+    "id": "SEED_CARROT",
+    "index": 195,
+    "category": "farming",
+    "name": "carrot seeds",
+    "prompt_hints": "small brown seeds, green leaf marker"
+  },
+  {
+    "id": "SEED_POTATO",
+    "index": 196,
+    "category": "farming",
+    "name": "potato seeds",
+    "prompt_hints": "tan potato tuber eyes, small pieces"
+  },
+  {
+    "id": "SEED_MELON",
+    "index": 197,
+    "category": "farming",
+    "name": "melon seeds",
+    "prompt_hints": "flat oval cream seeds, melon"
+  },
+  {
+    "id": "WHEAT",
+    "index": 198,
+    "category": "farming",
+    "name": "wheat",
+    "prompt_hints": "golden wheat stalks bundle, green stems"
+  },
+  {
+    "id": "CARROT",
+    "index": 199,
+    "category": "farming",
+    "name": "carrot",
+    "prompt_hints": "orange carrot with green leafy top"
+  },
+  {
+    "id": "POTATO",
+    "index": 200,
+    "category": "farming",
+    "name": "potato",
+    "prompt_hints": "lumpy brown potato, dark eye spots"
+  },
+  {
+    "id": "MELON_SLICE",
+    "index": 201,
+    "category": "farming",
+    "name": "melon slice",
+    "prompt_hints": "triangular slice, green rind, red flesh, seeds"
+  },
+  {
+    "id": "BREAD",
+    "index": 202,
+    "category": "farming",
+    "name": "bread",
+    "prompt_hints": "golden round bread loaf, score marks"
+  },
+  {
+    "id": "BAKED_POTATO",
+    "index": 203,
+    "category": "farming",
+    "name": "baked potato",
+    "prompt_hints": "split potato with butter, steam rising"
+  },
+  {
+    "id": "RABBIT_STEW",
+    "index": 204,
+    "category": "farming",
+    "name": "rabbit stew",
+    "prompt_hints": "brown stew bowl, meat chunks, steam"
+  },
+  {
+    "id": "WOODEN_PICKAXE",
+    "index": 205,
+    "category": "mining",
+    "name": "wooden pickaxe",
+    "prompt_hints": "brown wood handle, light wood head, diagonal mining tool"
+  },
+  {
+    "id": "STONE_PICKAXE",
+    "index": 206,
+    "category": "mining",
+    "name": "stone pickaxe",
+    "prompt_hints": "brown handle, grey stone head, diagonal mining tool"
+  },
+  {
+    "id": "IRON_PICKAXE",
+    "index": 207,
+    "category": "mining",
+    "name": "iron pickaxe",
+    "prompt_hints": "brown handle, silver iron head, diagonal mining tool"
+  },
+  {
+    "id": "DIAMOND_PICKAXE",
+    "index": 208,
+    "category": "mining",
+    "name": "diamond pickaxe",
+    "prompt_hints": "brown handle, cyan diamond head, diagonal mining tool, sparkling"
+  },
+  {
+    "id": "SPIKE_TRAP_ITEM",
+    "index": 209,
+    "category": "building",
+    "name": "spike trap",
+    "prompt_hints": "iron spikes on wooden base plate, defensive trap"
+  },
+  {
+    "id": "TORCH_HOLDER_ITEM",
+    "index": 210,
+    "category": "building",
+    "name": "torch holder",
+    "prompt_hints": "iron wall bracket with burning flame torch"
+  },
+  {
+    "id": "SUPPORT_BEAM_ITEM",
+    "index": 211,
+    "category": "building",
+    "name": "support beam",
+    "prompt_hints": "thick vertical wooden pillar, structural, brown"
+  },
+  {
+    "id": "SAFE_ROOM_BLUEPRINT",
+    "index": 212,
+    "category": "building",
+    "name": "safe room blueprint",
+    "prompt_hints": "rolled paper with blue room sketch lines, ribbon tie"
+  },
+  {
+    "id": "MINI_FORGE_ITEM",
+    "index": 213,
+    "category": "building",
+    "name": "mini-forge",
+    "prompt_hints": "small brick furnace, fire glow, compact"
+  },
+  {
+    "id": "RESOURCE_CACHE_ITEM",
+    "index": 214,
+    "category": "building",
+    "name": "resource cache",
+    "prompt_hints": "wooden storage crate, iron bands, supply box"
+  },
+  {
+    "id": "ARCANE_ORE",
+    "index": 215,
+    "category": "mining",
+    "name": "arcane ore",
+    "prompt_hints": "rough rock chunk, purple glowing veins, magical mineral"
   }
 ]

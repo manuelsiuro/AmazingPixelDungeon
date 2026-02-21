@@ -199,13 +199,81 @@ open class CavesLevel : RegularLevel() {
             size(am * 2)
         }
     }
+
+    private class OreVein(private val pos: Int, private val oreColor: Int) : Group() {
+        private var delay: Float = Random.Float(2f)
+        override fun update() {
+            visible = Dungeon.visible[pos]
+            if (visible) {
+                super.update()
+                delay -= Game.elapsed
+                if (delay <= 0) {
+                    delay = Random.Float(1.5f)
+                    val p = DungeonTilemap.tileToWorld(pos)
+                    val sparkle = recycle(OreSparkle::class.java) as OreSparkle
+                    sparkle.reset(
+                        p.x + Random.Float(DungeonTilemap.SIZE.toFloat()),
+                        p.y + Random.Float(DungeonTilemap.SIZE.toFloat()),
+                        oreColor
+                    )
+                }
+            }
+        }
+    }
+
+    class OreSparkle : PixelParticle() {
+        fun reset(x: Float, y: Float, oreColor: Int) {
+            revive()
+            this.x = x
+            this.y = y
+            color(oreColor)
+            lifespan = 0.6f
+            left = lifespan
+        }
+        override fun update() {
+            super.update()
+            val p = left / lifespan
+            am = (if (p < 0.5f) p * 2 else (1 - p) * 2) * 2
+            size(am * 2)
+        }
+    }
+
     companion object {
+        private const val ORE_COLOR_IRON = 0xCC8844
+        private const val ORE_COLOR_GOLD = 0xFFDD00
+        private const val ORE_COLOR_DIAMOND = 0xCCEEFF
+        private const val ORE_COLOR_ARCANE = 0xAA44FF
+
+        fun oreColor(terrain: Int): Int = when (terrain) {
+            Terrain.ORE_WALL_IRON -> ORE_COLOR_IRON
+            Terrain.ORE_WALL_GOLD -> ORE_COLOR_GOLD
+            Terrain.ORE_WALL_DIAMOND -> ORE_COLOR_DIAMOND
+            Terrain.ORE_WALL_ARCANE -> ORE_COLOR_ARCANE
+            else -> 0
+        }
+
+        fun isOreWall(terrain: Int): Boolean = when (terrain) {
+            Terrain.ORE_WALL_IRON, Terrain.ORE_WALL_GOLD,
+            Terrain.ORE_WALL_DIAMOND, Terrain.ORE_WALL_ARCANE -> true
+            else -> false
+        }
+
+        fun addOreVisuals(level: Level, scene: Scene) {
+            for (i in 0 until LENGTH) {
+                val tile = level.map[i]
+                if (isOreWall(tile)) {
+                    scene.add(OreVein(i, oreColor(tile)))
+                }
+            }
+        }
+
         fun addVisuals(level: Level, scene: Scene) {
             for (i in 0 until LENGTH) {
                 if (level.map[i] == Terrain.WALL_DECO) {
                     scene.add(Vein(i))
                 }
             }
+            addOreVisuals(level, scene)
         }
     }
 }

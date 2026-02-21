@@ -350,8 +350,27 @@ object EncyclopediaRegistry {
             EnchantedBook::class.java,
             EyeOfEnder::class.java,
             Bone::class.java,
-            Bonemeal::class.java
+            Bonemeal::class.java,
+            ArcaneOre::class.java
         ), cat, "Materials")
+
+        // Mining tools
+        registerItems(listOf(
+            WoodenPickaxe::class.java,
+            StonePickaxe::class.java,
+            IronPickaxe::class.java,
+            DiamondPickaxe::class.java
+        ), cat, "Mining")
+
+        // Building items
+        registerItems(listOf(
+            SpikeTrapItem::class.java,
+            TorchHolderItem::class.java,
+            SupportBeamItem::class.java,
+            SafeRoomBlueprint::class.java,
+            MiniForgeItem::class.java,
+            ResourceCacheItem::class.java
+        ), cat, "Building")
 
         // Recipes from RecipeRegistry
         try {
@@ -706,6 +725,38 @@ object EncyclopediaRegistry {
                     "appearances each game. Use a Scroll of Identify to reveal an item's true nature. " +
                     "You can also identify items by using them, though this can be dangerous with cursed items. " +
                     "Once identified, all items of that type are recognized for the rest of the run."
+        ))
+
+        entries.add(EncyclopediaEntry(
+            id = "mech_mining",
+            name = "Mining System",
+            category = cat,
+            iconImage = ItemSpriteSheet.IRON_PICKAXE,
+            iconType = IconType.ITEM,
+            description = "Craft tiered pickaxes to mine geological walls and discover ore veins. " +
+                    "Wall types: Dirt (Wood+), Stone (Stone+), Granite (Iron+), Obsidian (Diamond only). " +
+                    "Ore veins contain Iron, Gold, Diamond, or Arcane ore depending on depth. " +
+                    "Mining causes noise that attracts monsters — harder walls are louder. " +
+                    "Removing walls can cause cave-ins! Place Support Beams to reinforce areas. " +
+                    "Each hit costs hunger. Higher-tier pickaxes mine faster and deal more damage per hit.",
+            subcategory = "Mining"
+        ))
+
+        entries.add(EncyclopediaEntry(
+            id = "mech_building",
+            name = "Building System",
+            category = cat,
+            iconImage = ItemSpriteSheet.COBBLESTONE_BLOCK,
+            iconType = IconType.ITEM,
+            description = "Place structures in mined-out areas to create fortifications. " +
+                    "Cobblestone Walls block passage and are fire-resistant. " +
+                    "Spike Traps damage mobs that walk over them (you're immune). " +
+                    "Torch Holders illuminate areas permanently. " +
+                    "Support Beams prevent cave-ins in a 3x3 area. " +
+                    "Safe Rooms create a 5x5 enclosure mobs can't enter. " +
+                    "Mini-Forges function as portable furnaces. " +
+                    "Resource Caches share inventory across a floor. Max 15 builds per floor.",
+            subcategory = "Building"
         ))
     }
 }
