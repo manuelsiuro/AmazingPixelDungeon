@@ -4,7 +4,7 @@ This document catalogs all items in Amazing Pixel Dungeon.
 
 ## Overview
 
-The game contains **180+ items** across multiple categories:
+The game contains **230+ items** across multiple categories:
 - Weapons (33 types + 6 crafted + 12 enchantments)
 - Armor (11 types + 4 crafted + 12 glyphs)
 - Potions (13 types)
@@ -14,8 +14,10 @@ The game contains **180+ items** across multiple categories:
 - Food (6 types)
 - Keys (4 types)
 - Quest Items (7 types)
-- Crafting Materials (7 raw + 4 processed + 2 consumables + 5 farming)
+- Crafting Materials (8 raw + 4 processed + 2 consumables + 5 farming)
 - Farming (4 crop seeds, 4 produce, 3 cooked foods, planter box)
+- Mining (4 tiered pickaxes)
+- Building (7 placeable structures)
 - Miscellaneous items
 
 ## Item Base Class
@@ -314,19 +316,20 @@ All crafting materials extend `MaterialItem` (stackable base class).
 | Material | File | Source | Used In |
 |----------|------|--------|---------|
 | Stick | `Stick.kt` | High grass, trees | Wood Planks, Torch, weapons |
-| Cobblestone | `Cobblestone.kt` | Harvestable walls | Blocks, Stone weapons |
+| Cobblestone | `Cobblestone.kt` | Mining geological walls | Blocks, Stone weapons |
 | Fiber | `Fiber.kt` | High grass | Torch, Bandage |
 | Leather | `Leather.kt` | Mob drops (bats, gnolls, golems) | Armor crafting |
-| Iron Ore | `IronOre.kt` | Harvestable walls | Iron Ingot (furnace) |
-| Gold Ore | `GoldOre.kt` | Harvestable walls | Gold Ingot (furnace) |
-| Diamond Shard | `DiamondShard.kt` | Rare drops | Diamond equipment |
+| Iron Ore | `IronOre.kt` | Iron ore walls, geological walls | Iron Ingot (furnace) |
+| Gold Ore | `GoldOre.kt` | Gold ore walls, geological walls | Gold Ingot (furnace) |
+| Diamond Shard | `DiamondShard.kt` | Rare drops, diamond ore walls | Diamond equipment |
+| Arcane Ore | `ArcaneOre.kt` | Arcane ore walls (depth 16+) | Arcane Dust (furnace) |
 
 ### Processed Materials
 
 | Material | File | Recipe |
 |----------|------|--------|
 | Wood Plank | `WoodPlank.kt` | 3 Sticks → 2 Planks |
-| Cobblestone Block | `CobblestoneBlock.kt` | 4 Cobblestone → 1 Block (table) or 2 Blocks (furnace) |
+| Cobblestone Block | `CobblestoneBlock.kt` | 4 Cobblestone → 1 Block (table) or 2 Blocks (furnace). Placeable as COBBLE_WALL (HP 30) |
 | Iron Ingot | `IronIngot.kt` | 1 Iron Ore → 1 Ingot (furnace) |
 | Gold Ingot | `GoldIngot.kt` | 1 Gold Ore → 1 Ingot (furnace), or 1 Dark Gold → 2 Ingots (furnace) |
 
@@ -358,6 +361,36 @@ All crafting materials extend `MaterialItem` (stackable base class).
 
 - **Storage Chest**: Place on an adjacent tile to create a stationary chest NPC. Items stored persist per-chest.
 - **Dimensional Chest**: Place on an adjacent tile. All dimensional chests share inventory across depths via `DimensionalStorage`.
+
+### Mining Tools
+
+**Path**: `items/crafting/`
+
+Tiered pickaxes for mining geological and ore walls. Each doubles as a melee weapon. All extend `CraftedPickaxe` (base class extending `MeleeWeapon`) with `AC_MINE` cell-selector action, durability tracking, and auto-mine for cracked walls.
+
+| Pickaxe | File | Tier | STR | Damage | Durability | Recipe |
+|---------|------|------|-----|--------|-----------|--------|
+| Wooden Pickaxe | `WoodenPickaxe.kt` | WOOD | 10 | 2-8 | 30 | 3 WoodPlank + 2 Stick |
+| Stone Pickaxe | `StonePickaxe.kt` | STONE | 12 | 3-12 | 60 | 3 Cobblestone + 2 Stick |
+| Iron Pickaxe | `IronPickaxe.kt` | IRON | 14 | 5-15 | 120 | 3 IronIngot + 2 Stick |
+| Diamond Pickaxe | `DiamondPickaxe.kt` | DIAMOND | 16 | 7-20 | 240 | 3 DiamondShard + 2 Stick |
+
+### Building Items
+
+**Path**: `items/crafting/`, `building/`
+
+Placeable structures using `PlacementValidator` (shared validation: adjacency, terrain, entrance/exit, actor, boss level, max 15 builds per floor).
+
+| Item | File | Places Terrain | Recipe |
+|------|------|----------------|--------|
+| Cobblestone Block | `CobblestoneBlock.kt` | `COBBLE_WALL` (HP 30) | 4 Cobblestone |
+| Wood Barricade | `WoodBarricadeItem.kt` | `BARRICADE` | 4 WoodPlank |
+| Spike Trap | `SpikeTrapItem.kt` | `SPIKE_TRAP_PLAYER` (3 uses) | 2 IronIngot + 1 Stick |
+| Torch Holder | `TorchHolderItem.kt` | `TORCH_HOLDER` (light source) | 2 Stick + 1 IronIngot + 1 Fiber |
+| Support Beam | `SupportBeamItem.kt` | `SUPPORT_BEAM` (prevents cave-ins) | 3 WoodPlank + 1 CobblestoneBlock |
+| Safe Room Blueprint | `SafeRoomBlueprint.kt` | 5x5 enclosure with door | 6 CobblestoneBlock + 2 IronIngot + 2 WoodPlank |
+| Mini-Forge | `MiniForgeItem.kt` | `MINI_FORGE` (furnace station) | 4 CobblestoneBlock + 2 IronIngot |
+| Resource Cache | `ResourceCacheItem.kt` | Spawns `ResourceCacheNpc` | 6 WoodPlank + 1 IronIngot |
 
 ### Crafted Consumables
 

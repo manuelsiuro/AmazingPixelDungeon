@@ -11,14 +11,18 @@ The game starts at depth 0, an outdoor village that serves as a hub with shops w
 - **Varied shops**: Weapon shop, potion shop, and tavern with distinct inventories
 - **New tileset**: Outdoor-themed pixel art (placeholder: City tileset)
 
-## Layout (32x32 grid)
+## Layout (64x64 grid)
 
+- **Village Square** (center-north, ~20-44, 5-20): Shops, elder, healing well, signpost, campfire
 - **Weapon Shop** (northwest): Shopkeeper NPC + weapon/armor items as FOR_SALE heaps
 - **Potion Shop** (northeast): Shopkeeper NPC + potions/scrolls as FOR_SALE heaps
-- **Tavern** (south-west): Food vendor NPC + food/supplies as FOR_SALE heaps
-- **Central square**: Grass, paths, a well, a signpost
-- **Entrance** (north edge): Gate representing the world exit
-- **Exit** (south-center): Stairs down to the dungeon
+- **Tavern** (south of square): Food vendor NPC + food/supplies as FOR_SALE heaps
+- **Workshop Zone** (SW, ~8-25, 26-45): Crafting table, furnace, enchanting table, anvil
+- **Farming Zone** (SW lower, ~8-25, 46-58): Farmland, water, crop seeds, farming tools
+- **Mining Zone** (SE, ~42-58, 27-50): Geological wall samples (dirt/stone/granite/obsidian), ore wall samples, all 4 pickaxe tiers, extra crafting materials
+- **Building Zone** (SE lower, ~42-58, 48-58): Open 12x10 EMPTY area for placing fortifications, pre-dropped building items
+- **Entrance** (north edge, ~33,2): Gate representing the world exit
+- **Exit** (south-center, ~33,61): Stairs down to the dungeon
 
 ## Shop Inventories
 

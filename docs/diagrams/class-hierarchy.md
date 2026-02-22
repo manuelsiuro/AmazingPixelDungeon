@@ -127,6 +127,7 @@ classDiagram
     NPC <|-- Ghost
     NPC <|-- Wandmaker
     NPC <|-- Blacksmith
+    NPC <|-- ResourceCacheNpc
 
     Buff <|-- FlavourBuff
     Buff <|-- Hunger
@@ -197,6 +198,11 @@ classDiagram
     MeleeWeapon <|-- ShortSword
     MeleeWeapon <|-- Longsword
     MeleeWeapon <|-- WarHammer
+    MeleeWeapon <|-- CraftedPickaxe
+    CraftedPickaxe <|-- WoodenPickaxe
+    CraftedPickaxe <|-- StonePickaxe
+    CraftedPickaxe <|-- IronPickaxe
+    CraftedPickaxe <|-- DiamondPickaxe
     MissileWeapon <|-- Dart
     MissileWeapon <|-- Shuriken
     MissileWeapon <|-- Boomerang

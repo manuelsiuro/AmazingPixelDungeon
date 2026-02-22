@@ -196,10 +196,22 @@ python tools/sprite_gen/generate_sprites.py --setup
 
 ### How Sheet Extension Works
 
-- Current `items.png`: 128x256 (8 cols x 16 rows = 128 slots, indices 0-127)
-- Adding items beyond index 127 extends the sheet height automatically
+- Current `items.png`: 128x432 (8 cols x 27 rows = 216 slots, indices 0-215)
+- Adding items beyond the current max extends the sheet height automatically
 - `TextureFilm(texture, 16, 16)` computes rows dynamically — no engine changes needed
 - Only `ItemSpriteSheet.kt` needs new `const val` entries
+
+### Hand-Crafted Sprite Scripts
+
+In addition to AI-generated sprites, two scripts create hand-crafted pixel art:
+
+**`create_farming_sprites.py`** — 17 farming item sprites (indices 188-204)
+**`create_mining_sprites.py`** — 11 mining/building item sprites (indices 205-215):
+- Pickaxes (wood/stone/iron/diamond), spike trap, torch holder, support beam, safe room blueprint, mini-forge, resource cache, arcane ore
+
+**`extend_tilesets.py`** — Terrain tile sprites for all 6 tilesets:
+- Farming tiles (indices 64-69)
+- Mining/building tiles (indices 70-87): geological walls, ore walls, rubble, cracked wall, cobble wall, spike trap, torch holder, support beam, safe room wall/door, mini-forge
 
 ## Prompt Engineering Guide
 

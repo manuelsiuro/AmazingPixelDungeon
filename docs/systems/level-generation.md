@@ -8,7 +8,7 @@ Every standard dungeon floor is a `RegularLevel`. The `build()` method drives th
 
 ```
 RegularLevel.build()
-  ├── initRooms()         — BSP splits the 32×32 grid into Room rects
+  ├── initRooms()         — BSP splits the 64×64 grid into Room rects
   ├── Graph connectivity  — Entrance/exit placement, path building, random connections
   ├── assignRoomType()    — Labels rooms as STANDARD, TUNNEL, PASSAGE, or special
   ├── paint()             — Each room's painter fills terrain (StandardPainter, TunnelPainter, etc.)
@@ -23,7 +23,7 @@ RegularLevel.build()
 
 ### Room Splitting (BSP)
 
-`initRooms()` recursively splits a 32×32 `Rect` into smaller rooms. Each split is constrained by `minRoomSize` (default 7) and `maxRoomSize` (default 9). The split terminates when a rect is small enough or random chance decides to stop. After splitting, all rooms discover their neighbours.
+`initRooms()` recursively splits a 64×64 `Rect` into smaller rooms. Each split is constrained by `minRoomSize` (default 7) and `maxRoomSize` (default 9). The split terminates when a rect is small enough or random chance decides to stop. After splitting, all rooms discover their neighbours. The larger grid produces more rooms (~16-25) compared to the original 32×32 layout.
 
 ### Room Type Assignment
 
@@ -253,6 +253,57 @@ Terrain constants used by the decoration systems and their visual meaning:
 | `HIGH_GRASS` | 16 | Striped rooms |
 | `CHASM` | 0 | Fissure rooms, bridge rooms, inter-room chasms (Caves) |
 | `BOOKSHELF` | 28 | Study room border |
+| `DIRT_WALL` | 70 | Geological wall (Sewers, mineable) |
+| `STONE_WALL_NATURAL` | 71 | Geological wall (Prison, mineable) |
+| `GRANITE_WALL` | 72 | Geological wall (Caves, mineable) |
+| `OBSIDIAN_WALL` | 73 | Geological wall (City/Halls, mineable) |
+| `ORE_WALL_IRON` | 74 | Ore vein (iron, depth 1+) |
+| `ORE_WALL_GOLD` | 75 | Ore vein (gold, depth 6+) |
+| `ORE_WALL_DIAMOND` | 76 | Ore vein (diamond, depth 11+) |
+| `ORE_WALL_ARCANE` | 77 | Ore vein (arcane, depth 16+) |
+| `RUBBLE` | 78 | Cave-in debris (passable) |
+| `CRACKED_WALL` | 79 | Partially mined wall |
+| `COBBLE_WALL` | 80 | Player-placed stone wall |
+| `SPIKE_TRAP_PLAYER` | 81 | Player-placed trap (passable, no AVOID) |
+| `TORCH_HOLDER` | 82 | Player-placed light source |
+| `SUPPORT_BEAM` | 83 | Player-placed structural pillar |
+| `SAFE_ROOM_WALL` | 84 | Indestructible safe room wall |
+| `SAFE_ROOM_DOOR` | 85 | Hero-only door (solid to mobs) |
+| `MINI_FORGE` | 87 | Portable furnace station |
+
+---
+
+## Geology Generation
+
+After room painting, `RegularLevel.markHarvestable()` converts accessible `WALL` cells to biome-appropriate geological wall types and generates ore veins.
+
+### Biome Wall Replacement
+
+For each `WALL` cell adjacent to at least one passable tile:
+
+| Depth | Region | Distribution |
+|-------|--------|-------------|
+| 1-5 | Sewers | 60% `DIRT_WALL`, 40% `STONE_WALL_NATURAL` |
+| 6-10 | Prison | 70% `STONE_WALL_NATURAL`, 30% `GRANITE_WALL` |
+| 11-15 | Caves | 80% `GRANITE_WALL`, 20% `STONE_WALL_NATURAL` |
+| 16-20 | City | 50% `OBSIDIAN_WALL`, 50% `GRANITE_WALL` |
+| 21-25 | Halls | 100% `OBSIDIAN_WALL` |
+
+Structural walls (no adjacent passable tiles) remain as `WALL` (non-mineable).
+
+### Ore Vein Placement
+
+`OreGenerator.generate()` uses flood-fill from random seed cells to create ore veins:
+
+| Depth | Iron Veins | Gold Veins | Diamond Veins | Arcane Veins |
+|-------|-----------|------------|---------------|--------------|
+| 1-4 | 1-2 (size 1-2) | — | — | — |
+| 6-9 | 2-3 (size 2-3) | 0-1 (size 1-2) | — | — |
+| 11-14 | 3-4 (size 2-4) | 1-2 (size 2-3) | 0-1 (size 1-2) | — |
+| 16-19 | — | 2-3 (size 2-4) | 1-2 (size 1-3) | — |
+| 22-24 | — | — | 2-3 (size 2-3) | 0-1 (size 1-2) |
+
+Ore walls display sparkle particle effects in all biome levels (iron=orange, gold=yellow, diamond=cyan, arcane=purple).
 
 ---
 

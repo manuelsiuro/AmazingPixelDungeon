@@ -31,11 +31,11 @@ TitleScene → EncyclopediaScene → WndEncyclopediaEntry
 | Wands | All wand types |
 | Rings | All ring types |
 | Food | Basic food, special food, farm produce, cooked dishes |
-| Crafting | Materials, recipes by station, enchantments |
+| Crafting | Materials (incl. ArcaneOre), mining tools (4 pickaxe tiers), building items (7 types), recipes by station, enchantments |
 | Farming | Crops, tools |
 | Monsters | Enemies by dungeon region and bosses |
 | Buffs | Positive and negative status effects |
-| Mechanics | Hunger, strength, upgrades, enchanting, leveling, etc. |
+| Mechanics | Hunger, strength, upgrades, enchanting, leveling, mining system, building system, etc. |
 
 ## Adding New Content to the Encyclopedia
 

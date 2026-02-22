@@ -193,6 +193,7 @@ mobs/
     ├── StorageChestNpc.kt    # Placeable per-chest storage
     ├── DimensionalChestNpc.kt # Shared cross-depth storage
     ├── DimensionalStorage.kt  # Shared inventory singleton
+    ├── ResourceCacheNpc.kt   # Per-floor shared storage (building system)
     └── [more NPCs]
 ```
 
@@ -214,6 +215,13 @@ Crafting system — recipes, stations, and smelting.
 | `EnchantmentTier.kt` | Enchantment cost tiers (dust, XP, level) |
 | `AnvilManager.kt` | Anvil logic: repair weapons, apply enchanted books |
 
+### com.watabou.pixeldungeon.building
+Building and fortification placement validation.
+
+| Class | Purpose |
+|-------|---------|
+| `PlacementValidator.kt` | Shared validation for all placeable items (adjacency, terrain, build count limit) |
+
 ### com.watabou.pixeldungeon.farming
 Crop farming system — planting, growing, and harvesting food crops.
 
@@ -229,7 +237,7 @@ Crop farming system — planting, growing, and harvesting food crops.
 | `MelonSeed.kt` | Melon seed (60 turns, 3-5 yield) |
 
 ### com.watabou.pixeldungeon.items
-All game items (200+ types). See [Items Documentation](../entities/items.md).
+All game items (230+ types). See [Items Documentation](../entities/items.md).
 
 ```
 items/
@@ -241,7 +249,7 @@ items/
 ├── armor/              # 11 armor types + 12 glyphs
 │   └── crafted/        # 4 crafted armor types
 ├── bags/               # 6 container types (incl. MaterialBag, SeedPouch)
-├── crafting/           # Crafting materials, farming tools (Hoe, Bonemeal, WaterBucket, Bone)
+├── crafting/           # Crafting materials, farming tools, mining pickaxes, building items
 ├── food/               # 6 food items
 │   └── farming/        # Farm produce (Wheat, Carrot, Potato, MelonSlice, Bread, BakedPotato, RabbitStew, PlanterBox)
 ├── keys/               # 4 key types
@@ -259,10 +267,11 @@ Dungeon generation and terrain. See [Levels Documentation](../entities/levels.md
 
 ```
 levels/
-├── Level.kt            # Base level class
-├── RegularLevel.kt     # Procedural generation
-├── Terrain.kt          # Terrain constants
+├── Level.kt            # Base level class (64x64 grid)
+├── RegularLevel.kt     # Procedural generation with geology
+├── Terrain.kt          # Terrain constants (0-87)
 ├── Room.kt             # Room generation
+├── WallHardness.kt     # PickaxeTier + WallHardness enums
 ├── SewerLevel.kt       # Floors 1-4
 ├── SewerBossLevel.kt   # Floor 5 (Goo)
 ├── PrisonLevel.kt      # Floors 6-9
@@ -276,7 +285,7 @@ levels/
 ├── LastShopLevel.kt    # Floor 21
 ├── LastLevel.kt        # Floor 26
 ├── DeadEndLevel.kt     # Beyond 26
-├── features/           # Level features
+├── features/           # Level features (HarvestableWall, Farmland, MiningManager, MiningNoise, OreGenerator)
 ├── painters/           # Room decorators
 └── traps/              # Trap types
 ```
@@ -357,6 +366,7 @@ Modal dialogs (31 types).
 | `WndChallenges.kt` | Challenge selection |
 | `WndCrafting.kt` | Crafting table interface |
 | `WndFurnace.kt` | Furnace smelting interface |
+| `WndResourceCache.kt` | Resource cache shared storage |
 | [14 more windows] | |
 
 ### com.watabou.pixeldungeon.effects
@@ -399,6 +409,7 @@ Character and item sprites.
 | `MissileSprite.kt` | Projectile sprites |
 | `PlantSprite.kt` | Plant visuals |
 | `CropSprite.kt` | Crop growth visuals (4 stages per crop type) |
+| `ResourceCacheSprite.kt` | Static sprite for resource cache NPC |
 | `TrapSprite.kt` | Trap visuals |
 | `[mob-specific sprites]` | Individual enemies |
 

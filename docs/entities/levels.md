@@ -22,9 +22,9 @@ Base class for all dungeon floors:
 ```kotlin
 abstract class Level : Bundlable {
     companion object {
-        const val WIDTH = 32
-        const val HEIGHT = 32
-        const val LENGTH = WIDTH * HEIGHT  // 1024 cells
+        const val WIDTH = 64
+        const val HEIGHT = 64
+        const val LENGTH = WIDTH * HEIGHT  // 4096 cells
     }
 
     // Terrain map
@@ -100,6 +100,32 @@ object Terrain {
     const val ANVIL = 67            // SOLID — interact from adjacent
     const val FARMLAND = 68         // PASSABLE — tilled earth for planting crops
     const val HYDRATED_FARMLAND = 69 // PASSABLE — moist farmland, 1.5x crop growth
+
+    // Geological Walls (70-73) — biome-specific mineable walls
+    const val DIRT_WALL = 70             // LOS_BLOCKING | SOLID | UNSTITCHABLE — Sewers
+    const val STONE_WALL_NATURAL = 71    // LOS_BLOCKING | SOLID | UNSTITCHABLE — Prison
+    const val GRANITE_WALL = 72          // LOS_BLOCKING | SOLID | UNSTITCHABLE — Caves
+    const val OBSIDIAN_WALL = 73         // LOS_BLOCKING | SOLID | UNSTITCHABLE — City/Halls
+
+    // Ore Walls (74-77) — contain ore veins, drop resources when mined
+    const val ORE_WALL_IRON = 74         // LOS_BLOCKING | SOLID | UNSTITCHABLE — depth 1+
+    const val ORE_WALL_GOLD = 75         // LOS_BLOCKING | SOLID | UNSTITCHABLE — depth 6+
+    const val ORE_WALL_DIAMOND = 76      // LOS_BLOCKING | SOLID | UNSTITCHABLE — depth 11+
+    const val ORE_WALL_ARCANE = 77       // LOS_BLOCKING | SOLID | UNSTITCHABLE — depth 16+
+
+    // Mining States (78-79)
+    const val RUBBLE = 78                // PASSABLE — cave-in debris
+    const val CRACKED_WALL = 79          // LOS_BLOCKING | SOLID | UNSTITCHABLE — partially mined
+
+    // Building Terrain (80-87) — player-placed structures
+    const val COBBLE_WALL = 80           // SOLID | LOS_BLOCKING | UNSTITCHABLE
+    const val SPIKE_TRAP_PLAYER = 81     // PASSABLE — player trap, mobs walk on it
+    const val TORCH_HOLDER = 82          // SOLID — placed light source
+    const val SUPPORT_BEAM = 83          // SOLID — prevents cave-ins in 3x3 area
+    const val SAFE_ROOM_WALL = 84        // SOLID | LOS_BLOCKING | UNSTITCHABLE
+    const val SAFE_ROOM_DOOR = 85        // PASSABLE | LOS_BLOCKING | SOLID — hero opens, mobs cannot
+    const val SAFE_ROOM_DOOR_OPEN = 86   // PASSABLE | UNSTITCHABLE
+    const val MINI_FORGE = 87            // SOLID — portable furnace station
 }
 ```
 
@@ -119,7 +145,7 @@ Outdoor safe hub where the player starts. Hand-crafted layout (not procedurally 
 | Feeling | Always NONE |
 | Respawner | None (safe zone) |
 
-**Layout**: Three shops (weapon NW, potion NE, tavern SW), central square with healing well, signpost, and campfire, village garden (E) with farmland, herbalist's alchemy pot (W), hidden stash behind weapon shop, workshop with crafting table, furnace, enchanting table, and anvil (SE).
+**Layout (64x64 grid)**: Village Square (center-north, shops, elder, well), Workshop Zone (SW with crafting table, furnace, enchanting table, anvil), Farming Zone (SW lower with farmland and water), Mining Zone (SE with geological wall samples, ore walls, pickaxes), Building Zone (SE lower with open 12x10 area for placing fortifications). Entrance at north edge, exit at south.
 
 **NPCs**: 3 Shopkeepers, VillageElder, 1-2 Rats (outskirts).
 
@@ -131,6 +157,8 @@ Outdoor safe hub where the player starts. Hand-crafted layout (not procedurally 
 - Hidden Stash — SECRET_DOOR behind weapon shop leads to chest (Honeypot/Ankh/HolyWater/SmokeBomb)
 - Workshop — Crafting Table, Furnace, Enchanting Table, and Anvil. All are SOLID tiles; player interacts from an adjacent cell via `HeroAction.UseStation`. MaterialBag available for purchase.
 - Farming Demo — Hoe, crop seeds (wheat, carrot, potato, melon), PlanterBox, and Bone materials near the garden
+- Mining Zone — Sample geological walls (dirt, stone, granite, obsidian), ore wall samples (iron, gold, diamond, arcane), all 4 pickaxe tiers, and extra crafting materials
+- Building Zone — Open EMPTY area for testing wall, trap, and structure placement with pre-dropped building items
 
 ---
 
@@ -492,8 +520,11 @@ abstract class Trap {
 | High Grass | `HighGrass.kt` | Hides items, seeds |
 | Sign | `Sign.kt` | Readable lore |
 | Alchemy Pot | `AlchemyPot.kt` | Brew potions |
-| Harvestable Wall | `HarvestableWall.kt` | Mine ore/stone from walls |
+| Harvestable Wall | `HarvestableWall.kt` | Mine ore/stone from walls (legacy) |
 | Farmland | `Farmland.kt` | Crop planting and growth |
+| Mining Manager | `MiningManager.kt` | Multi-hit geological/ore wall mining with drops, cave-ins |
+| Mining Noise | `MiningNoise.kt` | Mob alerting when mining (radius + wake chance) |
+| Ore Generator | `OreGenerator.kt` | Flood-fill ore vein placement per depth |
 
 ---
 
