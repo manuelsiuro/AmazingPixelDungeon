@@ -83,7 +83,7 @@ class SafeRoomBlueprint : MaterialItem() {
             return !isBorder(dx, dy)
         }
 
-        private fun validateArea(center: Int, level: Level): String? {
+        private fun validateArea(center: Int, level: Level, heroPos: Int): String? {
             val cx = center % Level.WIDTH
             val cy = center / Level.WIDTH
 
@@ -106,7 +106,8 @@ class SafeRoomBlueprint : MaterialItem() {
                     if (cell == level.entrance || cell == level.exit) {
                         return "You can't block the entrance or exit."
                     }
-                    if (Actor.findChar(cell) != null) {
+                    val charAtCell = Actor.findChar(cell)
+                    if (charAtCell != null && cell != heroPos) {
                         return "Something is in the way."
                     }
                     if (level.heaps[cell] != null) {
@@ -137,7 +138,7 @@ class SafeRoomBlueprint : MaterialItem() {
                     return
                 }
 
-                val error = validateArea(cell, level)
+                val error = validateArea(cell, level, hero.pos)
                 if (error != null) {
                     GLog.w(error)
                     return
