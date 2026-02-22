@@ -351,7 +351,12 @@ object EncyclopediaRegistry {
             EyeOfEnder::class.java,
             Bone::class.java,
             Bonemeal::class.java,
-            ArcaneOre::class.java
+            ArcaneOre::class.java,
+            Log::class.java,
+            Bark::class.java,
+            Resin::class.java,
+            Rope::class.java,
+            TreeSapling::class.java
         ), cat, "Materials")
 
         // Mining tools
@@ -362,6 +367,14 @@ object EncyclopediaRegistry {
             DiamondPickaxe::class.java
         ), cat, "Mining")
 
+        // Woodcutting tools
+        registerItems(listOf(
+            WoodenAxe::class.java,
+            StoneAxe::class.java,
+            IronAxe::class.java,
+            DiamondAxe::class.java
+        ), cat, "Woodcutting")
+
         // Building items
         registerItems(listOf(
             SpikeTrapItem::class.java,
@@ -369,7 +382,8 @@ object EncyclopediaRegistry {
             SupportBeamItem::class.java,
             SafeRoomBlueprint::class.java,
             MiniForgeItem::class.java,
-            ResourceCacheItem::class.java
+            ResourceCacheItem::class.java,
+            WoodenFence::class.java
         ), cat, "Building")
 
         // Recipes from RecipeRegistry
@@ -740,6 +754,22 @@ object EncyclopediaRegistry {
                     "Removing walls can cause cave-ins! Place Support Beams to reinforce areas. " +
                     "Each hit costs hunger. Higher-tier pickaxes mine faster and deal more damage per hit.",
             subcategory = "Mining"
+        ))
+
+        entries.add(EncyclopediaEntry(
+            id = "mech_woodcutting",
+            name = "Woodcutting System",
+            category = cat,
+            iconImage = ItemSpriteSheet.WOODEN_AXE,
+            iconType = IconType.ITEM,
+            description = "Craft tiered axes to chop trees and harvest wood resources. " +
+                    "Tree types: Oak, Birch, Pine, Maple, Willow, and Fruit trees. " +
+                    "Trees have varying hardness: Soft (Birch, Willow, Fruit), Medium (Oak, Maple), Hard (Pine). " +
+                    "Higher-tier axes chop faster and can fell harder trees. " +
+                    "Chopping yields Logs, Sticks, and sometimes Bark, Resin, or Fruit. " +
+                    "Logs can be processed into Wood Planks at a Crafting Table. " +
+                    "Plant Tree Saplings on stumps to regrow trees.",
+            subcategory = "Woodcutting"
         ))
 
         entries.add(EncyclopediaEntry(

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Extend tile PNGs from 256x64 to 256x256 to support terrain indices 64+.
 
-Adds hand-crafted terrain tiles for crafting, farming, and mining/building systems.
-Fills remaining new slots with copies of the EMPTY tile (index 1).
+Adds hand-crafted terrain tiles for crafting, farming, mining/building, and
+woodcutting systems.  Fills remaining new slots with copies of the EMPTY tile
+(index 1).
 
 Existing tiles (64-69):
   64 CRAFTING_TABLE, 65 FURNACE, 66 ENCHANTING_TABLE, 67 ANVIL,
@@ -14,6 +15,10 @@ Mining/building tiles (70-87):
   78 RUBBLE, 79 CRACKED_WALL, 80 COBBLE_WALL, 81 SPIKE_TRAP_TILE,
   82 TORCH_HOLDER_TILE, 83 SUPPORT_BEAM_TILE, 84 SAFE_ROOM_WALL,
   85 SAFE_ROOM_DOOR_CLOSED, 86 SAFE_ROOM_DOOR_OPEN, 87 MINI_FORGE_TILE
+
+Tree / woodcutting tiles (88-95):
+  88 TREE_OAK, 89 TREE_BIRCH, 90 TREE_PINE, 91 TREE_MAPLE,
+  92 TREE_WILLOW, 93 TREE_FRUIT, 94 TREE_STUMP, 95 TREE_DAMAGED
 """
 
 import os
@@ -777,6 +782,251 @@ MINI_FORGE_TILE_GRID = [
 ]
 
 # ============================================================
+# TREE / WOODCUTTING TERRAIN TILES (indices 88-95)
+# ============================================================
+
+# --- 88: Tree Oak — wide green canopy, brown trunk ---
+TREE_OAK_PALETTE = {
+    1: (18, 30, 12, 255),       # dark outline
+    2: (45, 90, 39, 255),       # canopy base
+    3: (30, 65, 25, 255),       # canopy shadow
+    4: (65, 120, 55, 255),      # canopy highlight
+    5: (107, 58, 31, 255),      # trunk base (#6b3a1f)
+    6: (80, 42, 20, 255),       # trunk shadow
+    7: (135, 78, 42, 255),      # trunk highlight
+    8: (55, 100, 45, 255),      # canopy mid
+}
+TREE_OAK_GRID = [
+    [_,_,_,_,1,1,1,1,1,1,1,1,_,_,_,_],
+    [_,_,_,1,4,4,2,8,8,2,4,2,1,_,_,_],
+    [_,_,1,4,4,8,2,2,8,2,2,3,3,1,_,_],
+    [_,1,4,4,8,2,2,3,2,2,8,3,3,3,1,_],
+    [_,1,4,8,2,2,3,3,3,2,2,3,3,3,1,_],
+    [1,4,8,2,2,3,3,2,3,3,2,3,3,3,3,1],
+    [1,4,2,2,3,3,8,2,2,3,3,3,3,3,3,1],
+    [1,2,2,3,3,3,2,2,8,2,3,3,3,3,3,1],
+    [_,1,8,2,3,3,3,2,2,3,3,3,3,3,1,_],
+    [_,1,2,3,3,3,3,1,1,3,3,3,3,3,1,_],
+    [_,_,1,1,3,3,1,5,5,1,3,3,1,1,_,_],
+    [_,_,_,_,1,1,1,5,5,1,1,1,_,_,_,_],
+    [_,_,_,_,_,_,1,7,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,7,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,5,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,1,1,1,1,1,1,_,_,_,_,_],
+]
+
+# --- 89: Tree Birch — white/light trunk, pale green leaves ---
+TREE_BIRCH_PALETTE = {
+    1: (60, 65, 50, 255),       # dark outline
+    2: (127, 176, 105, 255),    # leaf base (#7fb069)
+    3: (95, 140, 78, 255),      # leaf shadow
+    4: (155, 200, 130, 255),    # leaf highlight
+    5: (212, 201, 168, 255),    # trunk base (#d4c9a8)
+    6: (180, 168, 138, 255),    # trunk shadow
+    7: (235, 228, 200, 255),    # trunk highlight
+    8: (50, 45, 35, 255),       # bark stripe dark
+}
+TREE_BIRCH_GRID = [
+    [_,_,_,_,_,1,1,1,1,1,_,_,_,_,_,_],
+    [_,_,_,_,1,4,4,2,2,3,1,_,_,_,_,_],
+    [_,_,_,1,4,4,2,2,3,2,3,1,_,_,_,_],
+    [_,_,1,4,4,2,2,3,2,3,3,3,1,_,_,_],
+    [_,1,4,4,2,2,3,3,2,2,3,3,3,1,_,_],
+    [_,1,4,2,2,3,2,2,3,3,3,3,3,1,_,_],
+    [_,1,2,2,3,3,2,2,3,3,3,3,3,1,_,_],
+    [_,_,1,2,3,3,3,2,2,3,3,3,1,_,_,_],
+    [_,_,_,1,3,3,3,1,1,3,3,1,_,_,_,_],
+    [_,_,_,_,1,1,1,7,6,1,1,_,_,_,_,_],
+    [_,_,_,_,_,_,1,5,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,7,8,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,5,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,7,8,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,5,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,1,1,1,1,1,1,_,_,_,_,_],
+]
+
+# --- 90: Tree Pine — triangular dark green, narrow trunk ---
+TREE_PINE_PALETTE = {
+    1: (10, 22, 8, 255),        # dark outline
+    2: (26, 67, 20, 255),       # pine base (#1a4314)
+    3: (18, 48, 14, 255),       # pine shadow
+    4: (40, 90, 32, 255),       # pine highlight
+    5: (92, 51, 23, 255),       # trunk base (#5c3317)
+    6: (68, 38, 16, 255),       # trunk shadow
+    7: (115, 68, 32, 255),      # trunk highlight
+    8: (32, 75, 25, 255),       # pine mid
+}
+TREE_PINE_GRID = [
+    [_,_,_,_,_,_,_,1,1,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,4,2,1,_,_,_,_,_,_],
+    [_,_,_,_,_,1,4,2,2,3,1,_,_,_,_,_],
+    [_,_,_,_,1,4,8,2,2,3,3,1,_,_,_,_],
+    [_,_,_,1,4,4,8,2,8,2,3,3,1,_,_,_],
+    [_,_,_,_,_,1,4,2,2,3,1,_,_,_,_,_],
+    [_,_,_,_,1,4,8,2,2,8,3,1,_,_,_,_],
+    [_,_,_,1,4,8,2,2,2,2,3,3,1,_,_,_],
+    [_,_,1,4,4,8,2,2,2,2,3,3,3,1,_,_],
+    [_,_,_,_,1,4,8,2,2,3,3,1,_,_,_,_],
+    [_,_,_,1,4,8,2,2,2,2,3,3,1,_,_,_],
+    [_,_,1,4,8,2,2,2,2,2,2,3,3,1,_,_],
+    [_,1,4,4,8,2,2,2,2,2,2,3,3,3,1,_],
+    [_,_,_,_,_,_,1,7,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,5,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,1,1,1,1,1,1,_,_,_,_,_],
+]
+
+# --- 91: Tree Maple — red-orange canopy, medium trunk ---
+TREE_MAPLE_PALETTE = {
+    1: (55, 20, 10, 255),       # dark outline
+    2: (196, 78, 43, 255),      # canopy base (#c44e2b)
+    3: (150, 55, 28, 255),      # canopy shadow
+    4: (230, 110, 55, 255),     # canopy highlight (orange)
+    5: (107, 58, 31, 255),      # trunk base (#6b3a1f)
+    6: (80, 42, 20, 255),       # trunk shadow
+    7: (135, 78, 42, 255),      # trunk highlight
+    8: (210, 90, 35, 255),      # canopy warm mid
+}
+TREE_MAPLE_GRID = [
+    [_,_,_,_,1,1,1,1,1,1,1,1,_,_,_,_],
+    [_,_,_,1,4,4,8,2,8,2,4,2,1,_,_,_],
+    [_,_,1,4,4,8,2,2,2,8,2,3,3,1,_,_],
+    [_,1,4,4,8,2,2,3,2,2,8,3,3,3,1,_],
+    [_,1,4,8,2,2,3,3,3,2,2,3,3,3,1,_],
+    [1,4,8,2,2,3,3,2,3,3,2,3,3,3,3,1],
+    [1,4,2,8,3,3,8,2,2,3,3,3,3,3,3,1],
+    [1,2,2,3,3,3,2,2,8,2,3,3,3,3,3,1],
+    [_,1,8,2,3,3,3,2,2,3,3,3,3,3,1,_],
+    [_,1,2,3,3,3,3,1,1,3,3,3,3,3,1,_],
+    [_,_,1,1,3,3,1,5,5,1,3,3,1,1,_,_],
+    [_,_,_,_,1,1,1,5,5,1,1,1,_,_,_,_],
+    [_,_,_,_,_,_,1,7,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,7,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,5,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,1,1,1,1,1,1,_,_,_,_,_],
+]
+
+# --- 92: Tree Willow — drooping branches, thin trunk ---
+TREE_WILLOW_PALETTE = {
+    1: (25, 48, 18, 255),       # dark outline
+    2: (111, 163, 92, 255),     # branch base (#6fa35c)
+    3: (85, 130, 68, 255),      # branch shadow
+    4: (139, 198, 122, 255),    # branch highlight (#8bc67a)
+    5: (90, 62, 30, 255),       # trunk base (thin)
+    6: (68, 45, 20, 255),       # trunk shadow
+    7: (115, 82, 42, 255),      # trunk highlight
+    8: (125, 180, 108, 255),    # branch mid
+}
+TREE_WILLOW_GRID = [
+    [_,_,_,_,_,1,1,1,1,1,1,_,_,_,_,_],
+    [_,_,_,_,1,4,4,8,2,4,2,1,_,_,_,_],
+    [_,_,_,1,4,8,2,2,8,2,2,3,1,_,_,_],
+    [_,_,1,4,8,2,2,3,2,2,3,3,3,1,_,_],
+    [_,1,4,2,2,3,3,1,1,3,3,3,3,1,_,_],
+    [_,1,4,2,3,1,1,5,5,1,1,3,3,1,_,_],
+    [1,4,2,3,1,_,1,7,6,1,_,1,3,3,1,_],
+    [1,4,3,1,_,_,1,5,6,1,_,_,1,3,1,_],
+    [1,2,3,1,_,_,1,5,6,1,_,_,1,3,1,_],
+    [1,4,3,1,_,_,1,5,6,1,_,_,1,3,1,_],
+    [_,1,2,3,1,_,1,5,6,1,_,1,3,1,_,_],
+    [_,1,4,2,3,1,1,5,6,1,1,3,1,_,_,_],
+    [_,_,1,4,2,3,1,5,6,1,3,1,_,_,_,_],
+    [_,_,_,1,1,3,1,5,6,1,1,_,_,_,_,_],
+    [_,_,_,_,_,1,1,5,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,1,1,1,1,1,_,_,_,_,_,_],
+]
+
+# --- 93: Tree Fruit — round canopy with colored red dots (fruits) ---
+TREE_FRUIT_PALETTE = {
+    1: (15, 35, 12, 255),       # dark outline
+    2: (61, 122, 50, 255),      # canopy base (#3d7a32)
+    3: (42, 88, 35, 255),       # canopy shadow
+    4: (82, 150, 68, 255),      # canopy highlight
+    5: (107, 58, 31, 255),      # trunk base
+    6: (80, 42, 20, 255),       # trunk shadow
+    7: (204, 51, 51, 255),      # fruit red (#cc3333)
+    8: (55, 108, 45, 255),      # canopy mid
+}
+TREE_FRUIT_GRID = [
+    [_,_,_,_,_,1,1,1,1,1,1,_,_,_,_,_],
+    [_,_,_,1,1,4,4,8,2,4,2,1,1,_,_,_],
+    [_,_,1,4,4,8,2,7,2,8,2,3,3,1,_,_],
+    [_,1,4,4,8,2,2,2,2,2,8,3,3,3,1,_],
+    [_,1,4,8,7,2,3,3,3,7,2,3,3,3,1,_],
+    [_,1,4,2,2,3,2,2,3,2,2,3,7,3,1,_],
+    [_,1,8,2,2,3,2,2,2,2,3,3,3,3,1,_],
+    [_,1,2,7,3,3,2,2,7,2,3,3,3,3,1,_],
+    [_,_,1,2,3,3,3,2,2,3,3,3,7,1,_,_],
+    [_,_,_,1,3,3,3,1,1,3,3,3,1,_,_,_],
+    [_,_,_,_,1,1,1,5,5,1,1,1,_,_,_,_],
+    [_,_,_,_,_,_,1,5,5,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,5,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,5,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,5,6,1,_,_,_,_,_,_],
+    [_,_,_,_,_,1,1,1,1,1,1,_,_,_,_,_],
+]
+
+# --- 94: Tree Stump — short brown cylinder, top rings ---
+TREE_STUMP_PALETTE = {
+    1: (40, 28, 12, 255),       # dark outline
+    2: (107, 58, 31, 255),      # bark base (#6b3a1f)
+    3: (80, 42, 20, 255),       # bark shadow
+    4: (135, 78, 42, 255),      # bark highlight
+    5: (139, 94, 60, 255),      # top rings (#8b5e3c)
+    6: (170, 120, 75, 255),     # top highlight
+    7: (105, 72, 42, 255),      # top shadow
+    8: (55, 38, 18, 255),       # ring dark center
+}
+TREE_STUMP_GRID = [
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,1,1,1,1,1,1,1,1,_,_,_,_],
+    [_,_,_,1,6,6,5,5,5,5,7,7,1,_,_,_],
+    [_,_,_,1,6,5,5,8,8,5,5,7,1,_,_,_],
+    [_,_,_,1,5,5,8,7,7,8,5,7,1,_,_,_],
+    [_,_,_,1,6,5,5,8,8,5,5,7,1,_,_,_],
+    [_,_,_,1,1,1,1,1,1,1,1,1,1,_,_,_],
+    [_,_,_,1,4,4,2,2,2,2,3,3,1,_,_,_],
+    [_,_,_,1,4,2,2,2,2,2,3,3,1,_,_,_],
+    [_,_,_,1,1,1,1,1,1,1,1,1,1,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+# --- 95: Tree Damaged — half-broken tree, cracked ---
+TREE_DAMAGED_PALETTE = {
+    1: (30, 25, 15, 255),       # dark outline
+    2: (85, 55, 28, 255),       # dead wood base
+    3: (62, 40, 20, 255),       # dead wood shadow
+    4: (110, 75, 38, 255),      # dead wood highlight
+    5: (55, 35, 18, 255),       # crack dark
+    6: (40, 65, 30, 255),       # sparse leaf dark
+    7: (65, 95, 48, 255),       # sparse leaf light
+    8: (95, 65, 32, 255),       # wood mid
+}
+TREE_DAMAGED_GRID = [
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,1,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,1,4,8,1,_,_,_,_,_],
+    [_,_,_,_,_,1,4,8,2,2,3,1,_,_,_,_],
+    [_,_,_,_,1,4,8,5,2,3,3,1,_,_,_,_],
+    [_,_,_,_,1,4,2,5,3,3,1,_,_,_,_,_],
+    [_,_,_,_,_,1,8,2,5,1,_,_,_,_,_,_],
+    [_,_,_,_,_,1,4,5,3,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,8,1,_,7,6,_,_,_,_],
+    [_,_,_,_,_,_,1,4,1,7,6,7,_,_,_,_],
+    [_,_,_,_,_,_,1,4,5,1,7,_,_,_,_,_],
+    [_,_,_,_,_,_,1,4,3,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,2,3,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,2,3,1,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1,2,3,1,_,_,_,_,_,_],
+    [_,_,_,_,_,1,1,1,1,1,1,_,_,_,_,_],
+]
+
+
+# ============================================================
 # All mining/building tiles collected for placement
 # ============================================================
 MINING_TILES = [
@@ -798,6 +1048,17 @@ MINING_TILES = [
     (85, SAFE_ROOM_DOOR_CLOSED_PALETTE, SAFE_ROOM_DOOR_CLOSED_GRID, "safe_room_door_closed"),
     (86, SAFE_ROOM_DOOR_OPEN_PALETTE, SAFE_ROOM_DOOR_OPEN_GRID, "safe_room_door_open"),
     (87, MINI_FORGE_TILE_PALETTE, MINI_FORGE_TILE_GRID, "mini_forge_tile"),
+]
+
+TREE_TILES = [
+    (88, TREE_OAK_PALETTE, TREE_OAK_GRID, "tree_oak"),
+    (89, TREE_BIRCH_PALETTE, TREE_BIRCH_GRID, "tree_birch"),
+    (90, TREE_PINE_PALETTE, TREE_PINE_GRID, "tree_pine"),
+    (91, TREE_MAPLE_PALETTE, TREE_MAPLE_GRID, "tree_maple"),
+    (92, TREE_WILLOW_PALETTE, TREE_WILLOW_GRID, "tree_willow"),
+    (93, TREE_FRUIT_PALETTE, TREE_FRUIT_GRID, "tree_fruit"),
+    (94, TREE_STUMP_PALETTE, TREE_STUMP_GRID, "tree_stump"),
+    (95, TREE_DAMAGED_PALETTE, TREE_DAMAGED_GRID, "tree_damaged"),
 ]
 
 
@@ -824,6 +1085,11 @@ def main():
     mining_sprites = {}
     for index, palette, grid, name in MINING_TILES:
         mining_sprites[index] = create_sprite(palette, grid)
+
+    # Render all tree/woodcutting tiles
+    tree_sprites = {}
+    for index, palette, grid, name in TREE_TILES:
+        tree_sprites[index] = create_sprite(palette, grid)
 
     for filename in TILESET_FILES:
         filepath = os.path.join(ASSETS_DIR, filename)
@@ -888,10 +1154,18 @@ def main():
             extended.paste(mining_sprites[index], (col * TILE_SIZE, row * TILE_SIZE))
             print(f"    Placed {name} at index {index} (col={col}, row={row})")
 
+        # Place all tree/woodcutting tiles at indices 88-95
+        for index, palette, grid, name in TREE_TILES:
+            col = index % COLS
+            row = index // COLS
+            extended.paste(tree_sprites[index], (col * TILE_SIZE, row * TILE_SIZE))
+            print(f"    Placed {name} at index {index} (col={col}, row={row})")
+
         extended.save(filepath)
         final_w, final_h = extended.size
-        tile_names = ", ".join(f"{name}@{idx}" for idx, _, _, name in MINING_TILES)
-        print(f"    -> {final_w}x{final_h} (existing@64-69, {tile_names})")
+        mining_names = ", ".join(f"{name}@{idx}" for idx, _, _, name in MINING_TILES)
+        tree_names = ", ".join(f"{name}@{idx}" for idx, _, _, name in TREE_TILES)
+        print(f"    -> {final_w}x{final_h} (existing@64-69, {mining_names}, {tree_names})")
 
     print("Done. All tilesets extended.")
 

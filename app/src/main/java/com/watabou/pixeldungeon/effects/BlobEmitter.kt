@@ -3,6 +3,7 @@ import com.watabou.noosa.particles.Emitter
 import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.DungeonTilemap
 import com.watabou.pixeldungeon.actors.blobs.Blob
+import com.watabou.pixeldungeon.levels.Level
 import com.watabou.utils.Random
 class BlobEmitter(private val blob: Blob) : Emitter() {
     init {
@@ -14,16 +15,14 @@ class BlobEmitter(private val blob: Blob) : Emitter() {
         }
         val map = blob.cur
         val size = DungeonTilemap.SIZE.toFloat()
-        for (i in 0 until LENGTH) {
-            if (map[i] > 0 && Dungeon.visible[i]) {
-                val x = ((i % WIDTH) + Random.Float()) * size
-                val y = ((i / WIDTH) + Random.Float()) * size
+        val w = Level.WIDTH
+        val len = Level.LENGTH
+        for (i in 0 until len) {
+            if (i < map.size && map[i] > 0 && i < Dungeon.visible.size && Dungeon.visible[i]) {
+                val x = ((i % w) + Random.Float()) * size
+                val y = ((i / w) + Random.Float()) * size
                 factory?.emit(this, index, x, y)
             }
         }
-    }
-    companion object {
-        private const val WIDTH = Blob.WIDTH
-        private const val LENGTH = Blob.LENGTH
     }
 }

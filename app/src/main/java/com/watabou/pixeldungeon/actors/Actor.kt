@@ -64,9 +64,12 @@ abstract class Actor : Bundlable {
         var current: Actor? = null
         var ids = SparseArray<Actor>()
         var now = 0f
-        var chars = arrayOfNulls<Char>(Level.LENGTH)
+        var chars = arrayOfNulls<Char>(com.watabou.pixeldungeon.levels.DEFAULT_LEVEL_WIDTH * com.watabou.pixeldungeon.levels.DEFAULT_LEVEL_HEIGHT)
         fun clear() {
             now = 0f
+            if (chars.size != Level.LENGTH) {
+                chars = arrayOfNulls(Level.LENGTH)
+            }
             chars.fill(null)
             all.clear()
             ids.clear()

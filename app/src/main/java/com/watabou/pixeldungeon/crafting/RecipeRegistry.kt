@@ -24,6 +24,13 @@ import com.watabou.pixeldungeon.items.crafting.SafeRoomBlueprint
 import com.watabou.pixeldungeon.items.crafting.MiniForgeItem
 import com.watabou.pixeldungeon.items.crafting.ResourceCacheItem
 import com.watabou.pixeldungeon.items.crafting.WoodenPickaxe
+import com.watabou.pixeldungeon.items.crafting.WoodenAxe
+import com.watabou.pixeldungeon.items.crafting.IronAxe
+import com.watabou.pixeldungeon.items.crafting.DiamondAxe
+import com.watabou.pixeldungeon.items.crafting.Log
+import com.watabou.pixeldungeon.items.crafting.Bark
+import com.watabou.pixeldungeon.items.crafting.Rope
+import com.watabou.pixeldungeon.items.crafting.WoodenFence
 import com.watabou.pixeldungeon.items.crafting.StonePickaxe
 import com.watabou.pixeldungeon.items.crafting.IronPickaxe
 import com.watabou.pixeldungeon.items.crafting.DiamondPickaxe
@@ -464,6 +471,89 @@ object RecipeRegistry {
             outputClass = WoodBarricadeItem::class.java,
             outputQuantity = 1,
             station = StationType.CRAFTING_TABLE
+        ))
+
+        // Phase 7: Woodcutting - material processing
+        register(Recipe(
+            id = "log_to_planks",
+            inputs = listOf(RecipeInput(Log::class.java, 1)),
+            outputClass = WoodPlank::class.java,
+            outputQuantity = 3,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "log_to_sticks",
+            inputs = listOf(RecipeInput(Log::class.java, 1)),
+            outputClass = Stick::class.java,
+            outputQuantity = 4
+        ))
+
+        register(Recipe(
+            id = "bark_rope",
+            inputs = listOf(
+                RecipeInput(Bark::class.java, 2),
+                RecipeInput(Fiber::class.java, 1)
+            ),
+            outputClass = Rope::class.java,
+            outputQuantity = 2
+        ))
+
+        // Phase 7: Woodcutting - axes
+        register(Recipe(
+            id = "wooden_axe",
+            inputs = listOf(
+                RecipeInput(WoodPlank::class.java, 3),
+                RecipeInput(Stick::class.java, 2)
+            ),
+            outputClass = WoodenAxe::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "iron_axe",
+            inputs = listOf(
+                RecipeInput(IronIngot::class.java, 3),
+                RecipeInput(Stick::class.java, 2)
+            ),
+            outputClass = IronAxe::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        register(Recipe(
+            id = "diamond_axe",
+            inputs = listOf(
+                RecipeInput(DiamondShard::class.java, 3),
+                RecipeInput(Stick::class.java, 2)
+            ),
+            outputClass = DiamondAxe::class.java,
+            outputQuantity = 1,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        // Phase 7: Woodcutting - building items
+        register(Recipe(
+            id = "wooden_fence",
+            inputs = listOf(
+                RecipeInput(WoodPlank::class.java, 3),
+                RecipeInput(Stick::class.java, 1)
+            ),
+            outputClass = WoodenFence::class.java,
+            outputQuantity = 2,
+            station = StationType.CRAFTING_TABLE
+        ))
+
+        // Phase 7: Resin torch (better than fiber torch)
+        register(Recipe(
+            id = "resin_torch",
+            inputs = listOf(
+                RecipeInput(Stick::class.java, 1),
+                RecipeInput(com.watabou.pixeldungeon.items.crafting.Resin::class.java, 1)
+            ),
+            outputClass = CraftedTorch::class.java,
+            outputQuantity = 2
         ))
     }
 

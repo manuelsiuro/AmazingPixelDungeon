@@ -12,6 +12,7 @@ import com.watabou.pixeldungeon.actors.buffs.FlavourBuff
 import com.watabou.pixeldungeon.actors.hero.Hero
 import com.watabou.pixeldungeon.actors.mobs.Mob
 import com.watabou.pixeldungeon.effects.BlobEmitter
+import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.effects.Flare
 import com.watabou.pixeldungeon.effects.Wound
 import com.watabou.pixeldungeon.effects.particles.SacrificialParticle
@@ -25,7 +26,7 @@ class SacrificialFire : Blob() {
     protected var pos: Int = 0
     override fun restoreFromBundle(bundle: Bundle) {
         super.restoreFromBundle(bundle)
-        for (i in 0 until LENGTH) {
+        for (i in 0 until Level.LENGTH) {
             if (cur[i] > 0) {
                 pos = i
                 break

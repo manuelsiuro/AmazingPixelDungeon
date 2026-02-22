@@ -267,4 +267,15 @@ object ItemSpriteSheet {
     const val MINI_FORGE_ITEM = 213
     const val RESOURCE_CACHE_ITEM = 214
     const val ARCANE_ORE = 215
+
+    // Woodcutting & axes
+    const val LOG = 216
+    const val BARK = 217
+    const val RESIN = 218
+    const val ROPE = 219
+    const val WOODEN_FENCE = 220
+    const val TREE_SAPLING = 221
+    const val WOODEN_AXE = 222
+    const val IRON_AXE_TOOL = 223
+    const val DIAMOND_AXE_TOOL = 224
 }

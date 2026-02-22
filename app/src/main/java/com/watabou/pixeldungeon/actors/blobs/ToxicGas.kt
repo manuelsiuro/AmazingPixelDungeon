@@ -5,6 +5,7 @@ import com.watabou.pixeldungeon.ResultDescriptions
 import com.watabou.pixeldungeon.actors.Actor
 import com.watabou.pixeldungeon.actors.hero.Hero
 import com.watabou.pixeldungeon.effects.BlobEmitter
+import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.effects.Speck
 import com.watabou.pixeldungeon.utils.GLog
 import com.watabou.pixeldungeon.utils.Utils
@@ -14,7 +15,7 @@ class ToxicGas : Blob(), Hero.Doom {
         super.evolve()
         val levelDamage = 5 + Dungeon.depth * 5
         var ch: com.watabou.pixeldungeon.actors.Char? = null
-        for (i in 0 until LENGTH) {
+        for (i in 0 until Level.LENGTH) {
             if (cur[i] > 0 && Actor.findChar(i).also { ch = it } != null) {
                 var damage = (ch!!.HT + levelDamage) / 40
                 if (Random.Int(40) < (ch!!.HT + levelDamage) % 40) {
@@ -26,7 +27,7 @@ class ToxicGas : Blob(), Hero.Doom {
         val blob = Dungeon.level!!.blobs[ParalyticGas::class.java]
         if (blob != null) {
             val par = blob.cur
-            for (i in 0 until LENGTH) {
+            for (i in 0 until Level.LENGTH) {
                 val t = cur[i]
                 val p = par[i]
                 if (p >= t) {

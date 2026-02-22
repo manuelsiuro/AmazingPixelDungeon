@@ -4,12 +4,13 @@ import com.watabou.pixeldungeon.actors.buffs.Buff
 import com.watabou.pixeldungeon.actors.buffs.Buffs
 import com.watabou.pixeldungeon.actors.buffs.Paralysis
 import com.watabou.pixeldungeon.effects.BlobEmitter
+import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.effects.Speck
 class ParalyticGas : Blob() {
     override fun evolve() {
         super.evolve()
         var ch: com.watabou.pixeldungeon.actors.Char? = null
-        for (i in 0 until LENGTH) {
+        for (i in 0 until Level.LENGTH) {
             if (cur[i] > 0 && Actor.findChar(i).also { ch = it } != null) {
                 Buffs.prolong(ch!!, Paralysis::class.java, Paralysis.duration(ch!!))
             }

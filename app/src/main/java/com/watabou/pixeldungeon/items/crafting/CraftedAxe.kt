@@ -1,24 +1,23 @@
-package com.watabou.pixeldungeon.items.weapon.melee.crafted
+package com.watabou.pixeldungeon.items.crafting
 
 import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.actors.hero.Hero
-import com.watabou.pixeldungeon.items.weapon.melee.MeleeWeapon
 import com.watabou.pixeldungeon.levels.AxeTier
 import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.levels.Terrain
 import com.watabou.pixeldungeon.levels.TreeHardness
 import com.watabou.pixeldungeon.levels.features.WoodcuttingManager
+import com.watabou.pixeldungeon.items.weapon.melee.MeleeWeapon
 import com.watabou.pixeldungeon.scenes.CellSelector
 import com.watabou.pixeldungeon.scenes.GameScene
-import com.watabou.pixeldungeon.sprites.ItemSpriteSheet
 import com.watabou.pixeldungeon.utils.GLog
 import com.watabou.utils.Callback
 
-class StoneAxe : MeleeWeapon(2, 1f, 1.1f) {
+abstract class CraftedAxe(tier: Int, acu: Float, dly: Float) : MeleeWeapon(tier, acu, dly) {
+
+    abstract val axeTier: AxeTier
+
     init {
-        name = "stone axe"
-        image = ItemSpriteSheet.STONE_AXE
-        STR = 12
         defaultAction = AC_CHOP
     }
 
@@ -30,6 +29,7 @@ class StoneAxe : MeleeWeapon(2, 1f, 1.1f) {
 
     override fun execute(hero: Hero, action: String) {
         if (action == AC_CHOP) {
+            // Auto-chop: if a TREE_DAMAGED is adjacent, auto-target it
             val level = Dungeon.level
             if (level != null) {
                 for (offset in Level.NEIGHBOURS8) {
@@ -40,6 +40,7 @@ class StoneAxe : MeleeWeapon(2, 1f, 1.1f) {
                     }
                 }
             }
+
             curUser = hero
             curItem = this
             GameScene.selectCell(chopper)
@@ -49,18 +50,27 @@ class StoneAxe : MeleeWeapon(2, 1f, 1.1f) {
     }
 
     private fun executeChop(hero: Hero, level: Level, cell: Int) {
-        hero.spend(AxeTier.STONE.choppingTime)
+        val tier = axeTier
+
+        hero.spend(tier.choppingTime)
         hero.busy()
         hero.sprite?.attack(cell, object : Callback {
             override fun call() {
-                WoodcuttingManager.chop(level, cell, hero, AxeTier.STONE)
+                WoodcuttingManager.chop(level, cell, hero, tier)
+
+                use()
+                if (isBroken) {
+                    GLog.w("Your %s breaks!", name())
+                    detachAll(hero.belongings.backpack)
+                }
+
                 hero.onOperateComplete()
             }
         })
     }
 
-    override fun desc(): String =
-        "A primitive stone axe, its heavy head bound to a wooden shaft with plant fibers. Slow but powerful. Can also chop trees."
+    override val isUpgradable: Boolean
+        get() = false
 
     override val isIdentified: Boolean
         get() = true
@@ -72,7 +82,7 @@ class StoneAxe : MeleeWeapon(2, 1f, 1.1f) {
             override fun onSelect(cell: Int?) {
                 if (cell == null) return
                 val hero = curUser ?: return
-                val item = curItem as? StoneAxe ?: return
+                val item = curItem as? CraftedAxe ?: return
                 val level = Dungeon.level ?: return
 
                 if (!Level.adjacent(hero.pos, cell)) {
@@ -86,8 +96,9 @@ class StoneAxe : MeleeWeapon(2, 1f, 1.1f) {
                     return
                 }
 
+                // Check tier is sufficient for this tree type
                 val hardness = TreeHardness.forTerrain(terrain)
-                if (hardness != null && AxeTier.STONE.ordinal < hardness.minTier.ordinal) {
+                if (hardness != null && item.axeTier.ordinal < hardness.minTier.ordinal) {
                     GLog.w("Your axe is not strong enough to chop this tree.")
                     return
                 }

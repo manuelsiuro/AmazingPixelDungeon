@@ -4,10 +4,11 @@ import com.watabou.pixeldungeon.actors.buffs.Buff
 import com.watabou.pixeldungeon.actors.buffs.Buffs
 import com.watabou.pixeldungeon.actors.buffs.Roots
 import com.watabou.pixeldungeon.effects.BlobEmitter
+import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.effects.particles.WebParticle
 class Web : Blob() {
     override fun evolve() {
-        for (i in 0 until LENGTH) {
+        for (i in 0 until Level.LENGTH) {
             val offv = if (cur[i] > 0) cur[i] - 1 else 0
             off[i] = offv
             if (offv > 0) {

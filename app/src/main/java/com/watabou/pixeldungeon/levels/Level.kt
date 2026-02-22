@@ -57,10 +57,18 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
+const val DEFAULT_LEVEL_WIDTH = 64
+const val DEFAULT_LEVEL_HEIGHT = 64
+
 abstract class Level : Bundlable {
     enum class Feeling {
         NONE, CHASM, WATER, GRASS
     }
+
+    open val levelWidth: Int = DEFAULT_LEVEL_WIDTH
+    open val levelHeight: Int = DEFAULT_LEVEL_HEIGHT
+    val levelLength: Int get() = levelWidth * levelHeight
+
     var map = IntArray(0)
     var visited = BooleanArray(0)
     var mapped = BooleanArray(0)
@@ -84,11 +92,12 @@ abstract class Level : Bundlable {
     var color1 = 0x004400
     var color2 = 0x88CC44
     open fun create() {
+        activateLevel(this)
         resizingNeeded = false
-        map = IntArray(LENGTH)
-        visited = BooleanArray(LENGTH)
-        mapped = BooleanArray(LENGTH)
-        harvestable = BooleanArray(LENGTH)
+        map = IntArray(levelLength)
+        visited = BooleanArray(levelLength)
+        mapped = BooleanArray(levelLength)
+        harvestable = BooleanArray(levelLength)
         blockHP = android.util.SparseIntArray()
         mobs = HashSet()
         heaps = SparseArray()
@@ -146,6 +155,7 @@ abstract class Level : Bundlable {
         createMobs()
     }
     override fun restoreFromBundle(bundle: Bundle) {
+        activateLevel(this)
         mobs = HashSet()
         heaps = SparseArray()
         blobs = HashMap()
@@ -283,22 +293,22 @@ abstract class Level : Bundlable {
         return if (feeling == Feeling.CHASM) Terrain.EMPTY_SP else Terrain.EMPTY
     }
     private fun adjustMapSize() {
-        // For levels saved before 1.6.3
-        if (map.size < LENGTH) {
+        val targetLength = levelLength
+        // For levels saved before 1.6.3 or with different dimensions
+        if (map.size < targetLength) {
             resizingNeeded = true
             loadedMapSize = sqrt(map.size.toDouble()).toInt()
-            val newMap = IntArray(LENGTH)
+            val newMap = IntArray(targetLength)
             Arrays.fill(newMap, Terrain.WALL)
-            val newVisited = BooleanArray(LENGTH)
-            //Arrays.fill(newVisited, false) // Default is false
-            val newMapped = BooleanArray(LENGTH)
-            val newHarvestable = BooleanArray(LENGTH)
+            val newVisited = BooleanArray(targetLength)
+            val newMapped = BooleanArray(targetLength)
+            val newHarvestable = BooleanArray(targetLength)
             for (i in 0 until loadedMapSize) {
-                System.arraycopy(this.map, i * loadedMapSize, newMap, i * WIDTH, loadedMapSize)
-                System.arraycopy(this.visited, i * loadedMapSize, newVisited, i * WIDTH, loadedMapSize)
-                System.arraycopy(this.mapped, i * loadedMapSize, newMapped, i * WIDTH, loadedMapSize)
+                System.arraycopy(this.map, i * loadedMapSize, newMap, i * levelWidth, loadedMapSize)
+                System.arraycopy(this.visited, i * loadedMapSize, newVisited, i * levelWidth, loadedMapSize)
+                System.arraycopy(this.mapped, i * loadedMapSize, newMapped, i * levelWidth, loadedMapSize)
                 if (this.harvestable.size > i * loadedMapSize) {
-                    System.arraycopy(this.harvestable, i * loadedMapSize, newHarvestable, i * WIDTH, loadedMapSize)
+                    System.arraycopy(this.harvestable, i * loadedMapSize, newHarvestable, i * levelWidth, loadedMapSize)
                 }
             }
             this.map = newMap
@@ -311,12 +321,12 @@ abstract class Level : Bundlable {
             resizingNeeded = false
         }
         // Ensure harvestable array is correct size for old saves
-        if (harvestable.size < LENGTH) {
-            harvestable = BooleanArray(LENGTH)
+        if (harvestable.size < targetLength) {
+            harvestable = BooleanArray(targetLength)
         }
     }
     open fun adjustPos(pos: Int): Int {
-        return (pos / loadedMapSize) * WIDTH + (pos % loadedMapSize)
+        return (pos / loadedMapSize) * levelWidth + (pos % loadedMapSize)
     }
     open fun tilesTex(): String? {
         return null
@@ -878,6 +888,14 @@ abstract class Level : Bundlable {
             Terrain.SAFE_ROOM_WALL -> "Reinforced wall"
             Terrain.SAFE_ROOM_DOOR, Terrain.SAFE_ROOM_DOOR_OPEN -> "Safe room door"
             Terrain.MINI_FORGE -> "Mini-forge"
+            Terrain.TREE_OAK -> "Oak tree"
+            Terrain.TREE_BIRCH -> "Birch tree"
+            Terrain.TREE_PINE -> "Pine tree"
+            Terrain.TREE_MAPLE -> "Maple tree"
+            Terrain.TREE_WILLOW -> "Willow tree"
+            Terrain.TREE_FRUIT -> "Fruit tree"
+            Terrain.TREE_STUMP -> "Tree stump"
+            Terrain.TREE_DAMAGED -> "Damaged tree"
             else -> "???"
         }
     }
@@ -921,6 +939,14 @@ abstract class Level : Bundlable {
             Terrain.SAFE_ROOM_WALL -> "A reinforced wall that cannot be destroyed."
             Terrain.SAFE_ROOM_DOOR, Terrain.SAFE_ROOM_DOOR_OPEN -> "A heavy door that only you know how to open."
             Terrain.MINI_FORGE -> "A compact portable furnace for smelting."
+            Terrain.TREE_OAK -> "A sturdy oak tree with a wide canopy. Chop it with an axe for wood."
+            Terrain.TREE_BIRCH -> "A slender birch tree with pale bark. Easy to chop."
+            Terrain.TREE_PINE -> "A tall pine tree with dark green needles. Hard wood, may yield resin."
+            Terrain.TREE_MAPLE -> "A maple tree with broad leaves. Good source of quality wood."
+            Terrain.TREE_WILLOW -> "A graceful willow tree with drooping branches. Often found near water."
+            Terrain.TREE_FRUIT -> "A fruit tree laden with ripe fruit. Chop for wood and a harvest."
+            Terrain.TREE_STUMP -> "The remains of a felled tree. A sapling could be planted here."
+            Terrain.TREE_DAMAGED -> "A partially chopped tree. A few more swings should bring it down."
             else -> {
                 if (tile >= Terrain.WATER_TILES) {
                     return tileDesc(Terrain.WATER)
@@ -933,26 +959,64 @@ abstract class Level : Bundlable {
         }
     }
     companion object {
-        const val WIDTH = 64
-        const val HEIGHT = 64
-        const val LENGTH = WIDTH * HEIGHT
-        val NEIGHBOURS4 = intArrayOf(-WIDTH, +1, +WIDTH, -1)
-        val NEIGHBOURS8 = intArrayOf(+1, -1, +WIDTH, -WIDTH, +1 + WIDTH, +1 - WIDTH, -1 + WIDTH, -1 - WIDTH)
-        val NEIGHBOURS9 = intArrayOf(0, +1, -1, +WIDTH, -WIDTH, +1 + WIDTH, +1 - WIDTH, -1 + WIDTH, -1 - WIDTH)
+        // Active level dimensions (set by activateLevel())
+        @JvmStatic var _activeWidth = DEFAULT_LEVEL_WIDTH
+            private set
+        @JvmStatic var _activeHeight = DEFAULT_LEVEL_HEIGHT
+            private set
+
+        @JvmStatic val WIDTH: Int get() = _activeWidth
+        @JvmStatic val HEIGHT: Int get() = _activeHeight
+        @JvmStatic val LENGTH: Int get() = _activeWidth * _activeHeight
+
+        var NEIGHBOURS4 = intArrayOf(-DEFAULT_LEVEL_WIDTH, +1, +DEFAULT_LEVEL_WIDTH, -1)
+        var NEIGHBOURS8 = intArrayOf(+1, -1, +DEFAULT_LEVEL_WIDTH, -DEFAULT_LEVEL_WIDTH, +1 + DEFAULT_LEVEL_WIDTH, +1 - DEFAULT_LEVEL_WIDTH, -1 + DEFAULT_LEVEL_WIDTH, -1 - DEFAULT_LEVEL_WIDTH)
+        var NEIGHBOURS9 = intArrayOf(0, +1, -1, +DEFAULT_LEVEL_WIDTH, -DEFAULT_LEVEL_WIDTH, +1 + DEFAULT_LEVEL_WIDTH, +1 - DEFAULT_LEVEL_WIDTH, -1 + DEFAULT_LEVEL_WIDTH, -1 - DEFAULT_LEVEL_WIDTH)
+
+        fun activateLevel(level: Level) {
+            val w = level.levelWidth
+            val h = level.levelHeight
+            if (_activeWidth != w || _activeHeight != h) {
+                _activeWidth = w
+                _activeHeight = h
+                val len = w * h
+                // Recompute neighbour offsets
+                NEIGHBOURS4 = intArrayOf(-w, +1, +w, -1)
+                NEIGHBOURS8 = intArrayOf(+1, -1, +w, -w, +1 + w, +1 - w, -1 + w, -1 - w)
+                NEIGHBOURS9 = intArrayOf(0, +1, -1, +w, -w, +1 + w, +1 - w, -1 + w, -1 - w)
+                // Reallocate static arrays
+                fieldOfView = BooleanArray(len)
+                passable = BooleanArray(len)
+                losBlocking = BooleanArray(len)
+                flamable = BooleanArray(len)
+                secret = BooleanArray(len)
+                solid = BooleanArray(len)
+                avoid = BooleanArray(len)
+                water = BooleanArray(len)
+                pit = BooleanArray(len)
+                discoverable = BooleanArray(len)
+                // Resize Actor.chars to match new level size
+                if (Actor.chars.size != len) {
+                    Actor.chars = arrayOfNulls(len)
+                }
+            }
+        }
+
         protected var TIME_TO_RESPAWN = 50f
         private const val TXT_HIDDEN_PLATE_CLICKS = "A hidden pressure plate clicks!"
         var resizingNeeded: Boolean = false
         var loadedMapSize: Int = 0
-        var fieldOfView = BooleanArray(LENGTH)
-        var passable = BooleanArray(LENGTH)
-        var losBlocking = BooleanArray(LENGTH)
-        var flamable = BooleanArray(LENGTH)
-        var secret = BooleanArray(LENGTH)
-        var solid = BooleanArray(LENGTH)
-        var avoid = BooleanArray(LENGTH)
-        var water = BooleanArray(LENGTH)
-        var pit = BooleanArray(LENGTH)
-        var discoverable = BooleanArray(LENGTH)
+        private var _staticLen = DEFAULT_LEVEL_WIDTH * DEFAULT_LEVEL_HEIGHT
+        var fieldOfView = BooleanArray(_staticLen)
+        var passable = BooleanArray(_staticLen)
+        var losBlocking = BooleanArray(_staticLen)
+        var flamable = BooleanArray(_staticLen)
+        var secret = BooleanArray(_staticLen)
+        var solid = BooleanArray(_staticLen)
+        var avoid = BooleanArray(_staticLen)
+        var water = BooleanArray(_staticLen)
+        var pit = BooleanArray(_staticLen)
+        var discoverable = BooleanArray(_staticLen)
         var pitRoomNeeded = false
         var weakFloorCreated = false
         private const val MAP = "map"
@@ -974,6 +1038,8 @@ abstract class Level : Bundlable {
         private const val BUILD_COUNT = "buildCount"
         private const val TORCH_HOLDERS = "torchHolders"
         private const val RESOURCE_CACHE_INV = "resourceCacheInventory"
+        private const val LEVEL_WIDTH_KEY = "levelWidth"
+        private const val LEVEL_HEIGHT_KEY = "levelHeight"
         fun isWallType(terrain: Int): Boolean = when (terrain) {
             Terrain.WALL, Terrain.WALL_DECO, Terrain.SECRET_DOOR,
             Terrain.DIRT_WALL, Terrain.STONE_WALL_NATURAL,

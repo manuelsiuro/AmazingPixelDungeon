@@ -11,8 +11,8 @@ import com.watabou.pixeldungeon.levels.Terrain
 import com.watabou.pixeldungeon.scenes.GameScene
 class Foliage : Blob() {
     override fun evolve() {
-        val from = WIDTH + 1
-        val to = Level.LENGTH - WIDTH - 1
+        val from = Level.WIDTH + 1
+        val to = Level.LENGTH - Level.WIDTH - 1
         val map = Dungeon.level!!.map
         var regrowth = false
         var visible = false

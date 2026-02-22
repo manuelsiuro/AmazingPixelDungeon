@@ -159,10 +159,10 @@ class HallsBossLevel : Level() {
         HallsLevel.addVisuals(this, scene)
     }
     companion object {
-        private const val ROOM_LEFT = WIDTH / 2 - 1
-        private const val ROOM_RIGHT = WIDTH / 2 + 1
-        private const val ROOM_TOP = HEIGHT / 2 - 1
-        private const val ROOM_BOTTOM = HEIGHT / 2 + 1
+        private const val ROOM_LEFT = DEFAULT_LEVEL_WIDTH / 2 - 1
+        private const val ROOM_RIGHT = DEFAULT_LEVEL_WIDTH / 2 + 1
+        private const val ROOM_TOP = DEFAULT_LEVEL_HEIGHT / 2 - 1
+        private const val ROOM_BOTTOM = DEFAULT_LEVEL_HEIGHT / 2 + 1
         private const val STAIRS = "stairs"
         private const val ENTERED = "entered"
         private const val DROPPED = "droppped"

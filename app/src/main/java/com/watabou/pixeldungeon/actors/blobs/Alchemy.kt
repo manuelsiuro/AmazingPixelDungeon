@@ -2,13 +2,14 @@ package com.watabou.pixeldungeon.actors.blobs
 import com.watabou.pixeldungeon.Dungeon
 import com.watabou.pixeldungeon.Journal
 import com.watabou.pixeldungeon.effects.BlobEmitter
+import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.effects.Speck
 import com.watabou.utils.Bundle
 class Alchemy : Blob() {
     protected var pos: Int = 0
     override fun restoreFromBundle(bundle: Bundle) {
         super.restoreFromBundle(bundle)
-        for (i in 0 until LENGTH) {
+        for (i in 0 until Level.LENGTH) {
             if (cur[i] > 0) {
                 pos = i
                 break

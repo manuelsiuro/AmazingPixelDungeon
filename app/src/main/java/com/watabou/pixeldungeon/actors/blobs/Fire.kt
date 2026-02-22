@@ -11,8 +11,8 @@ import com.watabou.pixeldungeon.scenes.GameScene
 class Fire : Blob() {
     override fun evolve() {
         val flamable = Level.flamable
-        val from = WIDTH + 1
-        val to = Level.LENGTH - WIDTH - 1
+        val from = Level.WIDTH + 1
+        val to = Level.LENGTH - Level.WIDTH - 1
         var observe = false
         for (pos in from until to) {
             val fire: Int
@@ -29,7 +29,7 @@ class Fire : Blob() {
                     }
                 }
             } else {
-                if (flamable[pos] && (cur[pos - 1] > 0 || cur[pos + 1] > 0 || cur[pos - WIDTH] > 0 || cur[pos + WIDTH] > 0)) {
+                if (flamable[pos] && (cur[pos - 1] > 0 || cur[pos + 1] > 0 || cur[pos - Level.WIDTH] > 0 || cur[pos + Level.WIDTH] > 0)) {
                     fire = 4
                     burn(pos)
                 } else {

@@ -1,12 +1,17 @@
 package com.watabou.pixeldungeon.levels
 import com.watabou.utils.Random
 object Patch {
-    private var cur = BooleanArray(Level.LENGTH)
-    private var off = BooleanArray(Level.LENGTH)
+    private var cur = BooleanArray(DEFAULT_LEVEL_WIDTH * DEFAULT_LEVEL_HEIGHT)
+    private var off = BooleanArray(DEFAULT_LEVEL_WIDTH * DEFAULT_LEVEL_HEIGHT)
     fun generate(seed: Float, nGen: Int): BooleanArray {
         val w = Level.WIDTH
         val h = Level.HEIGHT
-        for (i in 0 until Level.LENGTH) {
+        val len = Level.LENGTH
+        if (cur.size != len) {
+            cur = BooleanArray(len)
+            off = BooleanArray(len)
+        }
+        for (i in 0 until len) {
             off[i] = Random.Float() < seed
         }
         for (i in 0 until nGen) {

@@ -33,14 +33,19 @@ import com.watabou.pixeldungeon.items.armor.ClothArmor
 import com.watabou.pixeldungeon.items.armor.LeatherArmor
 import com.watabou.pixeldungeon.items.bags.MaterialBag
 import com.watabou.pixeldungeon.items.bags.SeedPouch
+import com.watabou.pixeldungeon.items.crafting.Bark
 import com.watabou.pixeldungeon.items.crafting.Cobblestone
 import com.watabou.pixeldungeon.items.crafting.CobblestoneBlock
+import com.watabou.pixeldungeon.items.crafting.DiamondAxe
 import com.watabou.pixeldungeon.items.crafting.DiamondShard
 import com.watabou.pixeldungeon.items.crafting.Fiber
 import com.watabou.pixeldungeon.items.crafting.GoldOre
+import com.watabou.pixeldungeon.items.crafting.IronAxe
 import com.watabou.pixeldungeon.items.crafting.IronIngot
 import com.watabou.pixeldungeon.items.crafting.IronOre
 import com.watabou.pixeldungeon.items.crafting.Leather
+import com.watabou.pixeldungeon.items.crafting.Log
+import com.watabou.pixeldungeon.items.crafting.Resin
 import com.watabou.pixeldungeon.items.crafting.Stick
 import com.watabou.pixeldungeon.items.crafting.ArcaneDust
 import com.watabou.pixeldungeon.items.crafting.ArcaneOre
@@ -48,8 +53,10 @@ import com.watabou.pixeldungeon.items.crafting.BlankTome
 import com.watabou.pixeldungeon.items.crafting.EyeOfEnder
 import com.watabou.pixeldungeon.items.crafting.Bone
 import com.watabou.pixeldungeon.items.crafting.Hoe
+import com.watabou.pixeldungeon.items.crafting.TreeSapling
 import com.watabou.pixeldungeon.items.crafting.WoodPlank
 import com.watabou.pixeldungeon.items.crafting.WoodBarricadeItem
+import com.watabou.pixeldungeon.items.crafting.WoodenAxe
 import com.watabou.pixeldungeon.items.crafting.WoodenPickaxe
 import com.watabou.pixeldungeon.items.crafting.StonePickaxe
 import com.watabou.pixeldungeon.items.crafting.IronPickaxe
@@ -60,6 +67,7 @@ import com.watabou.pixeldungeon.items.crafting.SupportBeamItem
 import com.watabou.pixeldungeon.items.crafting.SafeRoomBlueprint
 import com.watabou.pixeldungeon.items.crafting.MiniForgeItem
 import com.watabou.pixeldungeon.items.crafting.ResourceCacheItem
+import com.watabou.pixeldungeon.items.weapon.melee.crafted.StoneAxe
 import com.watabou.pixeldungeon.items.food.MysteryMeat
 import com.watabou.pixeldungeon.items.food.farming.PlanterBox
 import com.watabou.pixeldungeon.farming.WheatSeed
@@ -84,6 +92,9 @@ import java.util.Arrays
 
 class VillageLevel : Level() {
 
+    override val levelWidth = 128
+    override val levelHeight = 128
+
     init {
         color1 = 0x48763c
         color2 = 0x59994a
@@ -98,6 +109,9 @@ class VillageLevel : Level() {
 
         // === Large central open area (grass) ===
         Painter.fill(this, 5, 5, 54, 54, Terrain.GRASS)
+
+        // === Extended grass for forest zone (east portion) ===
+        Painter.fill(this, 59, 5, 66, 60, Terrain.GRASS)
 
         // === Main paths (cobblestone) ===
         // Horizontal path through center
@@ -237,6 +251,15 @@ class VillageLevel : Level() {
         Painter.fill(this, 56, 5, 3, 3, Terrain.HIGH_GRASS)
         Painter.fill(this, 56, 56, 3, 3, Terrain.HIGH_GRASS)
         Painter.fill(this, 5, 56, 3, 3, Terrain.HIGH_GRASS)
+
+        // ============================================================
+        // FOREST ZONE (east portion, ~80-120, 10-60)
+        // ============================================================
+
+        // Path connecting village to forest zone
+        Painter.fill(this, 58, 22, 22, 2, Terrain.EMPTY_DECO)
+
+        buildForestZone()
 
         // Scatter some high grass
         for (i in 0 until LENGTH) {
@@ -418,6 +441,23 @@ class VillageLevel : Level() {
         drop(MiniForgeItem(), pos(48, 49))
         drop(ResourceCacheItem().apply { quantity = 2 }, pos(49, 49))
 
+        // === FOREST ZONE TEST ITEMS (near lumber yard) ===
+        // All 4 axe tiers
+        drop(WoodenAxe(), pos(75, 21))
+        drop(StoneAxe(), pos(76, 21))
+        drop(IronAxe(), pos(77, 21))
+        drop(DiamondAxe(), pos(78, 21))
+        // Wood materials
+        drop(Log().apply { quantity = 10 }, pos(75, 23))
+        drop(Bark().apply { quantity = 8 }, pos(76, 23))
+        drop(Resin().apply { quantity = 5 }, pos(77, 23))
+        // Tree saplings for replanting
+        drop(TreeSapling().apply { quantity = 5 }, pos(78, 23))
+        drop(TreeSapling().apply { quantity = 3 }, pos(79, 23))
+        // Tree stumps for testing replanting (placed in build, but terrain set here)
+        map[pos(75, 26)] = Terrain.TREE_STUMP
+        map[pos(77, 26)] = Terrain.TREE_STUMP
+
         // Record village in journal
         Journal.add(Journal.Feature.VILLAGE)
     }
@@ -468,6 +508,13 @@ class VillageLevel : Level() {
             Terrain.ORE_WALL_GOLD -> "Gold ore vein (test)"
             Terrain.ORE_WALL_DIAMOND -> "Diamond ore vein (test)"
             Terrain.ORE_WALL_ARCANE -> "Arcane ore vein (test)"
+            Terrain.TREE_OAK -> "Oak tree"
+            Terrain.TREE_BIRCH -> "Birch tree"
+            Terrain.TREE_PINE -> "Pine tree"
+            Terrain.TREE_MAPLE -> "Maple tree"
+            Terrain.TREE_WILLOW -> "Willow tree"
+            Terrain.TREE_FRUIT -> "Fruit tree"
+            Terrain.TREE_STUMP -> "Tree stump"
             else -> super.tileName(tile)
         }
     }
@@ -493,6 +540,13 @@ class VillageLevel : Level() {
             Terrain.STONE_WALL_NATURAL -> "Solid stone. Mine with a Stone Pickaxe or better."
             Terrain.GRANITE_WALL -> "Dense granite. Mine with an Iron Pickaxe or better."
             Terrain.OBSIDIAN_WALL -> "Volcanic obsidian. Only a Diamond Pickaxe can break this."
+            Terrain.TREE_OAK -> "A sturdy oak tree with a wide canopy. Chop it with an axe for wood."
+            Terrain.TREE_BIRCH -> "A slender birch tree with pale bark. Easy to chop."
+            Terrain.TREE_PINE -> "A tall pine tree with dark green needles. Hard wood, may yield resin."
+            Terrain.TREE_MAPLE -> "A maple tree with broad leaves. Good source of quality wood."
+            Terrain.TREE_WILLOW -> "A graceful willow tree with drooping branches. Often found near water."
+            Terrain.TREE_FRUIT -> "A fruit tree laden with ripe fruit. Chop for wood and a harvest."
+            Terrain.TREE_STUMP -> "The remains of a felled tree. A sapling could be planted here."
             else -> super.tileDesc(tile)
         }
     }
@@ -509,6 +563,67 @@ class VillageLevel : Level() {
                 Terrain.HIGH_GRASS -> if (Random.Int(6) == 0) scene.add(VillageLeaf(i))
             }
         }
+    }
+
+    private fun buildForestZone() {
+        // === Large grass base for the forest ===
+        Painter.fill(this, 80, 10, 42, 52, Terrain.GRASS)
+
+        // === Lumber Yard (near forest entrance, ~75-80, 20-30) ===
+        Painter.fill(this, 75, 20, 6, 10, Terrain.EMPTY_SP)
+        map[pos(77, 19)] = Terrain.SIGN  // Lumber yard sign
+
+        // === Oak Grove (6-8 trees, ~85-95, 15-25) ===
+        map[pos(86, 16)] = Terrain.TREE_OAK
+        map[pos(89, 17)] = Terrain.TREE_OAK
+        map[pos(92, 16)] = Terrain.TREE_OAK
+        map[pos(87, 20)] = Terrain.TREE_OAK
+        map[pos(90, 19)] = Terrain.TREE_OAK
+        map[pos(93, 21)] = Terrain.TREE_OAK
+        map[pos(88, 23)] = Terrain.TREE_OAK
+        map[pos(91, 24)] = Terrain.TREE_OAK
+
+        // === Birch Copse (4-6 trees, ~100-110, 15-25) ===
+        map[pos(101, 16)] = Terrain.TREE_BIRCH
+        map[pos(104, 17)] = Terrain.TREE_BIRCH
+        map[pos(107, 16)] = Terrain.TREE_BIRCH
+        map[pos(102, 20)] = Terrain.TREE_BIRCH
+        map[pos(105, 21)] = Terrain.TREE_BIRCH
+        map[pos(108, 19)] = Terrain.TREE_BIRCH
+
+        // === Pine Stand (4-5 trees, ~85-95, 30-40) ===
+        map[pos(86, 31)] = Terrain.TREE_PINE
+        map[pos(89, 33)] = Terrain.TREE_PINE
+        map[pos(92, 32)] = Terrain.TREE_PINE
+        map[pos(87, 36)] = Terrain.TREE_PINE
+        map[pos(91, 38)] = Terrain.TREE_PINE
+
+        // === Maple Cluster (3-4 trees, ~100-110, 30-40) ===
+        map[pos(101, 31)] = Terrain.TREE_MAPLE
+        map[pos(104, 33)] = Terrain.TREE_MAPLE
+        map[pos(107, 35)] = Terrain.TREE_MAPLE
+        map[pos(103, 37)] = Terrain.TREE_MAPLE
+
+        // === Willow Area (3-4 trees near a small pond, ~85-95, 45-55) ===
+        // Small pond for willows
+        Painter.fill(this, 88, 48, 4, 3, Terrain.WATER)
+        map[pos(86, 46)] = Terrain.TREE_WILLOW
+        map[pos(89, 45)] = Terrain.TREE_WILLOW
+        map[pos(93, 47)] = Terrain.TREE_WILLOW
+        map[pos(85, 50)] = Terrain.TREE_WILLOW
+
+        // === Fruit Orchard (4-5 trees, ~100-110, 45-55) ===
+        map[pos(101, 46)] = Terrain.TREE_FRUIT
+        map[pos(104, 47)] = Terrain.TREE_FRUIT
+        map[pos(107, 46)] = Terrain.TREE_FRUIT
+        map[pos(102, 51)] = Terrain.TREE_FRUIT
+        map[pos(106, 52)] = Terrain.TREE_FRUIT
+
+        // === Paths through the forest ===
+        // Main east-west path connecting lumber yard to deep forest
+        Painter.fill(this, 80, 22, 40, 1, Terrain.EMPTY_DECO)
+        // North-south path through tree clusters
+        Painter.fill(this, 98, 12, 1, 48, Terrain.EMPTY_DECO)
     }
 
     private fun pos(x: Int, y: Int): Int = x + y * WIDTH

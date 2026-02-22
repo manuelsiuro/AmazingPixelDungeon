@@ -19,6 +19,8 @@ import com.watabou.pixeldungeon.items.rings.Ring
 import com.watabou.pixeldungeon.items.scrolls.Scroll
 import com.watabou.pixeldungeon.items.wands.Wand
 import com.watabou.pixeldungeon.levels.*
+import com.watabou.pixeldungeon.levels.DEFAULT_LEVEL_WIDTH
+import com.watabou.pixeldungeon.levels.DEFAULT_LEVEL_HEIGHT
 import com.watabou.pixeldungeon.scenes.GameScene
 import com.watabou.pixeldungeon.scenes.StartScene
 import com.watabou.pixeldungeon.ui.QuickSlot
@@ -48,13 +50,13 @@ object Dungeon {
     var resultDescription: String? = null
     var chapters: HashSet<Int>? = null
     // Hero's field of view
-    var visible: BooleanArray = BooleanArray(Level.LENGTH)
+    var visible: BooleanArray = BooleanArray(DEFAULT_LEVEL_WIDTH * DEFAULT_LEVEL_HEIGHT)
     var nightMode: Boolean = false
     var droppedItems: SparseArray<ArrayList<Item>>? = null
     fun init() {
         challenges = PixelDungeon.challenges()
         Actor.clear()
-        PathFinder.setMapSize(Level.WIDTH, Level.HEIGHT)
+        PathFinder.setMapSize(DEFAULT_LEVEL_WIDTH, DEFAULT_LEVEL_HEIGHT)
         Scroll.initLabels()
         Potion.initColors()
         Wand.initWoods()
@@ -166,14 +168,34 @@ object Dungeon {
     fun switchLevel(level: Level?, pos: Int) {
         nightMode = Date().hours < 7
         Dungeon.level = level
+        if (level != null) {
+            Level.activateLevel(level)
+            PathFinder.setMapSize(Level.WIDTH, Level.HEIGHT)
+            val len = Level.LENGTH
+            if (visible.size != len) {
+                visible = BooleanArray(len)
+            }
+            if (passable.size != len) {
+                passable = BooleanArray(len)
+            }
+        }
+        // Update hero position BEFORE Actor.init() so that when Actor.init()
+        // calls addDelayed(hero) -> chars[hero.pos], the position is valid for
+        // the new level's array size (critical for 128x128 -> 64x64 transitions)
+        val currentLevel = level ?: run {
+            Actor.init()
+            return
+        }
+        val currentHero = hero
+        if (currentHero != null) {
+            currentHero.pos = if (pos != -1) pos else currentLevel.exit
+        }
         Actor.init()
-        val currentLevel = level ?: return
         val respawner = currentLevel.respawner()
         if (respawner != null) {
             Actor.add(respawner)
         }
-        val currentHero = hero ?: return
-        currentHero.pos = if (pos != -1) pos else currentLevel.exit
+        if (currentHero == null) return
         val light = currentHero.buff(Light::class.java)
         currentHero.viewDistance = light?.let { Math.max(Light.DISTANCE, currentLevel.viewDistance) } ?: currentLevel.viewDistance
         observe()
@@ -350,7 +372,7 @@ object Dungeon {
         Dungeon.level = null
         Dungeon.depth = -1
         if (fullLoad) {
-            PathFinder.setMapSize(Level.WIDTH, Level.HEIGHT)
+            PathFinder.setMapSize(DEFAULT_LEVEL_WIDTH, DEFAULT_LEVEL_HEIGHT)
         }
         Scroll.restore(bundle)
         Potion.restore(bundle)
@@ -485,11 +507,12 @@ object Dungeon {
         val currentLevel = level ?: return
         val currentHero = hero ?: return
         currentLevel.updateFieldOfView(currentHero)
-        System.arraycopy(Level.fieldOfView, 0, visible, 0, visible.size)
+        val len = minOf(Level.fieldOfView.size, visible.size)
+        System.arraycopy(Level.fieldOfView, 0, visible, 0, len)
         BArray.or(currentLevel.visited, visible, currentLevel.visited)
         GameScene.afterObserve()
     }
-    private val passable = BooleanArray(Level.LENGTH)
+    private var passable = BooleanArray(DEFAULT_LEVEL_WIDTH * DEFAULT_LEVEL_HEIGHT)
     fun findPath(ch: Char, from: Int, to: Int, pass: BooleanArray, visible: BooleanArray): Int {
         if (Level.adjacent(from, to)) {
             return if (Actor.findChar(to) == null && (pass[to] || Level.avoid[to])) to else -1

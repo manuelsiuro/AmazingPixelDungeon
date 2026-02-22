@@ -13,21 +13,21 @@ open class Blob : Actor() {
     protected var off: IntArray
     var emitter: BlobEmitter? = null
     init {
-        cur = IntArray(LENGTH)
-        off = IntArray(LENGTH)
+        cur = IntArray(Level.LENGTH)
+        off = IntArray(Level.LENGTH)
         volume = 0
     }
     override fun storeInBundle(bundle: Bundle) {
         super.storeInBundle(bundle)
         if (volume > 0) {
             var start = 0
-            while (start < LENGTH) {
+            while (start < cur.size) {
                 if (cur[start] > 0) {
                     break
                 }
                 start++
             }
-            var end = LENGTH - 1
+            var end = cur.size - 1
             while (end > start) {
                 if (cur[end] > 0) {
                     break
@@ -80,9 +80,9 @@ open class Blob : Actor() {
     }
     protected open fun evolve() {
         val notBlocking = BArray.not(Level.solid, null)
-        for (i in 1 until HEIGHT - 1) {
-            val from = i * WIDTH + 1
-            val to = from + WIDTH - 2
+        for (i in 1 until Level.HEIGHT - 1) {
+            val from = i * Level.WIDTH + 1
+            val to = from + Level.WIDTH - 2
             for (pos in from until to) {
                 if (notBlocking[pos]) {
                     var count = 1
@@ -95,12 +95,12 @@ open class Blob : Actor() {
                         sum += cur[pos + 1]
                         count++
                     }
-                    if (notBlocking[pos - WIDTH]) {
-                        sum += cur[pos - WIDTH]
+                    if (notBlocking[pos - Level.WIDTH]) {
+                        sum += cur[pos - Level.WIDTH]
                         count++
                     }
-                    if (notBlocking[pos + WIDTH]) {
-                        sum += cur[pos + WIDTH]
+                    if (notBlocking[pos + Level.WIDTH]) {
+                        sum += cur[pos + Level.WIDTH]
                         count++
                     }
                     val value = if (sum >= count) (sum / count) -1 else 0
@@ -124,9 +124,6 @@ open class Blob : Actor() {
         return null
     }
     companion object {
-        const val WIDTH = Level.WIDTH
-        const val HEIGHT = Level.HEIGHT
-        const val LENGTH = Level.LENGTH
         private const val CUR = "cur"
         private const val START = "start"
         @Suppress("UNCHECKED_CAST")

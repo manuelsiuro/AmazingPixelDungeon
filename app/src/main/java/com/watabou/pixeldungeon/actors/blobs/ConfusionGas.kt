@@ -4,12 +4,13 @@ import com.watabou.pixeldungeon.actors.buffs.Buff
 import com.watabou.pixeldungeon.actors.buffs.Buffs
 import com.watabou.pixeldungeon.actors.buffs.Vertigo
 import com.watabou.pixeldungeon.effects.BlobEmitter
+import com.watabou.pixeldungeon.levels.Level
 import com.watabou.pixeldungeon.effects.Speck
 class ConfusionGas : Blob() {
     override fun evolve() {
         super.evolve()
         var ch: com.watabou.pixeldungeon.actors.Char? = null
-        for (i in 0 until LENGTH) {
+        for (i in 0 until Level.LENGTH) {
             if (cur[i] > 0 && Actor.findChar(i).also { ch = it } != null) {
                 Buffs.prolong(ch!!, Vertigo::class.java, Vertigo.duration(ch!!))
             }

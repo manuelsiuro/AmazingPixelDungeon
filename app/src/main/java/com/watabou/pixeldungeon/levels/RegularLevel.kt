@@ -13,6 +13,7 @@ import com.watabou.pixeldungeon.levels.painters.Painter
 import com.watabou.utils.Bundle
 import com.watabou.utils.Graph
 import com.watabou.pixeldungeon.levels.features.OreGenerator
+import com.watabou.pixeldungeon.levels.features.TreeGenerator
 import com.watabou.utils.Random
 import com.watabou.utils.Rect
 import java.util.ArrayList
@@ -110,6 +111,7 @@ abstract class RegularLevel : Level() {
         paintWater()
         paintGrass()
         placeTraps()
+        TreeGenerator.generateTrees(this, Dungeon.depth)
         return true
     }
     protected fun initRooms(): Boolean {

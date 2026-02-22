@@ -3,7 +3,7 @@ import com.watabou.pixeldungeon.actors.Actor
 import com.watabou.pixeldungeon.levels.Level
 import kotlin.math.abs
 object Ballistica {
-    var trace: IntArray = IntArray(Math.max(Level.WIDTH, Level.HEIGHT))
+    var trace: IntArray = IntArray(256)
     var distance: Int = 0
     fun cast(from: Int, to: Int, magic: Boolean, hitChars: Boolean): Int {
         val w = Level.WIDTH

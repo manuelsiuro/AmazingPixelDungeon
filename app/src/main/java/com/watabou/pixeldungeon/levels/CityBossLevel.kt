@@ -163,7 +163,7 @@ class CityBossLevel : Level() {
         private const val HALL_WIDTH = 7
         private const val HALL_HEIGHT = 15
         private const val CHAMBER_HEIGHT = 3
-        private const val LEFT = (WIDTH - HALL_WIDTH) / 2
+        private const val LEFT = (DEFAULT_LEVEL_WIDTH - HALL_WIDTH) / 2
         private const val CENTER = LEFT + HALL_WIDTH / 2
         private const val DOOR = "door"
         private const val ENTERED = "entered"

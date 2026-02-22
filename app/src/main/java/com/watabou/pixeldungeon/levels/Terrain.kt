@@ -61,6 +61,17 @@ object Terrain {
     const val SAFE_ROOM_DOOR = 85
     const val SAFE_ROOM_DOOR_OPEN = 86
     const val MINI_FORGE = 87
+
+    // Tree terrain
+    const val TREE_OAK = 88
+    const val TREE_BIRCH = 89
+    const val TREE_PINE = 90
+    const val TREE_MAPLE = 91
+    const val TREE_WILLOW = 92
+    const val TREE_FRUIT = 93
+    const val TREE_STUMP = 94
+    const val TREE_DAMAGED = 95
+
     const val SECRET_DOOR = 16
     const val TOXIC_TRAP = 17
     const val SECRET_TOXIC_TRAP = 18
@@ -172,10 +183,25 @@ object Terrain {
         flags[SAFE_ROOM_DOOR] = PASSABLE or LOS_BLOCKING or SOLID or UNSTITCHABLE
         flags[SAFE_ROOM_DOOR_OPEN] = PASSABLE or UNSTITCHABLE
         flags[MINI_FORGE] = SOLID
+
+        // Tree terrain
+        flags[TREE_OAK] = SOLID or FLAMABLE
+        flags[TREE_BIRCH] = SOLID or FLAMABLE
+        flags[TREE_PINE] = SOLID or FLAMABLE
+        flags[TREE_MAPLE] = SOLID or FLAMABLE
+        flags[TREE_WILLOW] = SOLID or FLAMABLE
+        flags[TREE_FRUIT] = SOLID or FLAMABLE
+        flags[TREE_STUMP] = PASSABLE
+        flags[TREE_DAMAGED] = SOLID or FLAMABLE
+
         for (i in WATER_TILES until WATER_TILES + 16) {
             flags[i] = flags[WATER]
         }
     }
+    fun isTreeType(terrain: Int): Boolean = terrain in TREE_OAK..TREE_FRUIT
+
+    fun isChoppable(terrain: Int): Boolean = terrain in TREE_OAK..TREE_FRUIT || terrain == TREE_DAMAGED
+
     fun discover(terr: Int): Int {
         return when (terr) {
             SECRET_DOOR -> DOOR

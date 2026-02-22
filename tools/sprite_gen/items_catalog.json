@@ -1510,5 +1510,68 @@
     "category": "mining",
     "name": "arcane ore",
     "prompt_hints": "rough rock chunk, purple glowing veins, magical mineral"
+  },
+  {
+    "id": "LOG",
+    "index": 216,
+    "category": "woodcutting",
+    "name": "log",
+    "prompt_hints": "brown cylinder, visible rings, cut wood"
+  },
+  {
+    "id": "BARK",
+    "index": 217,
+    "category": "woodcutting",
+    "name": "bark",
+    "prompt_hints": "brown sheet strip, rough tree bark texture"
+  },
+  {
+    "id": "RESIN",
+    "index": 218,
+    "category": "woodcutting",
+    "name": "resin",
+    "prompt_hints": "amber droplet, golden sap, translucent"
+  },
+  {
+    "id": "ROPE",
+    "index": 219,
+    "category": "woodcutting",
+    "name": "rope",
+    "prompt_hints": "coiled brown rope, hemp, twisted fibers"
+  },
+  {
+    "id": "WOODEN_FENCE",
+    "index": 220,
+    "category": "woodcutting",
+    "name": "wooden fence",
+    "prompt_hints": "picket fence section, vertical planks, pointed tops"
+  },
+  {
+    "id": "TREE_SAPLING",
+    "index": 221,
+    "category": "woodcutting",
+    "name": "tree sapling",
+    "prompt_hints": "small green seedling, tiny leaves, brown stem, dirt"
+  },
+  {
+    "id": "WOODEN_AXE",
+    "index": 222,
+    "category": "woodcutting",
+    "name": "wooden axe",
+    "prompt_hints": "wooden axe head, wooden handle, diagonal tool, crude"
+  },
+  {
+    "id": "IRON_AXE_TOOL",
+    "index": 223,
+    "category": "woodcutting",
+    "name": "iron axe",
+    "prompt_hints": "iron axe head, wooden handle, diagonal tool, silver"
+  },
+  {
+    "id": "DIAMOND_AXE_TOOL",
+    "index": 224,
+    "category": "woodcutting",
+    "name": "diamond axe",
+    "prompt_hints": "blue diamond axe head, wooden handle, diagonal tool, sparkling cyan"
   }
 ]

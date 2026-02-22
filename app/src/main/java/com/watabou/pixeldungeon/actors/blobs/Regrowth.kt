@@ -14,7 +14,7 @@ class Regrowth : Blob() {
         super.evolve()
         if (volume > 0) {
             var mapUpdated = false
-            for (i in 0 until LENGTH) {
+            for (i in 0 until Level.LENGTH) {
                 if (off[i] > 0) {
                     val c = Dungeon.level!!.map[i]
                     var c1 = c

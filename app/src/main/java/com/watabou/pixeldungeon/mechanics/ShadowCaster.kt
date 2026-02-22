@@ -3,8 +3,6 @@ import com.watabou.pixeldungeon.levels.Level
 import java.util.Arrays
 object ShadowCaster {
     private const val MAX_DISTANCE = 8
-    private const val WIDTH = Level.WIDTH
-    private const val HEIGHT = Level.HEIGHT
     private var distance: Int = 0
     private var limits: IntArray? = null
     private var losBlocking: BooleanArray? = null
@@ -25,7 +23,7 @@ object ShadowCaster {
         limits = rounding[distance]
         ShadowCaster.fieldOfView = fieldOfView
         Arrays.fill(fieldOfView, false)
-        fieldOfView[y * WIDTH + x] = true
+        fieldOfView[y * Level.WIDTH + x] = true
         scanSector(x, y, +1, +1, 0, 0)
         scanSector(x, y, -1, +1, 0, 0)
         scanSector(x, y, +1, -1, 0, 0)
@@ -46,11 +44,11 @@ object ShadowCaster {
             for (q in 0..pp) {
                 val x = cx + q * m1 + p * m3
                 val y = cy + p * m2 + q * m4
-                if (y >= 0 && y < HEIGHT && x >= 0 && x < WIDTH) {
+                if (y >= 0 && y < Level.HEIGHT && x >= 0 && x < Level.WIDTH) {
                     val a0 = q.toFloat() / p
                     val a1 = a0 - dq2
                     val a2 = a0 + dq2
-                    val pos = y * WIDTH + x
+                    val pos = y * Level.WIDTH + x
                     if (obs.isBlocked(a0) && obs.isBlocked(a1) && obs.isBlocked(a2)) {
                         // Do nothing
                     } else {
