@@ -17,6 +17,7 @@ The game contains **230+ items** across multiple categories:
 - Crafting Materials (8 raw + 4 processed + 2 consumables + 5 farming)
 - Farming (4 crop seeds, 4 produce, 3 cooked foods, planter box)
 - Mining (4 tiered pickaxes)
+- Woodcutting (4 tiered axes + 6 wood resources)
 - Building (7 placeable structures)
 - Miscellaneous items
 
@@ -374,6 +375,34 @@ Tiered pickaxes for mining geological and ore walls. Each doubles as a melee wea
 | Stone Pickaxe | `StonePickaxe.kt` | STONE | 12 | 3-12 | 60 | 3 Cobblestone + 2 Stick |
 | Iron Pickaxe | `IronPickaxe.kt` | IRON | 14 | 5-15 | 120 | 3 IronIngot + 2 Stick |
 | Diamond Pickaxe | `DiamondPickaxe.kt` | DIAMOND | 16 | 7-20 | 240 | 3 DiamondShard + 2 Stick |
+
+### Woodcutting Tools
+
+**Path**: `items/crafting/`
+
+Tiered axes for chopping trees. Each doubles as a melee weapon. All extend `CraftedAxe` (base class extending `MeleeWeapon`) with `AC_CHOP` cell-selector action and durability tracking. Note: `StoneAxe` is a standalone `MeleeWeapon` in `items/weapon/melee/crafted/`, not a `CraftedAxe` subclass.
+
+| Axe | File | Tier | STR | Damage | Durability | Chop Dmg | Chop Time |
+|-----|------|------|-----|--------|-----------|----------|-----------|
+| Wooden Axe | `WoodenAxe.kt` | WOOD | 10 | 2-8 | 30 | 1 | 3.0s |
+| Stone Axe | `StoneAxe.kt` | STONE | 12 | 3-12 | 60 | 2 | 2.5s |
+| Iron Axe | `IronAxe.kt` | IRON | 14 | 6-18 | 120 | 3 | 2.0s |
+| Diamond Axe | `DiamondAxe.kt` | DIAMOND | 16 | 8-24 | 240 | 4 | 1.5s |
+
+### Wood Resources
+
+**Path**: `items/crafting/`
+
+Resources obtained by chopping trees:
+
+| Material | File | Price | Source |
+|----------|------|-------|--------|
+| Log | `Log.kt` | 3 | All tree types (1-4 per tree) |
+| Bark | `Bark.kt` | 1 | Oak, Birch, Maple (10-15% chance) |
+| Resin | `Resin.kt` | 2 | Pine trees (25% chance) |
+| Rope | `Rope.kt` | 3 | Crafted from bark + fiber |
+| Tree Sapling | `TreeSapling.kt` | 5 | Any tree (5% chance). Plant on TREE_STUMP to grow a random tree |
+| Wooden Fence | `WoodenFence.kt` | 4 | Crafted. Placeable barrier |
 
 ### Building Items
 

@@ -126,6 +126,16 @@ object Terrain {
     const val SAFE_ROOM_DOOR = 85        // PASSABLE | LOS_BLOCKING | SOLID — hero opens, mobs cannot
     const val SAFE_ROOM_DOOR_OPEN = 86   // PASSABLE | UNSTITCHABLE
     const val MINI_FORGE = 87            // SOLID — portable furnace station
+
+    // Tree Terrain (88-95) — choppable trees and woodcutting states
+    const val TREE_OAK = 88              // SOLID | FLAMABLE — medium hardness
+    const val TREE_BIRCH = 89            // SOLID | FLAMABLE — soft
+    const val TREE_PINE = 90             // SOLID | FLAMABLE — hard
+    const val TREE_MAPLE = 91            // SOLID | FLAMABLE — medium hardness
+    const val TREE_WILLOW = 92           // SOLID | FLAMABLE — soft
+    const val TREE_FRUIT = 93            // SOLID | FLAMABLE — soft
+    const val TREE_STUMP = 94            // PASSABLE — chopped tree remains
+    const val TREE_DAMAGED = 95          // SOLID — partially chopped tree
 }
 ```
 
@@ -145,7 +155,7 @@ Outdoor safe hub where the player starts. Hand-crafted layout (not procedurally 
 | Feeling | Always NONE |
 | Respawner | None (safe zone) |
 
-**Layout (64x64 grid)**: Village Square (center-north, shops, elder, well), Workshop Zone (SW with crafting table, furnace, enchanting table, anvil), Farming Zone (SW lower with farmland and water), Mining Zone (SE with geological wall samples, ore walls, pickaxes), Building Zone (SE lower with open 12x10 area for placing fortifications). Entrance at north edge, exit at south.
+**Layout (128x128 grid)**: Village Square (center-north, shops, elder, well), Workshop Zone (SW with crafting table, furnace, enchanting table, anvil), Farming Zone (SW lower with farmland and water), Mining Zone (SE with geological wall samples, ore walls, pickaxes), Building Zone (SE lower with open 12x10 area for placing fortifications), Forest Zone (east with 31 trees across 6 clusters: oak grove, birch copse, pine stand, maple cluster, willow area with pond, fruit orchard; lumber yard with all 4 axe tiers). Entrance at north edge, exit at south.
 
 **NPCs**: 3 Shopkeepers, VillageElder, 1-2 Rats (outskirts).
 
@@ -525,6 +535,8 @@ abstract class Trap {
 | Mining Manager | `MiningManager.kt` | Multi-hit geological/ore wall mining with drops, cave-ins |
 | Mining Noise | `MiningNoise.kt` | Mob alerting when mining (radius + wake chance) |
 | Ore Generator | `OreGenerator.kt` | Flood-fill ore vein placement per depth |
+| Woodcutting Manager | `WoodcuttingManager.kt` | Multi-hit tree chopping with per-cell HP, drops |
+| Tree Generator | `TreeGenerator.kt` | Flood-fill tree cluster placement per depth |
 
 ---
 

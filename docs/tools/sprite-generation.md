@@ -209,9 +209,17 @@ In addition to AI-generated sprites, two scripts create hand-crafted pixel art:
 **`create_mining_sprites.py`** — 11 mining/building item sprites (indices 205-215):
 - Pickaxes (wood/stone/iron/diamond), spike trap, torch holder, support beam, safe room blueprint, mini-forge, resource cache, arcane ore
 
+**`create_woodcutting_sprites.py`** — 9 woodcutting item sprites (indices 216-224):
+- Log, Bark, Resin, Rope, Wooden Fence, Tree Sapling, Wooden Axe, Iron Axe, Diamond Axe
+
+**`create_village_base_tiles.py`** — Redesigns village tileset base tiles (indices 0-63) for outdoor/wood-house theme:
+- Replaces dungeon-themed base tiles in `tiles_village.png` with village-appropriate tiles: dirt paths, green grass, log cabin walls, wooden doors, cobblestone paths, outdoor water, etc.
+- Only modifies `tiles_village.png`. Extended tiles (64-95) are untouched.
+
 **`extend_tilesets.py`** — Terrain tile sprites for all 6 tilesets:
 - Farming tiles (indices 64-69)
 - Mining/building tiles (indices 70-87): geological walls, ore walls, rubble, cracked wall, cobble wall, spike trap, torch holder, support beam, safe room wall/door, mini-forge
+- Tree tiles (indices 88-95): oak, birch, pine, maple, willow, fruit tree, stump, damaged tree
 
 ## Prompt Engineering Guide
 

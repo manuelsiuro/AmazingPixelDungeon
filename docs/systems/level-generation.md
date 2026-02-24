@@ -270,6 +270,14 @@ Terrain constants used by the decoration systems and their visual meaning:
 | `SAFE_ROOM_WALL` | 84 | Indestructible safe room wall |
 | `SAFE_ROOM_DOOR` | 85 | Hero-only door (solid to mobs) |
 | `MINI_FORGE` | 87 | Portable furnace station |
+| `TREE_OAK` | 88 | Oak tree (medium hardness, HP 4) |
+| `TREE_BIRCH` | 89 | Birch tree (soft, HP 2) |
+| `TREE_PINE` | 90 | Pine tree (hard, HP 6) |
+| `TREE_MAPLE` | 91 | Maple tree (medium hardness, HP 4) |
+| `TREE_WILLOW` | 92 | Willow tree (soft, HP 2) |
+| `TREE_FRUIT` | 93 | Fruit tree (soft, HP 2) |
+| `TREE_STUMP` | 94 | Chopped tree stump (passable) |
+| `TREE_DAMAGED` | 95 | Partially chopped tree |
 
 ---
 
@@ -304,6 +312,56 @@ Structural walls (no adjacent passable tiles) remain as `WALL` (non-mineable).
 | 22-24 | — | — | 2-3 (size 2-3) | 0-1 (size 1-2) |
 
 Ore walls display sparkle particle effects in all biome levels (iron=orange, gold=yellow, diamond=cyan, arcane=purple).
+
+---
+
+## Tree Generation
+
+After ore placement, `TreeGenerator.generate()` places tree clusters in dungeon levels based on depth.
+
+### Tree Placement by Region
+
+| Depth | Region | Tree Types | Clusters | Size |
+|-------|--------|-----------|----------|------|
+| 1-4 | Sewers | OAK, WILLOW | 1-3 | 2-3 trees |
+| 6-9 | Prison | BIRCH | 0-1 | 2-3 trees |
+| 11-14 | Caves | PINE | 1-2 | 2-4 trees |
+| 16-19 | City | MAPLE | 0-1 | 1-2 trees |
+| 21+ | Halls | None | — | — |
+
+### Cluster Placement Algorithm
+
+Trees are placed using flood-fill from a random seed cell:
+1. Pick a random GRASS or EMPTY cell (not on edges, not entrance/exit)
+2. Expand the cluster to adjacent cells meeting the same criteria
+3. Stop when the target cluster size is reached
+
+### Tree Hardness
+
+Trees have per-cell HP tracked in `level.blockHP`. Hardness determines HP and minimum axe tier required:
+
+| Hardness | HP | Min Axe Tier | Trees | Noise Radius | Wake Chance |
+|----------|-----|-------------|-------|-------------|-------------|
+| SOFT | 2 | WOOD | Birch, Willow, Fruit | 3 | 20% |
+| MEDIUM | 4 | STONE | Oak, Maple | 5 | 40% |
+| HARD | 6 | IRON | Pine | 7 | 60% |
+
+### Woodcutting Drops
+
+`WoodcuttingManager.chop()` handles tree felling with tier-specific damage. When a tree's HP reaches 0, it becomes TREE_STUMP and drops resources:
+
+| Tree | Logs | Sticks | Special Drop |
+|------|------|--------|-------------|
+| Oak | 2-3 | 0-1 | 10% Bark |
+| Birch | 1-2 | 0-2 | 15% Bark |
+| Pine | 2-3 | 0-1 | 25% Resin |
+| Maple | 2-4 | 0-1 | 10% Bark |
+| Willow | 1-2 | 1-2 | 20% Fiber |
+| Fruit | 1-2 | 0-1 | 1-2 Apples |
+
+All trees have a 5% chance to drop a TreeSapling (plantable on TREE_STUMP to grow a random tree).
+
+**Paths**: `levels/features/WoodcuttingManager.kt`, `levels/TreeHardness.kt`, `levels/AxeTier.kt`, `levels/features/TreeGenerator.kt`
 
 ---
 

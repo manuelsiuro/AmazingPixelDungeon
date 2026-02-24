@@ -11,7 +11,7 @@ The game starts at depth 0, an outdoor village that serves as a hub with shops w
 - **Varied shops**: Weapon shop, potion shop, and tavern with distinct inventories
 - **New tileset**: Outdoor-themed pixel art (placeholder: City tileset)
 
-## Layout (64x64 grid)
+## Layout (128x128 grid)
 
 - **Village Square** (center-north, ~20-44, 5-20): Shops, elder, healing well, signpost, campfire
 - **Weapon Shop** (northwest): Shopkeeper NPC + weapon/armor items as FOR_SALE heaps
@@ -21,6 +21,7 @@ The game starts at depth 0, an outdoor village that serves as a hub with shops w
 - **Farming Zone** (SW lower, ~8-25, 46-58): Farmland, water, crop seeds, farming tools
 - **Mining Zone** (SE, ~42-58, 27-50): Geological wall samples (dirt/stone/granite/obsidian), ore wall samples, all 4 pickaxe tiers, extra crafting materials
 - **Building Zone** (SE lower, ~42-58, 48-58): Open 12x10 EMPTY area for placing fortifications, pre-dropped building items
+- **Forest Zone** (east, ~80-122, 10-62): Large grass area with 6 thematic tree clusters, lumber yard, and paths
 - **Entrance** (north edge, ~33,2): Gate representing the world exit
 - **Exit** (south-center, ~33,61): Stairs down to the dungeon
 
@@ -57,6 +58,19 @@ Enhancements added to make the village feel alive and reward exploration.
 - STATUE at pos(20,22) near the pond
 - FrostBerry food pickup
 - 1-in-3 chance of a bonus Sungrass seed
+
+### Forest Zone (east, x=80-122, y=10-62)
+Large grass area for demonstrating the woodcutting system. Includes a lumber yard at (75,20) with a signpost and all 4 axe tiers.
+
+**Tree Clusters (31 trees total):**
+- **Oak Grove** (8 trees, ~85-95, 15-25): TREE_OAK, medium hardness
+- **Birch Copse** (6 trees, ~100-110, 15-25): TREE_BIRCH, soft
+- **Pine Stand** (5 trees, ~85-95, 30-40): TREE_PINE, hard
+- **Maple Cluster** (4 trees, ~100-110, 30-40): TREE_MAPLE, medium
+- **Willow Area** (4 trees + pond, ~85-95, 45-55): TREE_WILLOW, soft
+- **Fruit Orchard** (5 trees, ~100-110, 45-55): TREE_FRUIT, soft
+
+**Paths:** Main east-west path at y=22 (40 tiles), north-south path at x=98 (48 tiles)
 
 ## Files Changed
 
